@@ -1,0 +1,74 @@
+﻿@model IList<TohalKullanici>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="kullaniciTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ad</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        @if (Request.QueryString["isInput"] == "True" || Request.QueryString["isNavigator"] == "true")
+                        {
+                            <input type="radio" name="kullanicilar" data-id="@item.KullaniciId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-id="@item.KullaniciId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                    </th>
+                    <td>@item.Ad</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+    <input id="isnavigator" type="hidden" value="@Request.QueryString["isNavigator"]" />
+    <input id="valueTarget" type="hidden" value="@Request.QueryString["valueTarget"]" />
+</div>
+
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        var table = CreateDatatable('#kullaniciTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        var isNavigator = $("#isnavigator").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#kullaniciTablo").find("input:checked");
+        if ($("#valueTarget").val().length > 0) {
+            console.log(item.data("id"));
+            $("#" + $("#valueTarget").val(item.data("id")));
+        }
+        if (isInput) {
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        } else if (isNavigator) {
+            sessionStorage.setItem("kullaniciId", item.data("id"));
+        } else {
+            $("#kullaniciTablo").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

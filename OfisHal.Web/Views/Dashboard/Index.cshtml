@@ -1,0 +1,71 @@
+﻿            @{
+    ViewBag.Title = "Ana Menü";
+    ViewBag.pTitle = "Ana Menü";
+    ViewBag.pageTitle = "Ana Menü";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    MenuItemsViewModel menuItems = new MenuItemsViewModel();
+    var menu = menuItems.GetMenuItemsHome();
+}
+<style>
+    button.btn.w-100 {
+        font-size: 20px;
+        font-weight: 700;
+    }
+</style>
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-primary" onclick="goBackMenu()">Geri</button>
+    </div>
+</div>
+<div id="menuContent" class="row">
+    @for (int i = 0; i < menu.Count; i++)
+    {
+        var item = menu.ElementAt(i);
+        <div class="col-lg-6 mt-2 d-flex justify-content-center">
+            <button onclick="clickMenu(@Json.Encode(item))" class="btn btn-primary w-100">@item.Title</button>
+        </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        var anaMenu = @Html.Raw(Json.Encode(menu));
+        var menus = [];
+        var counter = 0;
+        function clickMenu(item) {
+            if (item.SubMenu != null && item.SubMenu.length > 0) {
+                ++counter;
+                renderMenu(item.SubMenu);
+                menus.push(item.SubMenu);
+            } else {
+                location.href = item.Url;
+            }
+        }
+
+        function renderMenu(items) {
+            var newHtml = '';
+            for (var i = 0; i < items.length; i++) {
+                newHtml += '<div class="col-lg-6 mt-2 d-flex justify-content-center">';
+                var el = items[i];
+                newHtml += `<button onclick="clickMenu(${JSON.stringify(el).replace(/"/g, '&quot;')})" class="btn btn-primary w-100">${el.Title}</button>`;
+                newHtml += '</div>';
+            }
+            $("#menuContent").empty();
+            $("#menuContent").html(newHtml);
+        }
+
+        function goBackMenu() {
+            var oldMenu = menus.shift();
+            counter > 0 ? --counter : null;
+            if (counter === 1) {
+                renderMenu(oldMenu);
+                menus = [];
+            } else {
+                renderMenu(anaMenu);
+                counter = 0;
+            }
+        }
+
+    </script>
+}

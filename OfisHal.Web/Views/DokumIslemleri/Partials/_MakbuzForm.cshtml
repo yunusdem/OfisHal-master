@@ -1,0 +1,240 @@
+﻿@model VohalMakbuz
+@{
+    bool? status = null;
+
+    if (bool.TryParse(Convert.ToString(TempData["Status"]), out var t))
+    {
+        status = t;
+    }
+
+    Model.Kesildi ??= false;
+}
+
+@*@if (status.HasValue)
+{
+    <div id="alert" class="alert alert-@(status == true ? "success" : "danger") alert-dismissible fade show" role="alert">
+        @(status == true ? "Kaydedildi" : "Bir sorun oluştu")
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}*@
+<div class="row">
+    <input type="hidden" name="MakbuzId" id="MakbuzId" value="@Model.MakbuzId" />
+    <input type="hidden" name="Kesildi" id="Kesildi" value="@Model.Kesildi" />
+    <input type="hidden" name="hidGuid" id="hidGuid"/>
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="row">
+                    <label for="CariAdi" class="col-sm-2 col-form-label pb-0">Ad</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="CariAdi" id="CariAdi" class="form-control form-control-sm" value="@Model.CariAdi" readonly />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="FaturaNo" class="col-sm-2 col-form-label pb-0">No</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="FaturaNo" id="FaturaNo" class="form-control form-control-sm" value="@Model.FaturaNo" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <label for="Marka" class="col-sm-3 col-form-label pb-0">Marka</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="Marka" id="Marka" class="form-control form-control-sm" value="@Model.Marka" readonly />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="DokumNo" class="col-sm-3 col-form-label pb-0">Döküm</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="DokumNo" id="DokumNo" class="form-control form-control-sm" value="@Model.DokumNo" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <label for="Zaman" class="col-sm-2 col-form-label pb-0">Tarih</label>
+                    <div class="col-sm-10 d-flex justify-content-center align-items-center">
+                        <input type="date" name="Zaman" id="Zaman" class="form-control form-control-sm me-2" value="@Model.StokGirisTarihi.ToString("yyyy-MM-dd")" />
+                        <input type="time" name="Zaman" class="form-control form-control-sm" value="@Model.StokGirisTarihi.ToString("HH:mm")" />
+                    </div>
+                </div>
+                <div class="row text-center mt-1">
+                    @if (Model.Kesildi == true)
+                    {
+                        <p class="bg-danger w-50 fs-4 fw-bold rounded">Kesilmiş</p>
+                    }
+                    @if (Model.Kesildi == false && Model.BekleyenHareketSayisi == 0)
+                    {
+                        <p class="bg-danger w-50 fs-4 fw-bold rounded">Hazır</p>
+                    }
+                    @if (Model.Kesildi == false && Model.BekleyenHareketSayisi > 0)
+                    {
+                        <p class="bg-danger w-50 fs-4 fw-bold rounded">İşlemde</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="Aciklama" class="col-sm-1 col-form-label pb-0">Not</label>
+            <div class="col-sm-11">
+                <input type="text" name="Aciklama" id="Aciklama" class="form-control form-control-sm" value="@Model.Aciklama" />
+            </div>
+        </div>
+
+        <div class="row my-1">
+            <div class="col">
+                <input type="hidden" name="gridMal" id="gridMal" />
+                <div id="myGrid" class="slick-container" style="height:200px;"></div>
+                <div id="pager" style="width: 100%; height: 20px"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <input type="hidden" name="gridHesap" id="gridHesap" />
+                <div id="evrakGrid" class="slick-container" style="height:200px;"></div>
+                <div id="pager" style="width: 100%; height: 20px"></div>
+            </div>
+            <div class="col-lg-4">
+                @*<p class="mb-1 p-1 bg-primary-subtle">F4) Bilgi </p>*@
+                <p class="mb-1 p-1 bg-primary-subtle">F5) Kesinti </p>
+                <p class="mb-1 p-1 bg-primary-subtle">F9) Stok </p>
+                <p class="mb-1 p-1 bg-primary-subtle">F10) Kes </p>
+                <p class="mb-1 p-1 bg-primary-subtle">CTRL+D) Detay </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="row mb-1">
+            <label for="RusumOrani" class="col-sm-3 col-form-label pb-0">Rüsum</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="RusumOrani" id="RusumOrani" class="form-control form-control-sm calcInput me-2 w-25" value="@Model.RusumOrani" />
+                <input type="text" data-type="num" name="Rusum" id="Rusum" class="form-control form-control-sm" value="@Model.Rusum.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="Navlun" class="col-sm-3 col-form-label pb-0">Navlun</label>
+            <div class="col-sm-7">
+                @*<input type="number" min="0" max="99" name="RusumOrani" id="RusumOrani" class="form-control form-control-sm me-2 w-25" value="@Model.RusumOrani" />*@
+                <input type="text" data-type="num" name="Navlun" id="Navlun" class="form-control form-control-sm calcInput" value="@Model.Navlun.ToString()" />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="NavlunKdvOrani" class="col-sm-3 col-form-label pb-0">Nav. Kdv</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="NavlunKdvOrani" id="NavlunKdvOrani" class="form-control form-control-sm calcInput me-2 w-25" value="@Model.NavlunKdvOrani" />
+                <input type="text" data-type="num" name="NavlunKdv" id="NavlunKdv" class="form-control form-control-sm" value="@Model.NavlunKdv.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="BagkurOrani" class="col-sm-3 col-form-label pb-0">Bağkur</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="BagkurOrani" id="BagkurOrani" class="form-control form-control-sm calcInput me-2 w-25" value="@Model.BagkurOrani" />
+                <input type="text" data-type="num" name="Bagkur" id="Bagkur" class="form-control form-control-sm calcInput" value="@Model.Bagkur.ToString()" />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="StopajOrani" class="col-sm-3 col-form-label pb-0">Stopaj</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="StopajOrani" id="StopajOrani" class="form-control form-control-sm  calcInput me-2 w-25" value="@Model.StopajOrani" />
+                <input type="text" data-type="num" name="Stopaj" id="Stopaj" class="form-control form-control-sm" value="@Model.Stopaj.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="BorsaOrani" class="col-sm-3 col-form-label pb-0">Borsa</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="BorsaOrani" id="BorsaOrani" class="form-control form-control-sm  calcInput me-2 w-25" value="@Model.BorsaOrani" />
+                <input type="text" data-type="num" name="Borsa" id="Borsa" class="form-control form-control-sm" value="@Model.Borsa.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="KomisyonOrani" class="col-sm-3 col-form-label pb-0">Komisyon</label>
+            <div class="col-sm-9 d-flex">
+                <input type="text" data-type="num" name="KomisyonOrani" id="KomisyonOrani" class="form-control form-control-sm  calcInput me-2 w-25" value="@Model.KomisyonOrani.ToString()" />
+                <input type="text" data-type="num" name="Komisyon" id="Komisyon" class="form-control form-control-sm" value="@Model.Komisyon.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="KomisyonKdvOrani" class="col-sm-3 col-form-label pb-0">Kom. Kdv</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="KomisyonKdvOrani" id="KomisyonKdvOrani" class="form-control form-control-sm  calcInput me-2 w-25" value="@Model.KomisyonKdvOrani" />
+                <input type="text" data-type="num" name="KomisyonKdv" id="KomisyonKdv" class="form-control form-control-sm" value="@Model.KomisyonKdv.ToString()" readonly disabled />
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="TutarYekun" class="col-sm-7 col-form-label pb-0">Tutar Yekün</label>
+            <div class="col-sm-5">
+                <input type="text" data-type="num" name="TutarYekun" id="TutarYekun" class="form-control form-control-sm" value="0" disabled readonly />
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="KesintilerDahilMasrafYekun" class="col-sm-7 col-form-label pb-0">Kesintiler Dahil Masraf Yekün</label>
+            <div class="col-sm-5">
+                <input type="text" data-type="num" name="KesintilerDahilMasrafYekun" id="KesintilerDahilMasrafYekun" class="form-control form-control-sm" value="0" disabled readonly />
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="SafiYekun" class="col-sm-7 col-form-label pb-0">Safi Yekün</label>
+            <div class="col-sm-5">
+                <input type="text" data-type="num" name="SafiYekun" id="SafiYekun" class="form-control form-control-sm" value="0" disabled readonly />
+            </div>
+        </div>
+        @*<div class="row d-flex justify-content-between mb-1">
+            <label for="IadeliKapTutari" class="col-sm-7 col-form-label pb-0">İadeli Kap</label>
+            <div class="col-sm-5">
+                <input type="text" data-type="num" name="IadeliKapTutari" id="IadeliKapTutari" class="form-control form-control-sm" value="@Model.IadeliKapTutari.ToString()" />
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="IadesizKapTutari" class="col-sm-7 col-form-label pb-0">İadesiz Kap</label>
+            <div class="col-sm-5">
+                <input type="text" data-type="num" name="IadesizKapTutari" id="IadesizKapTutari" class="form-control form-control-sm" value="@Model.IadesizKapTutari.ToString()" />
+            </div>
+        </div>
+        <div class="row mb-1">
+            <label for="IadesizKapKdvOrani" class="col-sm-3 col-form-label pb-0">Kap Kdv</label>
+            <div class="col-sm-9 d-flex">
+                <input type="number" min="0" max="99" name="IadesizKapKdvOrani" id="IadesizKapKdvOrani" class="form-control form-control-sm me-2 w-25" value="@Model.IadesizKapKdvOrani" />
+                <input type="text" data-type="num" name="IadesizKapKdv" id="IadesizKapKdv" class="form-control form-control-sm" value="@Model.IadesizKapKdv.ToString()" readonly disabled />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="IadesizKapKomisyonaDahil" name="IadesizKapKomisyonaDahil" value="true" @(Model.IadesizKapKomisyonaDahil == true ? "checked" : "")>
+                    <label class="form-check-label" for="IadesizKapKomisyonaDahil">Kap Komisyona Dahil</label>
+                </div>
+            </div>
+        </div>*@
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="MalKdv" class="col-sm-3 col-form-label pb-0">Mal Kdv</label>
+            <div class="col-sm-7">
+                <input type="text" data-type="num" name="MalKdv" id="MalKdv" class="form-control form-control-sm calcInput" value="@Model.MalKdv.ToString()" disabled readonly />
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mb-1">
+            <label for="NetYekun" class="col-sm-3 col-form-label pb-0">Net Yekün</label>
+            <div class="col-sm-7">
+                <input type="text" data-type="num" name="NetYekun" id="NetYekun" class="form-control form-control-sm calcInput" value="0" disabled readonly />
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.HiddenFor(m => m.MakbuzId)
+@Html.HiddenFor(m => m.MarkaId)
+@Html.HiddenFor(m => m.CariKartId)
+@Html.HiddenFor(m => m.FaturaTarihi)
+@Html.HiddenFor(m => m.IrsaliyeNo)
+@Html.HiddenFor(m => m.Plaka)
+@Html.HiddenFor(m => m.Kesildi)
+@Html.HiddenFor(m => m.TeslimatYeriId)
+@Html.HiddenFor(m => m.UlkeId)
+@Html.HiddenFor(m => m.BagkurHesaplanmasin)
+@Html.HiddenFor(m => m.BagkurDosyaId)
+@Html.HiddenFor(m => m.EFaturaNot)
+@Html.HiddenFor(m => m.EFaturaBolgeKodu)
+@Html.HiddenFor(m => m.GibFirmamizPostaKutusuId)
+@Html.HiddenFor(m => m.GibMuhatapPostaKutusuId)
+@Html.HiddenFor(m => m.FaturaZamani)

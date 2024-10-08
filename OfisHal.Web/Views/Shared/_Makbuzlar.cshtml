@@ -1,0 +1,51 @@
+@model IList<VohalAramaMakbuz>
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="makbuzlarTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Döküm No</th>
+                <th scope="col">Fatura No</th>
+                <th scope="col">Tarih</th>
+                <th scope="col">Ünvan</th>
+                <th scope="col">Ýrsaliye No</th>
+                <th scope="col">Malýn Geliþ Tarihi</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        <input type="radio" name="makbuz" data-id="@item.MakbuzId" class="form-check-input ms-1"/>
+                    </th>
+                    <td>@item.DokumNo</td>
+                    <td>@item.FaturaNo</td>
+                    <td>@item.StokGirisTarihi.ToString("dd.MM.yyyy")</td>
+                    <td>@item.CariAdi</td>
+                    <td>@item.IrsaliyeNo</td>
+                    <td>@item.MalinGelisTarihi.ToString("dd.MM.yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="tip" type="hidden" value="@Request.QueryString["tip"]" />
+</div>
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#makbuzlarTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var item = $("#makbuzlarTablo").find("input:checked");
+        sessionStorage.setItem("makbuzId", item.data("id"));
+        $("#modal").modal("hide");
+    }
+</script>

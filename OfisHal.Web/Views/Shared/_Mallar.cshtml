@@ -1,0 +1,136 @@
+﻿@model IList<TohalMal>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="mallarTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <td colspan="2">
+                    <button id="detailBtn" onclick="MalDetay(true)" class="btn btn-sm btn-success">Detay</button>
+                    <button id="newBtn" onclick="MalDetay(false)" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Ekle</button>
+                </td>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ad</th>
+                <th scope="col">Kod</th>
+                <th scope="col">Tür</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        @if (Request.QueryString["isInput"] == "True" || Request.QueryString["isNavigator"] == "true" || Request.QueryString["isKunye"] == "True")
+                        {
+                            <input type="radio" name="malllar" data-id="@item.MalId" class="form-check-input ms-1" data-name="@item.Ad" data-code="@item.Kod" data-fiyat="@item.SatisFiyati" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-id="@item.MalId" class="form-check-input ms-1" data-name="@item.Ad" data-code="@item.Kod" />
+                        }
+                    </th>
+                    <td>@item.Ad</td>
+                    <td>@item.Kod</td>
+                    <td>@(item.Tur == 0 ? "Meyve" : "Sebze")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+    <input id="inputtype" type="hidden" value="@Request.QueryString["inputType"]" />
+    <input id="isnavigator" type="hidden" value="@Request.QueryString["isNavigator"]" />
+    <input id="iskunye" type="hidden" value="@Request.QueryString["isKunye"]" />
+    <input id="malCinsKod" type="hidden" value="@Request.QueryString["malCinsKod"]" />
+</div>
+
+<script>
+    $(document).on("click", "#ekleMalBtn", function (e) {
+        var ad = $("#ekleMalAd");
+        var kod = $("#ekleMalKod");
+        var tur = $("#ekleMalTur");
+
+        if (ad.val() == "") {
+            alert("Ad dolu olmalı");
+            ad.focus();
+        }
+        else if (kod.val() == "") {
+            alert("Kod dolu olmalı");
+            kod.focus();
+        }
+        else {
+            ad = ad.val();
+            kod = kod.val();
+            tur = tur.val();
+            $.post("@Url.Action("MalKaydet")", { ad, kod, tur }, function (data, status) {
+                if (status = "success") {
+                    $("#modalContent").empty();
+                    $("#modalContent").html(data);
+                }
+                else {
+                    alert("Hata: " + status);
+                }
+            });
+        }
+    });
+
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#mallarTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        var isKunye = $("#iskunye").val();
+        var inputType = $("#inputtype").val();
+        var isNavigator = $("#isnavigator").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#mallarTablo").find("input:checked");
+        if (isInput) {
+            inputType == "name" ? target.val(item.data("name")) : target.val(item.data("code"));
+            target.attr("data-id", item.data("id"));
+            target.attr("data-code", item.data("code"));
+            target.attr("data-fiyat", item.data("fiyat"));
+        } else if (isNavigator) {
+            sessionStorage.setItem("malId", item.data("id"));
+        } else if (isKunye) {
+            var cinsKod = $("#malCinsKod").val();
+            $.ajax({
+                type: "GET",
+                url: "/TohalMals/EditFromKunye/",
+                data: { id : item.data("id"), CinsKod: cinsKod },
+                success: function (response) {
+                    $(".colorId" + cinsKod).css("background-color", "#FFFFFF");
+                },
+                error: function (xhr, status, error) {
+                    console.log("false");
+                }
+            });
+        } else {
+            $("#mallarTablo").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+    function MalDetay(isDetail) {
+        var item = $("#mallarTablo").find("input:checked");
+        if (!isDetail)
+            window.open("/TohalMals/Create", "_blank");
+        else
+            window.open("/TohalMals/Edit/" + item.data("id"), "_blank");
+    }
+    
+</script>

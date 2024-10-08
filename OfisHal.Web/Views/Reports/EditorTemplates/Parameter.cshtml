@@ -1,0 +1,213 @@
+﻿@model Parameter
+@if (Model != null)
+{
+    var label = Html.Label(Model.Name, Model.Label, new { @class = "col-sm-3 col-form-label pb-0" }); // standart label, eğer kontrol tipine göre değişmesi gerekiyorsa ez bunu
+    var ctrl = Html.TextBox(Model.Name, null, new { @class = "form-control form-control-sm" }); // standart textbox, eper kontrol tipine göre değişmesi gerekiyorsa az bunu
+
+    if (Model.ControlType == ParameterControlType.Hidden)
+    {
+        label = MvcHtmlString.Empty;
+        ctrl = Html.Hidden(Model.Name, Model.DefaultValue);
+    }
+    else if (Model.ControlType == ParameterControlType.Standart) // parametre adına göre özel ayrılmış alan değilse, parametre değer tipine göre kontrolleri oluştur
+    {
+        switch (Model.ValueType)
+        {
+            case ParameterValueType.Numeric:
+            case ParameterValueType.Currency:
+                ctrl = Html.TextBox(Model.Name, null, new { @class = "form-control form-control-sm", type = "number" });
+                break;
+            case ParameterValueType.Boolean:
+                label = Html.Label(Model.Name, Model.Label, new { @class = "form-check-label" });
+                ctrl = Html.CheckBox(Model.Name, Model.DefaultValue != null ? (bool)Model.DefaultValue : false, new { @class = "form-check-input" });
+                break;
+            case ParameterValueType.Date:
+                ctrl = Html.TextBox(Model.Name, null, new { @class = "form-control form-control-sm start-date", data_provider = "flatpickr", data_date_format = "d.m.Y" });
+                break;
+            case ParameterValueType.DateTime:
+                ctrl = Html.TextBox(Model.Name, null, new { @class = "form-control form-control-sm start-date", data_provider = "flatpickr", data_date_format = "d.m.Y" });
+                break;
+            case ParameterValueType.Time:
+                ctrl = Html.TextBox(Model.Name, null, new { @class = "form-control form-control-sm", type = "time" });
+                break;
+        }
+    }
+    else // parametre adına göre kurallara bağlı özel kontorlleri oluştur
+    {
+        switch (Model.ControlType)
+        {
+            case ParameterControlType.ComboBox:
+                ctrl = Html.DropDownList(Model.Name, Model.Options.Select(x => new SelectListItem { Text = x.ToString(), Value = x.ToString() }), new { @class = "form-conrol w-100" });
+                break;
+            case ParameterControlType.CheckBox:
+                label = Html.Label(Model.Name, Model.Label, new { @class = "form-check-label" });
+                ctrl = Html.CheckBox(Model.Name, Model.DefaultValue != null ? (bool)Model.DefaultValue : false, new { @class = "form-check-input" });
+                break;
+        }
+    }
+
+    if (Model.ControlType == ParameterControlType.CheckBox || Model.ValueType == ParameterValueType.Boolean)
+    {
+        <div class="col-sm-3">
+            &nbsp;
+        </div>
+        <div class="col-sm-9">
+            <div class="form-check mb-2">
+                @ctrl
+                @label
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchCustomerCode)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = Html.Id(Model.Name).ToString(),tip=1, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchCustomerName)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = Html.Id(Model.Name).ToString(),tip=1, isInput = true, inputType = "name" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchProductName)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("MalAdlar", "Common", new { target = Html.Id(Model.Name).ToString(),tip=1, isInput = true, inputType = "name" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchProductCode)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("MalKodlar", "Common", new { target = Html.Id(Model.Name).ToString(),tip=1, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.Brands)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Brands", "Common", new { target = Html.Id(Model.Name).ToString(), isInput = false })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchProducerCode)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = Html.Id(Model.Name).ToString(),tip=0, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchProducerName)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = Html.Id(Model.Name).ToString(),tip=0, isInput = true, inputType = "name" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchContainerCode)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("KapKodlar", "Common", new { target = Html.Id(Model.Name).ToString(), isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.SearchContainerName)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Kaplar", "Common", new { target = Html.Id(Model.Name).ToString(), isInput = true, inputType = "name" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.Cities)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = Html.Id(Model.Name).ToString(), isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.Banks)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @ctrl
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = Html.Id(Model.Name).ToString(), tur =3, isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else if (Model.ControlType == ParameterControlType.User)
+    {
+        @label
+        <div class="col-sm-9">
+            <div class="input-group">
+                @Html.Hidden(Model.Name, string.Empty)
+                @Html.TextBox(Model.Name+'_', null, new { @class = "form-control form-control-sm" })
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Kullanicilar", "Common", new { target = Html.Id(Model.Name).ToString() + "_", valueTarget = Html.Id(Model.Name).ToString(), isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    }
+    else
+    {
+        @label
+        <div class="col-sm-9">
+            @ctrl
+        </div>
+    }
+}

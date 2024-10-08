@@ -1,0 +1,69 @@
+@model IList<OfisHal.Web.Models.VohalHesapHareketi>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="hesapHareketTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Kod</th>
+                <th scope="col">Ad</th>
+                <th scope="col">Tarih</th>
+                <th scope="col">Açýklama</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        <input type="radio" name="carihareket" data-id="@item.HesapHareketiId" class="form-check-input ms-1" />
+                    </th>
+                    <td>@item.Kod</td>
+                    <td>@item.Ad</td>
+                    <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
+                    <td>@item.Aciklama</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#hesapHareketTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var item = $("#hesapHareketTable").find("input:checked");
+        sessionStorage.setItem("hesapHareketId", item.data("id"));
+        $("#modal").modal("hide");
+    }
+</script>

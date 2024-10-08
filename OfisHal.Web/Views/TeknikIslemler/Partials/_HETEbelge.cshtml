@@ -1,0 +1,335 @@
+@model VohalEBelgeTanimi
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="EntegratorYanitVermeSuresi" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            * Entegratör Yanýt Verme Süresi (sn)
+        </label>
+        <div class="col-sm-6">
+            <input type="number" id="EntegratorYanitVermeSuresi" name="EntegratorYanitVermeSuresi" class="form-control form-control-sm" min="0" max="99" value="@Model.EntegratorYanitVermeSuresi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="eBelgeGondericiPostaKutulari" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            * Gönderici Posta Kutularý
+        </label>
+        <div class="col-sm-6">
+            <a class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalPostaKutulari"><i class="ri-arrow-right-s-fill"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EBelgeServerIp" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            * E-Belge Server IP
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="EBelgeServerIp" name="EBelgeServerIp" class="form-control form-control-sm" value="@Model.EBelgeServerIp" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EBelgeServerPortu" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            * E-Belge Server Portu
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EBelgeServerPortu" name="EBelgeServerPortu" class="form-control form-control-sm" value="@Model.EBelgeServerPortu" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EFaturaSenaryosu" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            * Satýþ E-Fatura Senaryosu
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="EFaturaSenaryosu" id="EFaturaSenaryosu">
+                <option value="0" @(Model.EFaturaSenaryosu == 0 ? "selected" : "")>Ticari</option>
+                <option value="1" @(Model.EFaturaSenaryosu == 1 ? "selected" : "")>HKS</option>
+                <option value="2" @(Model.EFaturaSenaryosu == 2 ? "selected" : "")>Kamu</option>
+                <option value="3" @(Model.EFaturaSenaryosu == 3 ? "selected" : "")>Temel</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="KdvMuafiyetNedeni" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            * Kdv Muafiyet Nedeni
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="KdvMuafiyetNedeni" name="KdvMuafiyetNedeni" class="form-control form-control-sm" value="@Model.KdvMuafiyetNedeni" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="XsltDosyalariKopyalansin">
+            <span>7-</span>
+            Sürüm Yükseltmede xslt Belge Dosyalarý Kopyalansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="XsltDosyalariKopyalansin" name="XsltDosyalariKopyalansin" value="true" @(Model.XsltDosyalariKopyalansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="RptDosyalariKopyalansin">
+            <span>8-</span>
+            Sürüm Yükseltmede rpt Belge Dosyalarý Kopyalansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="RptDosyalariKopyalansin" name="RptDosyalariKopyalansin" value="true" @(Model.RptDosyalariKopyalansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EFaturaBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>9-</span>
+            E-Fatura Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="EFaturaBaslangicTarihiCheck" name="EFaturaBaslangicTarihiCheck" value="true" @(Model.EFaturaBaslangicTarihi != null ? "checked" : "")>
+            <input type="date" name="EFaturaBaslangicTarihi" id="EFaturaBaslangicTarihi" class="form-control form-control-sm" @(Model.EFaturaBaslangicTarihi == null ? "disabled" : "") value="@(Model.EFaturaBaslangicTarihi.HasValue ? Model.EFaturaBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EFaturaOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>10-</span>
+            E-Fatura Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EFaturaOnEki" id="EFaturaOnEki" class="form-control form-control-sm" value="@Model.EFaturaOnEki" /> @*EFA2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EFaturaSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>11-</span>
+            E-Fatura Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EFaturaSiraNo" name="EFaturaSiraNo" class="form-control form-control-sm" value="@Model.EFaturaSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EFaturaBasilsin">
+            <span>12-</span>
+            E-Fatura Basýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EFaturaBasilsin" name="EFaturaBasilsin" value="true" @(Model.EFaturaBasilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EFaturaNotAdetOlsun">
+            <span>13-</span>
+            E-Fatura Not Alanýnda Adet Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EFaturaNotAdetOlsun" name="EFaturaNotAdetOlsun" value="true" @(Model.EFaturaNotAdetOlsun == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EFaturaYaziIleSekli" class="col-sm-6 col-form-label pb-0">
+            <span>14-</span>
+            E-Fatura Yazý Ýle Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="EFaturaYaziIleSekli" id="EFaturaYaziIleSekli">
+                <option value="0" @(Model.EFaturaYaziIleSekli == 0 ? "selected" : "")>Fatura Tutarý</option>
+                <option value="1" @(Model.EFaturaYaziIleSekli == 1 ? "selected" : "")>Rehin Dahil Tutar</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EFaturaMustahsilVar">
+            <span>15-</span>
+            E-Fatura Müstahsil Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EFaturaMustahsilVar" name="EFaturaMustahsilVar" value="true" @(Model.EFaturaMustahsilVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EFaturaMustahsilVknVar">
+            <span>16-</span>
+            E-Fatura Müstahsil VKN Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EFaturaMustahsilVknVar" name="EFaturaMustahsilVknVar" value="true" @(Model.EFaturaMustahsilVknVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EArsivBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>
+            E-Arþiv Faturasý Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="EArsivBaslangicTarihiCheck" name="EArsivBaslangicTarihiCheck" value="true" @(Model.EArsivBaslangicTarihi != null ? "checked" : "")>
+            <input type="date" name="EArsivBaslangicTarihi" id="EArsivBaslangicTarihi" class="form-control form-control-sm" @(Model.EArsivBaslangicTarihi == null ? "disabled" : "") value="@(Model.EArsivBaslangicTarihi.HasValue ? Model.EArsivBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EArsivFaturasiOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>18-</span>
+            E-Arþiv Faturasý Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EArsivFaturasiOnEki" id="EArsivFaturasiOnEki" class="form-control form-control-sm" value="@Model.EArsivFaturasiOnEki" /> @*EAF2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EArsivFaturasiSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>19-</span>
+            E-Arþiv Faturasý Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EArsivFaturasiSiraNo" name="EArsivFaturasiSiraNo" class="form-control form-control-sm" value="@Model.EArsivFaturasiSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EArsivFaturasiBasilsin">
+            <span>20-</span>
+            E-Arþiv Faturasý Basýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EArsivFaturasiBasilsin" name="EArsivFaturasiBasilsin" value="true" @(Model.EArsivFaturasiBasilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMustahsilMakbuzuBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>21-</span>
+            E-Müstahsil Makbuzu Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="EMustahsilMakbuzuBaslangicTarihiCheck" name="EMustahsilMakbuzuBaslangicTarihiCheck" value="true" @(Model.EMustahsilMakbuzuBaslangicTarihi != null ? "checked" : "")>
+            <input type="date" name="EMustahsilMakbuzuBaslangicTarihi" id="EMustahsilMakbuzuBaslangicTarihi" class="form-control form-control-sm" @(Model.EMustahsilMakbuzuBaslangicTarihi == null ? "disabled" : "") value="@(Model.EMustahsilMakbuzuBaslangicTarihi.HasValue ? Model.EMustahsilMakbuzuBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMustahsilMakbuzuOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>22-</span>
+            E-Müstahsil Makbuzu Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EMustahsilMakbuzuOnEki" id="EMustahsilMakbuzuOnEki" class="form-control form-control-sm" value="@Model.EMustahsilMakbuzuOnEki" /> @*EMM2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMustahsilMakbuzuSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>23-</span>
+            E-Müstahsil Makbuzu Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EMustahsilMakbuzuSiraNo" name="EMustahsilMakbuzuSiraNo" class="form-control form-control-sm" value="@Model.EMustahsilMakbuzuSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EMustahsilMakbuzuBasilsin">
+            <span>24-</span>
+            E-Müstahsil Makbuzu Basýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EMustahsilMakbuzuBasilsin" name="EMustahsilMakbuzuBasilsin" value="true" @(Model.EMustahsilMakbuzuBasilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="FirmalaraMakbuzKesilsin">
+            <span>25-</span>
+            Firmalara Müstahsil Makbuzu Kesilsin
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="FirmalaraMakbuzKesilsin" name="FirmalaraMakbuzKesilsin" value="true" @(Model.FirmalaraMakbuzKesilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="MusFatDuzenlemeSekli" class="col-sm-6 col-form-label pb-0">
+            <span>26-</span>
+            Müstahsil Faturasý Düzenleme Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="MusFatDuzenlemeSekli" id="MusFatDuzenlemeSekli">
+                <option value="0" @(Model.MusFatDuzenlemeSekli == 0 ? "selected" : "")>Kaðýt Fatura</option>
+                <option value="1" @(Model.MusFatDuzenlemeSekli == 1 ? "selected" : "")>E-Fatura</option>
+                <option value="2" @(Model.MusFatDuzenlemeSekli == 2 ? "selected" : "")>E-Müstahsil Makbuzu</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMustahsilFaturasiOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>27-</span>
+            E-Müstahsil Faturasý Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EMustahsilFaturasiOnEki" id="EMustahsilFaturasiOnEki" class="form-control form-control-sm" value="@Model.EMustahsilFaturasiOnEki" /> @*EME2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMustahsilFaturasiSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>28-</span>
+            E-Müstahsil Faturasý Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EMustahsilFaturasiSiraNo" name="EMustahsilFaturasiSiraNo" class="form-control form-control-sm numberFormat" value="@Model.EMustahsilFaturasiSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMusFatArsivOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>29-</span>
+            E-Müstahsil Faturasý (Arþiv) Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EMusFatArsivOnEki" id="EMusFatArsivOnEki" class="form-control form-control-sm" value="@Model.EMusFatArsivOnEki" /> @*EMA2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EMusFatArsivSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>30-</span>
+            E-Müstahsil Faturasý (Arþiv) Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EMusFatArsivSiraNo" name="EMusFatArsivSiraNo" class="form-control form-control-sm" value="@Model.EMusFatArsivSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EIrsaliyeBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>31-</span>
+            E-Ýrsaliye Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="EIrsaliyeBaslangicTarihiCheck" name="EIrsaliyeBaslangicTarihiCheck" value="true" @(Model.EIrsaliyeBaslangicTarihi != null ? "checked" : "")>
+            <input type="date" name="EIrsaliyeBaslangicTarihi" id="EIrsaliyeBaslangicTarihi" class="form-control form-control-sm" @(Model.EIrsaliyeBaslangicTarihi == null ? "disabled" : "") value="@(Model.EIrsaliyeBaslangicTarihi.HasValue ? Model.EIrsaliyeBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="EIrsaliyeOnEki" class="col-sm-6 col-form-label pb-0">
+            <span>32-</span>
+            E-Ýrsaliye Ön Eki
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="EIrsaliyeOnEki" id="EIrsaliyeOnEki" class="form-control form-control-sm" value="@Model.EIrsaliyeOnEki" /> @*EIR2023*@
+        </div>
+    </div>
+    <div class="row">
+        <label for="EIrsaliyeSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>33-</span>
+            E-Ýrsaliye Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="EIrsaliyeSiraNo" name="EIrsaliyeSiraNo" class="form-control form-control-sm" value="@Model.EIrsaliyeSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EIrsaliyeBasilsin">
+            <span>34-</span>
+            E-Ýrsaliye Basýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EIrsaliyeBasilsin" name="EIrsaliyeBasilsin" value="true" @(Model.EIrsaliyeBasilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="EIrsaliyedeFiyatVar">
+            <span>35-</span>
+            E-Ýrsaliyede Fiyat Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="EIrsaliyedeFiyatVar" name="EIrsaliyedeFiyatVar" value="true" @(Model.EIrsaliyedeFiyatVar == true ? "checked" : "")>
+        </div>
+    </div>
+</div>
+

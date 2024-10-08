@@ -1,0 +1,618 @@
+@{
+    //var FaturaModel = new List<OfisHal.Web.Models.VohalEvrakMasrafi>()
+    //{
+    //    new OfisHal.Web.Models.VohalEvrakMasrafi {HesapKodu = "003", HesapId = 1, Masraf = 30, KdvOrani = 20, Kdv = 6},
+    //    new OfisHal.Web.Models.VohalEvrakMasrafi {HesapKodu = "005", HesapId = 2, Masraf = 45, KdvOrani = 20, Kdv = 9},
+    //};
+    var FaturaModel = (List<OfisHal.Web.Models.VohalEvrakMasrafi>)ViewData["makbuzEvrakMasraflar"];
+}
+<script>
+    var evrakdataView;
+    var evrakgrid;
+    var evrakdata = [];
+    var evrakcolumns = [
+
+        { id: "id", name: "ID", width: 10, field: "id", cssClass: "cell-title", selectable: false, editable: false },
+        { id: "hesapkod", name: "Hesap Kodu", field: "hesapkod", editor: Slick.Editors.Text, formatter: hesapFormatter },
+        { id: "masraf", name: "Masraf", field: "masraf", cssClass: "column-sayi", editor: Slick.Editors.Text },
+        { id: "kdvoran", name: "Kdv %", field: "kdvoran", cssClass: "column-sayi", editable: false },
+        { id: "kdv", name: "Kdv", field: "kdv", cssClass: "column-sayi", editable: false },
+        { id: "toplam", name: "Toplam", field: "toplam", cssClass: "column-sayi", editable: false },
+    ];
+
+    var evrakOptions = {
+        columnPicker: {
+    columnTitle: "Sütunlar",
+            hideForceFitButton: false,
+            hideSyncResizeButton: false,
+            forceFitTitle: "Geniþliðe sýðdýrmaya zorla",
+            syncResizeTitle: "Senkron yeniden boyutlandýrma",
+        },
+        editable: true,
+        enableAddRow: true,
+        enableCellNavigation: true,
+        asyncEditorLoading: false,
+        rowHeight: 40,
+        forceFitColumns: true,
+        createFooterRow: true,
+        showFooterRow: true,
+        footerRowHeight: 28
+    };
+
+    function UpdateAllTotals(evrakgrid) {
+        var columnIdx = evrakgrid.getColumns().length;
+        while (columnIdx--) {
+            UpdateTotal(columnIdx, evrakgrid);
+        }
+    }
+
+
+    function UpdateTotal(cell, evrakgrid) {
+        var columnId = evrakgrid.getColumns()[cell].id;
+
+        // Sadece istenen sütunlara odaklan
+        if (["id", "adet", "kilo", "fiyat", "tutar", "kdv"].includes(columnId)) {
+            var total = 0;
+            var i = evrakdata.length;
+            while (i--) {
+                if (columnId == "tutar" || columnId == "fiyat") {
+                    total += parseFloat(evrakdata[i][columnId]);
+                }
+                else {
+                    total += parseInt(evrakdata[i][columnId], 10) || 0;
+                }
+            }
+            var columnElement = evrakgrid.getFooterRowColumn(columnId);
+            total = isNaN(total) ? 0 : total;
+            columnElement.textContent = `${total}`;
+        }
+        else {
+            var columnElement = evrakgrid.getFooterRowColumn(columnId);
+            columnElement.textContent = "-";
+        }
+    }
+
+    function toggleFilterRow() {
+        evrakgrid.setTopPanelVisibility(!evrakgrid.getOptions().showTopPanel);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const savedColumnStates = loadColumnSettings();
+        evrakdataView = new Slick.Data.DataView({ inlineFilters: true });
+
+        @if (FaturaModel?.Count == 0)
+        {
+            @:var d = (evrakdata[0] = {});
+            @:d["id"] = 1;
+            @:d["hesapkod"] = "";
+            @:d["hesapid"] = "";
+            @:d["masraf"] = "";
+            @:d["kdvoran"] = "";
+            @:d["kdv"] = "";
+            @:d["toplam"] = "";
+
+        }
+        else
+        {
+            //ADET -> KAP SAYISI KÝLO -> MÝKTAR
+            for (var i = 0; i < FaturaModel?.Count; i++)
+            {
+
+             @:var d = (evrakdata[@i] = {});
+             @:d["id"] = @i+1;
+             @:d["hesapkod"] = "@Html.Raw(FaturaModel[i].HesapKodu)";
+             @:d["hesapid"] = "@Html.Raw(FaturaModel[i].HesapId)";
+             @:d["masraf"] = "@Html.Raw(FaturaModel[i].Masraf)";
+             @:d["kdvoran"] = "@Html.Raw(FaturaModel[i].KdvOrani)";
+             @:d["kdv"] = "@Html.Raw(FaturaModel[i].Kdv)";
+             @:d["toplam"] = "@Html.Raw(FaturaModel[i].Masraf + FaturaModel[i].Kdv)";
+            }
+        }
+        evrakgrid = new Slick.Grid("#evrakGrid", evrakdataView, evrakcolumns, evrakOptions);
+        UpdateAllTotals(evrakgrid);
+        evrakgrid.setSelectionModel(new Slick.RowSelectionModel());
+
+        var columnpicker = new Slick.Controls.ColumnPicker(evrakcolumns, evrakgrid, {
+            ...evrakOptions,
+        });
+
+        // Sütun seçim ayarlarý deðiþtikçe localStorage'a kaydet
+        columnpicker.onColumnsChanged.subscribe(function (e, args) {
+            var storedColumns = evrakgrid.getColumns();
+            saveColumnSettings(storedColumns);
+        });
+        evrakgrid.onColumnsResized.subscribe(function (e, args) {
+            var storedColumns = evrakgrid.getColumns();
+            saveColumnSettings(storedColumns);
+        });
+        if (savedColumnStates) {
+            evrakgrid.setColumns(savedColumnStates);
+        }
+        evrakgrid.onContextMenu.subscribe(function (e) {
+            e.preventDefault();
+            var cell = evrakgrid.getCellFromEvent(e);
+            const contextMenuElm = document.querySelector('#contextMenu');
+            contextMenuElm.dataset.row = cell.row;
+            contextMenuElm.style.top = `${e.pageY}px`;
+            contextMenuElm.style.left = `${e.pageX}px`;
+            contextMenuElm.style.display = 'block';
+
+            document.body.addEventListener('click', () => {
+                contextMenuElm.style.display = 'none';
+            });
+        });
+
+        evrakgrid.onCellChange.subscribe(async function (e, args) {
+
+            var rowId = args.row;
+            if (args.cell === evrakcolumns.findIndex(c => c.id === "miktar") ||
+                args.cell === evrakcolumns.findIndex(c => c.id === "fiyat")
+            ) {
+                evrakdata[rowId].miktar = evrakdata[rowId].miktar || 0;
+                evrakdata[rowId].fiyat = evrakdata[rowId].fiyat || 0;
+                updateRowValues(rowId);
+            }
+            if (args.cell === evrakcolumns.findIndex(c => c.id === "id")) {
+                if (Number.isInteger(args.item.id)) {
+                    evrakdataView.updateItem(args.item.id, args.item);
+                } else {
+                    // Çevrim yap ve kontrol et.
+                    var itemIdAsInteger = parseInt(args.item.id, 10);
+                    evrakdataView.updateItem(itemIdAsInteger, args.item);
+                }
+
+
+            }
+
+            UpdateTotal(args.cell, args.grid);
+            switch (args.column.field) {
+                case "hesapkod":
+                    var val = await gridGetData("/Common/HesapGetir?isInput=True&target=gridHesap&codeOrName=true&inputType=code", args.item[args.column.field], "hesap");
+                    val.result ? updateHesapCell(val.data.HesapId, val.data.Kod, val.data.KdvOrani) : null;
+                    break;
+                case "masraf":
+                    ToplamHesapla();
+                    break;
+
+
+            }
+        });
+        function gridGetData(reqUrl, val, target) {
+            var deger = val.trim();
+            return new Promise((resolve, reject) => {
+                if (deger.length > 0) {
+                    $.ajax({
+                        url: reqUrl,
+                        type: "GET",
+                        data: { content: deger },
+                        success: (res) => {
+                            switch (res.length) {
+                                case 0:
+                                    ShowAlert(false, "Kayýt Bulunamadý");
+                                    goToPrevColumn(true);
+                                    resolve({ result: false, data: null });
+                                    break;
+                                case 1:
+                                    resolve({ result: true, data: res[0] });
+                                    break;
+                                default:
+                                    resolve({ result: false, data: null });
+                                    goToPrevColumn(true);
+                                    loadModal(res, target);
+                                    break;
+                            }
+                        }
+                    });
+                }
+                else {
+                    resolve({ result: false, data: null });
+                }
+            });
+        }
+        evrakgrid.onKeyDown.subscribe(function (e) {
+            var activeCell = evrakgrid.getActiveCell();
+            if (activeCell != null) {
+                var column = evrakgrid.getColumns()[activeCell.cell];
+                if (column.cssClass == "column-sayi") {
+                    //harf giriþini engelle
+                    if (e.key.length === 1 && e.key.match(/[^0-9]/)) {
+                        e.preventDefault();
+                    }
+
+
+                }
+            }
+
+            if (e.key === 'F12') {
+                var formatterColumns = ["hesapkod"];
+                var field = column.field;
+                // Ýlgili buttonun id'sini belirle
+                if (formatterColumns.includes(field)) {
+                    var buttonId = field + "Button";
+                    var button = document.getElementById(buttonId);
+                    if (button) {
+                        button.click();
+                    }
+
+                    e.preventDefault();
+                }
+            }
+
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+
+                DeleteConfirm().then(p => {
+                    if (p.isConfirmed) {
+                        // DataView'dan satýrý kaldýr
+                        evrakdataView.deleteItem(activeCell.row + 1);
+
+                        // Ýlgili satýrý grid üzerinden kaldýr
+                        evrakgrid.invalidateRow(activeCell.row + 1);
+                        evrakgrid.render();
+
+                        // Eðer gerekiyorsa, veriyi güncelle
+                        evrakdataView.refresh();
+                    }
+                });
+            }
+
+            if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) {
+                e.preventDefault();
+
+                onAddNewRow()
+            }
+
+            if (e.which === 13) {
+                // Þimdi dataView'deki iþlemlerinizi gerçekleþtirin.
+                if (evrakgrid.getActiveCell().row === evrakdataView.getLength()) {
+                    onAddNewRow();
+                }
+            }
+
+
+            // select all rows on ctrl-a
+            if (e.which != 65 || !e.ctrlKey) {
+                return false;
+            }
+            var rows = [];
+            for (var i = 0; i < evrakdataView.getLength(); i++) {
+                rows.push(i);
+            }
+
+            evrakgrid.setSelectedRows(rows);
+            e.preventDefault();
+        });
+
+        evrakdataView.onRowCountChanged.subscribe(function (e, args) {
+            evrakgrid.updateRowCount();
+            evrakgrid.render();
+        });
+
+        evrakdataView.onRowsChanged.subscribe(function (e, args) {
+            evrakgrid.invalidateRows(args.rows);
+            evrakgrid.render();
+        });
+
+        evrakgrid.onClick.subscribe(function (e) {
+            var cell = evrakgrid.getCellFromEvent(e);
+            var clickedColumn = evrakgrid.getColumns()[cell.cell];
+
+            if (cell.row === evrakdataView.getLength() && evrakgrid.getCellFromEvent(e).cell === 0) {
+                onAddNewRow();
+            }
+        });
+
+        evrakgrid.onAddNewRow.subscribe(function (e, args) {
+
+            var newDataRow = {
+                id: evrakdataView.getLength() + 1, // Yeni bir numara oluþtur
+                hesapkod: "",
+                hesapid: "",
+                masraf: "",
+                kdvoran: "",
+                kdv: "",
+                toplam: "",
+
+            };
+
+            if (!isLastRowEmpty()) {
+                Slick.Utils.extend(newDataRow, args.item);
+                evrakdataView.addItem(newDataRow);
+                evrakdataView.refresh();
+            }
+        });
+
+
+
+        function onAddNewRow() {
+
+            var newDataRow = {
+                id: evrakdataView.getLength() + 1, // Yeni bir numara oluþtur
+                hesapkod: "",
+                hesapid: "",
+                masraf: "",
+                kdvoran: "",
+                kdv: "",
+                toplam: "",
+            };
+            if (!isLastRowEmpty()) {
+                evrakdataView.addItem(newDataRow);
+                evrakdataView.refresh();
+            }
+        }
+        function isLastRowEmpty() {
+            var lastRow = evrakdata[evrakdata.length - 1];
+            return !lastRow.mal.trim();
+        }
+
+
+        var dataArray = evrakdata;
+
+        evrakdataView.beginUpdate();
+        evrakdataView.setItems(dataArray);
+        evrakdataView.endUpdate();
+
+        // if you don't want the items that are not visible (due to being filtered out
+        // or being on a different page) to stay selected, pass 'false' to the second arg
+        evrakdataView.syncGridSelection(evrakgrid, true);
+        DigerHesaplamalar();
+    });
+
+    // MAL
+    function hesapFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='hesap' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HesapKodlar", "Common", new { target = "gridHesap", isInput = true ,inputType = "code" })'' ><i class='ri-search-line'></i></button>" + value + "</div>";
+    }
+
+
+
+
+    function updateRowValues(rowId) {
+
+        if (!isNaN(miktar) && !isNaN(fiyat)) {
+            evrakdata[rowId].tutar = (parseFloat(evrakdata[rowId].miktar) * parseFloat(evrakdata[rowId].fiyat)).toFixed(2);
+
+            // Grid'i güncelle
+            evrakgrid.updateRow(rowId);
+
+        }
+    }
+
+    // localStorage üzerinde sütun seçim ayarlarýný kaydet
+    function saveColumnSettings(columnStates) {
+        var columnsToSave = columnStates.map(column => {
+            var formattedColumn = {
+                ...column,
+                formatter: column.formatter ? column.formatter.toString() : null
+            };
+
+            //// Eðer editor bir fonksiyon ise, onu ad olarak kaydet
+            //if (typeof column.editor === 'function') {
+            //    formattedColumn.editor = 'function';
+            //} else if (typeof column.editor === 'object') {
+            //    // Eðer editor bir nesne ise, tüm özelliklerini kaydet
+            //    formattedColumn.editor = { ...column.editor };
+            //} else {
+            //    formattedColumn.editor = null;
+            //}
+
+            if (column.editor != undefined && column.editor != null) {
+                formattedColumn.editor = column.editor.name;
+            }
+
+            return formattedColumn;
+        });
+
+        localStorage.setItem('columnSettingsEvrak', JSON.stringify(columnsToSave));
+    }
+
+    // localStorage'dan sütun seçim ayarlarýný al
+    function loadColumnSettings() {
+        const savedColumnStates = localStorage.getItem('columnSettingsEvrak');
+        if (savedColumnStates) {
+            const columns = JSON.parse(savedColumnStates);
+            return columns.map(column => {
+                var restoredColumn = {
+                    ...column,
+                    formatter: column.formatter ? new Function('return ' + column.formatter)() : null
+                };
+
+                //// Eðer editor 'function' olarak kaydedilmiþse, geri yüklenirken bir fonksiyon olarak atandý
+                //if (column.editor === 'function') {
+                //    restoredColumn.editor = Slick.Editors.Text;
+                //} else {
+                //    restoredColumn.editor = null;
+                //}
+
+                if (column.editor === "TextEditor") {
+                    restoredColumn.editor = Slick.Editors.Text;
+                }
+                else if (column.editor === "IntegerEditor") {
+                    restoredColumn.editor = Slick.Editors.Integer;
+                }
+                else if (column.editor === "_FloatEditor") {
+                    restoredColumn.editor = Slick.Editors.Float;
+                }
+                else {
+                    restoredColumn.editor = null;
+                }
+
+                return restoredColumn;
+            });
+        }
+        return null;
+    }
+
+    function postGridElements(kesildimi) {
+        var gridData = evrakgrid.getData();
+
+        var requestDataList = [];
+
+        for (var i = 0; i < gridData.items.length; i++) {
+            var rowData = gridData.items[i];
+            if (parseInt(rowData.hesapid) !== 0 && rowData.hesapid !== "" && rowData.hesapid !== null) {
+
+                var requestData = {
+                    SatirNo: rowData.id - 1,
+                    Guid: $("#hidGuid").val(),
+                    HesapId: parseInt(rowData.hesapid),
+                    Masraf: parseInt(rowData.masraf),
+                    KdvOrani: parseInt(rowData.kdvoran),
+                    Kdv: parseInt(rowData.kdv),
+                    KapId: null,
+                    KapSayisi: 0,
+                    KapFiyati: 0,
+                    Muhatap: 0,
+                    KesintiOrani: 0,
+                };
+
+
+                for (const key in requestData) {
+                    if (requestData.hasOwnProperty(key) && typeof requestData[key] === 'number' && isNaN(requestData[key])) {
+                        requestData[key] = 0;
+                    }
+                }
+
+                requestDataList.push(requestData);
+            }
+        }
+
+        var requestPostData = JSON.stringify(requestDataList);
+
+        $.ajax({
+            url: '/DokumIslemleri/CreateEvrakMasrafSatir',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: requestPostData,
+            success: function (responsedata) {
+                //if (responsedata.success)
+                //    ShowAlert(responsedata.success, responsedata.message);
+                //else
+                //    ErrorAlert(responsedata.message);
+
+                MakbuzKaydet(kesildimi);
+            },
+            error: function (error) {
+                ErrorAlert("Hata Oluþtu -Evrak Satýrlarý kontrol edin" + error);
+            }
+        });
+    }
+    function MakbuzKaydet(kesildimi) {
+        // Form verilerini serialize ediyoruz
+        var formData = $("#makbuzForm").serialize();
+
+        if (kesildimi)
+            formData += "&kesildiBut=true";
+
+        $.ajax({
+            type: "POST",
+            url: "/DokumIslemleri/Makbuz",
+            //data: formData ,
+            data: formData,
+            success: function (response) {
+                if (kesildimi) {
+                    ShowAlert(true, "Ýþlem Baþarýlý");
+                    location.href = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + $("#MakbuzId").val() + "&redirectAction=Makbuz";
+                } else {
+                    ShowAlert(true, "Ýþlem Baþarýlý");
+                    location.href = "/DokumIslemleri/Makbuz/?faturaId=" + $("#MakbuzId").val();
+                }
+            },
+            error: function (error) {
+                ShowAlert(false, "Hata " + error);
+            }
+        });
+    }
+    //function BelgeNoUret() {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/DokumIslemleri/EBelgeNoUret",
+    //        data: { makbuzid: $("#MakbuzId").val(), evraktur: 0, belgetur:0 },
+    //        success: function (response) {
+    //            ShowAlert(true, "Ýþlem Baþarýlý");
+    //            /*location.href = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + $("#MakbuzId").val() + "&redirectAction=Makbuz";*/
+    //            window.location.reload();
+
+    //        },
+    //        error: function (error) {
+    //            ShowAlert(false, "Hata " + error);
+    //        }
+    //    });
+
+    //}
+</script>
+<!--Mal-->
+<script>
+
+    function updateHesapCell(hesapid, hesapkod, kdvOran) {
+        if (hesapid != null && hesapid != "" && hesapkod != null && hesapkod != "") {
+            // Týklanan satýrýn indisini al
+            var rowId = evrakgrid.getActiveCell().row;
+            // SlickGrid'deki veriyi güncelle
+            evrakdata[rowId].hesapkod = hesapkod;
+            evrakdata[rowId].hesapid = hesapid;
+            evrakdata[rowId].kdvoran = kdvOran;
+
+            // SlickGrid'deki satýrý güncelle
+            evrakgrid.updateRow(rowId);
+            goToNextCol();
+
+        }
+    }
+
+    function goToNextCol() {
+
+        var activeCell = evrakgrid.getActiveCell();
+        var columns = evrakgrid.getColumns();
+
+        var nextCell = null;
+        if (activeCell) {
+            var sayac = 1;
+            while (true) {
+                nextCell = {
+                    row: activeCell.row,
+                    cell: activeCell.cell + sayac
+                };
+                if (columns[nextCell.cell].editable == false)
+                    sayac += 1;
+                else
+                    break;
+            }
+        }
+
+        if (nextCell && nextCell.cell < evrakgrid.getColumns().length) {
+            evrakgrid.gotoCell(nextCell.row, nextCell.cell, true);
+        }
+    }
+
+    function goToPrevColumn(remove) {
+        var activeCell = evrakgrid.getActiveCell();
+
+        // Eðer aktif bir hücre varsa
+        if (activeCell) {
+            // Aktif hücrenin sütununu al
+            var currentColumn = activeCell.cell;
+
+            // Eðer sütun 0'dan büyükse, bir önceki sütuna git
+            if (currentColumn > 0) {
+                evrakgrid.gotoCell(activeCell.row, currentColumn - 1, true);
+                var prevColumnField = evrakgrid.getColumns()[currentColumn - 1].field;
+                evrakdata[activeCell.row][prevColumnField] = '';
+                evrakgrid.updateRow(activeCell.row);
+            }
+        }
+    }
+    function ToplamHesapla() {
+        var rowId = evrakgrid.getActiveCell().row;
+        var item = evrakdataView.items[rowId];
+        item.kdv = parseFloat((parseFloat(item.masraf) * parseFloat(item.kdvoran)) / 100).toFixed(2);
+        item.toplam = parseFloat(parseFloat(item.kdv) + parseFloat(item.masraf)).toFixed(2);
+        evrakgrid.updateRow(rowId);
+        DigerHesaplamalar();
+        //if (parseFloat(item.adet) > 0 && parseFloat(item.kilo) > 0) {
+        //    var val = (parseFloat(item.kilo) / parseFloat(item.adet)).toFixed(2).toString();
+        //    item.ortkilo = FormatDecimalNumber(val);
+        //}
+    }
+</script>
+<button id="hesapkodButton" type='button' data-btarget='hesap' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HesapKodlar", "Common", new { target = "gridHesap", isInput = true ,inputType = "code" })' style='display:none;'><i class='ri-search-line'></i> HESAP Formatter Button</button>

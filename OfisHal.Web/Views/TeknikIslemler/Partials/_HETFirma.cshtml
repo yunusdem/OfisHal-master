@@ -1,0 +1,267 @@
+@model VohalFirmaTanimlari
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="DigSicilKodu" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            * Sicil Kodu
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigSicilKodu" name="DigSicilKodu" class="form-control form-control-sm" maxlength="20" value="@Model.DigSicilKodu" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigYazihaneNo" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Yazýhane No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigYazihaneNo" name="DigYazihaneNo" class="form-control form-control-sm" maxlength="20" value="@Model.DigYazihaneNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigFirmaAdi" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            * Firma Adý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigFirmaAdi" name="DigFirmaAdi" class="form-control form-control-sm" value="@Model.DigFirmaAdi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="firmaVergiDairesi" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            * Vergi Dairesi
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="DigVergiDairesiId" id="DigVergiDairesiId" value="@Model.DigVergiDairesiId" />
+                <input type="text" id="firmaVergiDairesi" name="firmaVergiDairesi" class="form-control form-control-sm" data-id="@Model.DigVergiDairesiId" value="@Model.VergiDairesiAdi" />
+                <button type="button" data-btarget="firmavergidairesi" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "firmaVergiDairesi",tur = 2, isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigVergiKimlikNo" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            * Vergi Kimlik No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigVergiKimlikNo" name="DigVergiKimlikNo" class="form-control form-control-sm" maxlength="20" value="@Model.DigVergiKimlikNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigSahisAdi" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            * Þahýs Adý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigSahisAdi" name="DigSahisAdi" class="form-control form-control-sm" readonly value="@Model.DigSahisAdi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigSahisSoyadi" class="col-sm-6 col-form-label pb-0">
+            <span>7-</span>
+            * Þahýs Soyadý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigSahisSoyadi" name="DigSahisSoyadi" class="form-control form-control-sm" readonly value="@Model.DigSahisSoyadi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigAdres" class="col-sm-6 col-form-label pb-0">
+            <span>8-</span>
+            * Adres
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigAdres" name="DigAdres" class="form-control form-control-sm" value="@Model.DigAdres" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigTelefon" class="col-sm-6 col-form-label pb-0">
+            <span>9-</span>
+            Telefon No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigTelefon" name="DigTelefon" class="form-control form-control-sm" maxlength="20" value="@Model.DigTelefon" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigGsmNo" class="col-sm-6 col-form-label pb-0">
+            <span>10-</span>
+            Gsm No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigGsmNo" name="DigGsmNo" class="form-control form-control-sm" maxlength="20" value="@Model.DigGsmNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigEposta" class="col-sm-6 col-form-label pb-0">
+            <span>11-</span>
+            * E-Posta
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigEposta" name="DigEposta" class="form-control form-control-sm" value="@Model.DigEposta" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigTopHaliAdi" class="col-sm-6 col-form-label pb-0">
+            <span>12-</span>
+            Toptancý Hali Adý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigTopHaliAdi" name="DigTopHaliAdi" class="form-control form-control-sm" value="@Model.DigTopHaliAdi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigTopHaliTelNo" class="col-sm-6 col-form-label pb-0">
+            <span>13-</span>
+            Toptancý Hali telefonu
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigTopHaliTelNo" name="DigTopHaliTelNo" class="form-control form-control-sm" maxlength="20" value="@Model.DigTopHaliTelNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="firmaHalAdi" class="col-sm-6 col-form-label pb-0">
+            <span>14-</span>
+            Hal Adý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" id="HalId" name="HalId" value="@Model.HalId" />
+                <input type="text" id="firmaHalAdi" name="firmaHalAdi" class="form-control form-control-sm" data-id="@Model.HalId" value="@Model.HalAdi" />
+                <button type="button" data-btarget="hal" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Haller", "Common", new { target = "firmaHalAdi"})">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirMahalle" class="col-sm-6 col-form-label pb-0">
+            <span>15-</span>
+            Mahalle
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirMahalle" name="FirMahalle" class="form-control form-control-sm" maxlength="50" value="@Model.FirMahalle" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirCadde" class="col-sm-6 col-form-label pb-0">
+            <span>16-</span>
+            Cadde
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirCadde" name="FirCadde" class="form-control form-control-sm" maxlength="50" value="@Model.FirCadde" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirSokak" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>
+            Sokak
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirSokak" name="FirSokak" class="form-control form-control-sm" maxlength="50" value="@Model.FirSokak" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirKapiNo" class="col-sm-6 col-form-label pb-0">
+            <span>18-</span>
+            Bina No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirKapiNo" name="FirKapiNo" class="form-control form-control-sm" maxlength="20" value="@Model.FirKapiNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirDaireNo" class="col-sm-6 col-form-label pb-0">
+            <span>19-</span>
+            Kapý No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirDaireNo" name="FirDaireNo" class="form-control form-control-sm" maxlength="20" value="@Model.FirDaireNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirPostaKodu" class="col-sm-6 col-form-label pb-0">
+            <span>20-</span>
+            Posta Kodu
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirPostaKodu" name="FirPostaKodu" class="form-control form-control-sm" maxlength="20" value="@Model.FirPostaKodu" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirWebAdresi" class="col-sm-6 col-form-label pb-0">
+            <span>21-</span>
+            * Web Adresi
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirWebAdresi" name="FirWebAdresi" class="form-control form-control-sm" maxlength="50" value="@Model.FirWebAdresi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirMersisNo" class="col-sm-6 col-form-label pb-0">
+            <span>22-</span>
+            Mersis No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirMersisNo" name="FirMersisNo" class="form-control form-control-sm" maxlength="20" value="@Model.FirMersisNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirBankaAdi" class="col-sm-6 col-form-label pb-0">
+            <span>23-</span>
+            Banka Adý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirBankaAdi" name="FirBankaAdi" class="form-control form-control-sm" maxlength="50" value="@Model.FirBankaAdi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FirIbanNo" class="col-sm-6 col-form-label pb-0">
+            <span>24-</span>
+            Iban No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="FirIbanNo" name="FirIbanNo" class="form-control form-control-sm" maxlength="50" value="@Model.FirIbanNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="firmaLogo" class="col-sm-6 col-form-label pb-0">
+            <span>25-</span>
+            Logo
+        </label>
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-sm btn-primary w-100" data-tur="1" data-bs-toggle="modal" data-bs-target="#modalLogo"><i class="ri-arrow-right-s-fill"></i></button>
+        </div>
+    </div>
+    <div class="row">
+        <label for="firmaImza" class="col-sm-6 col-form-label pb-0">
+            <span>26-</span>
+            Ýmza
+        </label>
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-sm btn-primary w-100" data-tur="2" data-bs-toggle="modal" data-bs-target="#modalImza"><i class="ri-arrow-right-s-fill"></i></button>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBagkurKullaniciAdi" class="col-sm-6 col-form-label pb-0">
+            <span>27-</span>
+            Baðkur Web Kullanýcý Adý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigBagkurKullaniciAdi" name="DigBagkurKullaniciAdi" class="form-control form-control-sm" maxlength="50" value="@Model.DigBagkurKullaniciAdi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBagkurSifresi" class="col-sm-6 col-form-label pb-0">
+            <span>28-</span>
+            Baðkur Web Þifresi
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigBagkurSifresi" name="DigBagkurSifresi" class="form-control form-control-sm" maxlength="30" value="@Model.DigBagkurSifresi" />
+        </div>
+    </div>
+</div>

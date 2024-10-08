@@ -1,0 +1,125 @@
+﻿@{
+    MenuItemsViewModel menuItems = new MenuItemsViewModel();
+    var menu = menuItems.GetMenuItems();
+}
+<style>
+    /*.navbar-menu .navbar-nav .nav-sm .nav-link:before {
+        content: none;
+    }*/
+    .app-menu.navbar-menu {
+        background: #25a0e2;
+        border-right: 1px solid #25a0e2;
+    }
+
+    :is([data-layout=vertical],[data-layout=semibox])[data-sidebar-size=sm] .navbar-menu .navbar-nav .nav-item:hover > .menu-dropdown,
+    :is([data-layout=vertical],[data-layout=semibox])[data-sidebar-size=sm] .navbar-menu .navbar-nav .nav-item:hover > a.menu-link,
+    :is([data-layout=vertical],[data-layout=semibox])[data-sidebar-size=sm] .navbar-brand-box,
+    :is([data-layout=vertical],[data-layout=semibox])[data-sidebar-size=sm] .navbar-menu .navbar-nav .nav-sm .nav-item:hover{
+        background: #25a0e2;
+    }
+
+    .navbar-menu .navbar-nav .nav-link, .navbar-menu .navbar-nav .nav-sm .nav-link, .navbar-menu .navbar-nav .nav-link svg {
+        font-weight: 700;
+        color: white;
+    }
+
+        .navbar-menu .navbar-nav .nav-sm .nav-link:before {
+            background-color: white;
+        }
+
+        .navbar-menu .navbar-nav .nav-sm .nav-link:hover, .navbar-menu .navbar-nav .nav-link:hover,
+        .navbar-menu .navbar-nav .nav-sm .nav-link.active, .navbar-menu .navbar-nav .nav-link[data-bs-toggle=collapse][aria-expanded=true],
+        .navbar-menu .navbar-nav .nav-link.active, .navbar-menu .navbar-nav .nav-link[data-bs-toggle=collapse][aria-expanded=true] .icon-dual,
+        .navbar-menu .navbar-nav .nav-link:hover .icon-dual,
+        .navbar-menu .navbar-nav .nav-link[data-bs-toggle=collapse][aria-expanded=true]:after {
+            color: #17445c;
+            /*color: #c5c5c5;*/
+        }
+
+            .navbar-menu .navbar-nav .nav-sm .nav-link.active:before, .navbar-menu .navbar-nav .nav-sm .nav-link:hover:before {
+                background-color: #17445c !important;
+            }
+</style>
+<!-- ========== App Menu ========== -->
+<div class="app-menu navbar-menu">
+    <!-- LOGO -->
+    <div class="navbar-brand-box">
+        <!-- Dark Logo-->
+        <a href="@Url.Action("Index", "Dashboard")" class="logo logo-dark">
+            <span class="logo-sm">
+                <img src="~/assets/images/logo-sm-dark.png" alt="" height="35">
+            </span>
+            <span class="logo-lg">
+                <img src="~/assets/images/logo-dark.png" alt="" height="50">
+            </span>
+        </a>
+        <!-- Light Logo-->
+        <a href="@Url.Action("Index", "Dashboard")" class="logo logo-light">
+            <span class="logo-sm">
+                <img src="~/assets/images/logo-sm-light.png" alt="" height="35">
+            </span>
+            <span class="logo-lg">
+                <img src="~/assets/images/logo-light.png" alt="" height="50">
+            </span>
+        </a>
+        <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+                id="vertical-hover">
+            <i class="ri-record-circle-line"></i>
+        </button>
+    </div>
+
+    <div id="scrollbar">
+        <div class="container-fluid">
+            <div id="two-column-menu"> </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                @*<li class="menu-title"><span data-key="t-menu">Menü</span></li>*@
+                @for (int i = 0; i < menu.Count; i++)
+                {
+                    var item = menu.ElementAt(i);
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="#sidebarM@(i)" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarM@(i)">
+                            <i class="mdi @item.IconClass"></i> <span data-key="t-m@(i)">@item.Title</span>
+                        </a>
+                        <div class="collapse menu-dropdown" id="sidebarM@(i)">
+                            <ul class="nav nav-sm flex-column">
+                                @for (int j = 0; j < item.SubMenu.Count; j++)
+                                {
+                                    var subItem = item.SubMenu.ElementAt(j);
+
+                                    if (subItem.SubMenu != null && subItem.SubMenu.Count > 0)
+                                    {
+                                        <li class="nav-item">
+                                            <a href="#m@(i)sm@(j)" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="m@(i)sm@(j)" data-key="m@(i)sm@(j)">
+                                                @subItem.Title
+                                            </a>
+                                            <div class="collapse menu-dropdown" id="m@(i)sm@(j)">
+                                                <ul class="nav nav-sm flex-column">
+                                                    @for (int k = 0; k < subItem.SubMenu.Count; k++)
+                                                    {
+                                                        var subSubItem = subItem.SubMenu.ElementAt(k);
+                                                        <li class="nav-item">
+                                                            <a href="@subSubItem.Url" class="nav-link" data-key="t-m@(i)-sm@(j)-sm@(k)"> @subSubItem.Title</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item"><a href="@subItem.Url" class="nav-link" data-key="t-m@(i)-sm@(j)">@subItem.Title</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+    <div class="sidebar-background"></div>
+</div>
+<!-- Left Sidebar End -->
+<!-- Vertical Overlay-->
+<div class="vertical-overlay"></div>

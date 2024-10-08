@@ -1,0 +1,147 @@
+﻿@model IList<TohalTabloMaddesi>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="maddeTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <td>
+                    <button id="ekleMaddeBtn" class="btn btn-sm btn-primary">Ekle</button>
+                </td>
+                <td>
+                    <input id="ekleMaddeAd" type="text" class="form-control form-control-sm" placeholder="Ad" />
+                </td>
+                <td>
+                    <select id="ekleMaddeTur" class="form-select form-select-sm">
+                        @foreach (var item in ViewBag.turler as Dictionary<int, string>)
+                        {
+                            <option value="@item.Key" selected="@(item.Key.ToString() == Request.QueryString["tur"])">@item.Value</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <input id="ekleMaddeKisaltma" type="text" class="form-control form-control-sm" placeholder="Kısaltma" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ad</th>
+                <th scope="col">Tür</th>
+                <th scope="col">Kısaltma</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        @if (Request.QueryString["isInput"] == "True")
+                        {
+                            <input type="radio" name="maddeler" data-id="@item.TabloMaddesiId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-id="@item.TabloMaddesiId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                    </th>
+                    <td>@item.Ad</td>
+                    <td>@item.Tur</td>
+                    <td>@item.Kisaltma</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+</div>
+
+<script>
+    var table = null;
+    $(document).on("click", "#ekleMaddeBtn", function (e) {
+        var ad = $("#ekleMaddeAd");
+        var tur = $("#ekleMaddeTur");
+        var kisaltma = $("#ekleMaddeKisaltma");
+        if (ad.val() == "") {
+            ErrorAlert("Ad Alanı Zorunludur");
+            ad.focus();
+        }
+        else if (kisaltma.val() == "") {
+            ErrorAlert("Kısaltma Alanı Zorunludur");
+            kisaltma.focus();
+        }
+        else {
+            ad = ad.val();
+            tur = tur.val();
+            kisaltma = kisaltma.val();
+            $.post("@Url.Action("MaddeKaydet", "Common")", { ad, kisaltma, tur }, function (data, status) {
+                if (data.result) {
+                    var newRow = $('<tr class="rows" ondblclick="closeModal()">' +
+                        '<th scope="row">' + (@Html.Raw(Model.Count) + 1) +
+                        '<input type="checkbox" data-id="' + data.data.TabloMaddesiId + '" class="form-check-input ms-1" data-name="' + data.data.Ad + '" />' +
+                        '</th>' +
+                        '<td>' + data.data.Ad + '</td>' +
+                        '<td>' + data.data.Tur + '</td>' +
+                        '<td>' + data.data.Kisaltma + '</td>' +
+                        '</tr>');
+                    $(".table-group-divider").append(newRow);
+                }
+                //var tbl = CreateDatatable('#maddeTablo');
+               // table.destroy();
+               // table = CreateDatatable('#maddeTablo');
+                ShowAlert(data.result, data.message);
+            });
+        }
+    });
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+       table = CreateDatatable('#maddeTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        target.empty();
+        target.removeAttr("data-id");
+        if (isInput) {
+            var item = $("#maddeTablo").find("input:checked");
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        } else {
+            $("#maddeTablo").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

@@ -1,0 +1,388 @@
+@model VohalFatura
+@{
+    ViewBag.Title = "Detay";
+    ViewBag.pTitle = "Detay";
+    ViewBag.pageTitle = "Satýþ Faturasý";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #IhracatKuru {
+            text-align: end;
+            direction: ltr;
+        }
+    </style>
+}
+<form action="@Url.Action("FaturaDetay")" method="post">
+    <input type="hidden" name="FaturaId" id="FaturaId" value="@Model.FaturaId" />
+    <input type="hidden" name="CariKartId" id="CariKartId" value="@Model.CariKartId" />
+    <input type="hidden" name="Tip" id="Tip" value="@Model.Tip" />
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="Zaman" class="col-sm-4 col-form-label pb-0">Fatura Tarihi</label>
+                <div class="col-sm-8 d-flex justify-content-center align-items-center">
+                    <input type="date" name="Zaman" id="Zaman" class="form-control form-control-sm me-2" value="@Model.Zaman.ToString("yyyy-MM-dd")" />
+                    <input type="time" name="Zaman" class="form-control form-control-sm" value="@Model.Zaman.ToString("HH:mm")" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="IrsaliyeZamani" class="col-sm-4 col-form-label pb-0">Ýrsaliye Tarihi</label>
+                <div class="col-sm-8 d-flex justify-content-center align-items-center">
+                    <input type="date" name="IrsaliyeZamani" id="IrsaliyeZamani" class="form-control form-control-sm me-2" value="@Model.IrsaliyeZamani.ToString("yyyy-MM-dd")" />
+                    <input type="time" name="IrsaliyeZamani" class="form-control form-control-sm" value="@Model.IrsaliyeZamani.ToString("HH:mm")" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="FiyatReferansFaturaNo" class="col-sm-6 col-form-label pb-0">Fiyat Referans Fatura</label>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <input type="hidden" name="FiyatReferansFaturaId" id="FiyatReferansFaturaId" value="@Model.FiyatReferansFaturaId" />
+                        <input id="FiyatReferansFaturaNo" name="FiyatReferansFaturaNo" class="form-control form-control-sm" value="@Model.FiyatReferansFaturaNo" />
+                        <button type="button" data-btarget="reffatura" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("FiyatRefFaturalar","Common",new {target = "FiyatReferansFaturaNo",tip = Model.Tip, cariKartId = Model.CariKartId, faturaId = Model.FaturaId})">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="EPosta" class="col-sm-4 col-form-label pb-0">E-posta</label>
+                <div class="col-sm-8">
+                    <input type="text" name="EPosta" id="EPosta" class="form-control form-control-sm" value="@Model.EPosta" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="FisNo" class="col-sm-4 col-form-label pb-0">Satýþ Fiþ No</label>
+                <div class="col-sm-8">
+                    <input type="text" name="FisNo" id="FisNo" class="form-control form-control-sm" value="@Model.FisNo" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="SiparisNo" class="col-sm-4 col-form-label pb-0">Sipariþ No</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input type="hidden" id="SiparisId" name="SiparisId" value="@Model.SiparisId" />
+                        <input id="SiparisNo" name="SiparisNo" class="form-control form-control-sm" value="@Model.SiparisNo" />
+                        <button type="button" data-btarget="siparisno" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Siparisler", "Common", new { target = "SiparisNo", isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row">
+                <label for="HalAdi" class="col-sm-4 col-form-label pb-0">Hal Adý</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input type="hidden" name="HalId" id="" value="@Model.HalId" />
+                        <input id="HalAdi" name="HalAdi" class="form-control form-control-sm" value="@Model.HalAdi" />
+                        <button type="button" data-btarget="haladi" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="hksWebSira" class="col-sm-5 col-form-label pb-0">Hks Web Sýra</label>
+                <div class="col-sm-7">
+                    <input type="text" maxlength="3" data-type="numNotDec" name="hksWebSira" id="hksWebSira" class="form-control form-control-sm" value="0" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-2 mt-1">
+        <div class="col-lg-5 ">
+            <div class="border border-2 p-1">
+                <span class="fs-6 fw-light">E-Fatura</span>
+                <div class="row">
+                    <label for="EFaturaEttn" class="col-sm-4 col-form-label pb-0">ETTN</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="EFaturaEttn" id="EFaturaEttn" class="form-control form-control-sm" value="@Model.EFaturaEttn" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="GibFirmamizPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Firmamýz Posta Kutusu</label>
+                    <div class="col-sm-6">
+                        <input type="hidden" name="GibFirmamizPostaKutusuId" id="GibFirmamizPostaKutusuId" value="@Model.GibFirmamizPostaKutusuId" />
+                        <div class="input-group">
+                            <input id="GibFirmamizPostaKutusu" name="GibFirmamizPostaKutusu" class="form-control form-control-sm" value="@Model.GibFirmamizPostaKutusu" />
+                            <button type="button" data-btarget="firmapostakutusu" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="GibMuhatapPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Muhatap Posta Kutusu</label>
+                    <div class="col-sm-6">
+                        <input type="hidden" name="GibMuhatapPostaKutusuId" id="GibMuhatapPostaKutusuId" value="@Model.GibMuhatapPostaKutusuId" />
+                        <div class="input-group">
+                            <input id="GibMuhatapPostaKutusu" name="GibMuhatapPostaKutusu" class="form-control form-control-sm" value="@Model.GibMuhatapPostaKutusu">
+                            <button type="button" data-btarget="muhatappostakutusu" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="EFaturaBolgeKodu" class="col-sm-6 col-form-label pb-0">Bölge Kodu</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="EFaturaBolgeKodu" id="EFaturaBolgeKodu" class="form-control form-control-sm" value="@Model.EFaturaBolgeKodu" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="EFaturaSiparisNo" class="col-sm-6 col-form-label pb-0">E-Fatura Sipariþ No</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="EFaturaSiparisNo" id="EFaturaSiparisNo" class="form-control form-control-sm" value="@Model.EFaturaSiparisNo" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="EFaturaSiparisTarihi" class="col-sm-6 col-form-label pb-0">Sipariþ Tarihi</label>
+                    <div class="col-sm-4">
+                        <input type="date" name="EFaturaSiparisTarihi" id="EFaturaSiparisTarihi" class="form-control form-control-sm me-2" value="@(Model.EFaturaSiparisTarihi.HasValue == true ? Model.EFaturaSiparisTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 ">
+            <div class="border border-2 p-1">
+                <span class="fs-6 fw-light">E-Ýrsaliye</span>
+                <div class="row">
+                    <label for="EIrsaliyeEttn" class="col-sm-4 col-form-label pb-0">ETTN</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="EIrsaliyeEttn" id="EIrsaliyeEttn" class="form-control form-control-sm" value="@Model.EIrsaliyeEttn" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="GibFirmamizIrsaliyeKutusu" class="col-sm-7 col-form-label pb-0">GÝB Firmamýz irsaliye Posta Kutusu</label>
+                    <div class="col-sm-5">
+                        <input type="hidden" name="GibFirmamizIrsaliyeKutusuId" id="GibFirmamizIrsaliyeKutusuId" value="@Model.GibFirmamizIrsaliyeKutusuId" />
+                        <div class="input-group">
+                            <input id="GibFirmamizIrsaliyeKutusu" name="GibFirmamizIrsaliyeKutusu" class="form-control form-control-sm" value="@Model.GibFirmamizIrsaliyeKutusu" />
+                            <button type="button" data-btarget="firmairspostakutusu" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="GibMuhatapIrsaliyeKutusu" class="col-sm-7 col-form-label pb-0">GÝB Muhatap irsaliye Posta Kutusu</label>
+                    <div class="col-sm-5">
+                        <input type="hidden" name="GibMuhatapIrsaliyeKutusuId" id="GibMuhatapIrsaliyeKutusuId" value="@Model.GibMuhatapIrsaliyeKutusuId" />
+                        <div class="input-group">
+                            <input id="GibMuhatapIrsaliyeKutusu" name="GibMuhatapIrsaliyeKutusu" class="form-control form-control-sm" value="@Model.GibMuhatapIrsaliyeKutusu" />
+                            <button type="button" data-btarget="muhatapirspostakutusu" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="SoforAdi" class="col-sm-7 col-form-label pb-0">Þoför Adý</label>
+                    <div class="col-sm-5">
+                        <input type="hidden" name="SoforId" id="SoforId" value="@Model.SoforId" />
+                        <div class="input-group">
+                            <input id="SoforAdi" name="SoforAdi" class="form-control form-control-sm" value="@Model.SoforAdi" />
+                            <button type="button" data-btarget="soforadi" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "SoforAdi",tur = 15, isInput = true })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col d-flex justify-content-between">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="iadeFaturasi" name="iadeFaturasi" value="true" @(Model.IadeFaturasi == true ? "checked" : "")>
+                        <label class="form-check-label" for="iadeFaturasi">
+                            Ýade Faturasý
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-secondary">GÝB Kullanýcýlarýný Al</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-2 mt-1">
+        <div class="col-lg-7">
+            <div class="border border-2 p-1">
+                <span class="fs-6 fw-light">Ýhracat</span>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <label for="IhracatParaBirimi" class="col-sm-4 col-form-label pb-0 pe-0">Para Birimi</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="IhracatParaBirimiId" id="IhracatParaBirimiId" value="@Model.IhracatParaBirimiId" />
+                                <div class="input-group">
+                                    <input id="IhracatParaBirimi" name="IhracatParaBirimi" class="form-control form-control-sm" value="@Model.IhracatParaBirimi" />
+                                    <button type="button" data-btarget="parabirimi" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "IhracatParaBirimi",tur = 14, isInput = true })">
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="IhracatKuru" class="col-sm-4 col-form-label pb-0">Kur</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="IhracatKuru" id="IhracatKuru" class="form-control form-control-sm" value="@Model.IhracatKuru" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="NavlunMaliyeti" class="col-sm-4 col-form-label pb-0">Navlun</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-type="num" name="NavlunMaliyeti" id="NavlunMaliyeti" class="form-control form-control-sm" value="@Model.NavlunMaliyeti" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="SigortaMaliyeti" class="col-sm-4 col-form-label pb-0">Sigorta</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-type="num" name="SigortaMaliyeti" id="SigortaMaliyeti" class="form-control form-control-sm" value="@Model.SigortaMaliyeti" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row">
+                            <label for="TeslimatSekli" class="col-sm-4 col-form-label pb-0">Teslimat Þekli</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="TeslimatSekliId" id="TeslimatSekliId" value="@Model.TeslimatSekliId" />
+                                <div class="input-group">
+                                    <input id="TeslimatSekli" name="TeslimatSekli" class="form-control form-control-sm" value="@Model.TeslimatSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                    <button type="button" data-btarget="teslimatsekli" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "TeslimatSekli",tur = 11, isInput = true })" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="UlasimSekli" class="col-sm-4 col-form-label pb-0">Ulaþým Þekli</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="UlasimSekliId" id="UlasimSekliId" value="@Model.UlasimSekliId" />
+                                <div class="input-group">
+                                    <input id="UlasimSekli" name="UlasimSekli" class="form-control form-control-sm" value="@Model.UlasimSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                    <button type="button" data-btarget="ulasimsekli" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "UlasimSekli",tur = 12, isInput = true })" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="OdemeSekli" class="col-sm-4 col-form-label pb-0">Ödeme Þekli</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="OdemeSekliId" id="OdemeSekliId" value="@Model.OdemeSekliId" />
+                                <div class="input-group">
+                                    <input id="OdemeSekli" name="OdemeSekli" class="form-control form-control-sm" value="@Model.OdemeSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                    <button type="button" data-btarget="odemesekli" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "OdemeSekli",tur = 13, isInput = true })" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 d-flex justify-content-around align-items-end">
+            <button type="submit" class="btn btn-sm btn-success">Tamam</button>
+            <button type="button" class="btn btn-sm btn-danger">Vazgeç</button>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        new Cleave("#IhracatKuru", {
+            numeral: true,
+            numeralDecimalScale: 6,
+            numeralIntegerScale: 3,
+            delimiter: ".",
+            numeralDecimalMark: ","
+        });
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "soforadi": document.getElementById("SoforAdi").getAttribute("data-id") > 0 ? $("#SoforId").val(document.getElementById("SoforAdi").getAttribute("data-id")) : $("#SoforId").val(null); break;
+                case "parabirimi": document.getElementById("IhracatParaBirimi").getAttribute("data-id") > 0 ? $("#IhracatParaBirimiId").val(document.getElementById("IhracatParaBirimi").getAttribute("data-id")) : $("#IhracatParaBirimiId").val(null); break;
+                case "teslimatsekli": document.getElementById("TeslimatSekli").getAttribute("data-id") > 0 ? $("#TeslimatSekliId").val(document.getElementById("TeslimatSekli").getAttribute("data-id")) : $("#TeslimatSekliId").val(null); break;
+                case "ulasimsekli": document.getElementById("UlasimSekli").getAttribute("data-id") > 0 ? $("#UlasimSekliId").val(document.getElementById("UlasimSekli").getAttribute("data-id")) : $("#UlasimSekliId").val(null); break;
+                case "odemesekli": document.getElementById("OdemeSekli").getAttribute("data-id") > 0 ? $("#OdemeSekliId").val(document.getElementById("OdemeSekli").getAttribute("data-id")) : $("#OdemeSekliId").val(null); break;
+                case "siparisno": document.getElementById("SiparisNo").getAttribute("data-id") > 0 ? $("#SiparisId").val(document.getElementById("SiparisNo").getAttribute("data-id")) : $("#SiparisId").val(null); break;
+                case "reffatura": document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id") > 0 ? $("#FiyatReferansFaturaId").val(document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id")) : $("#FiyatReferansFaturaId").val(null); break;
+            }
+        });
+        $("#SoforAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=SoforAdi&tur=15", "Ad", "TabloMaddesiId", e, null, "soforadi");
+            val.result ? $("#SoforId").val(val.data.TabloMaddesiId) : $("#SoforId").val(null);
+        });
+        $("#IhracatParaBirimi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=IhracatParaBirimi&tur=14", "Ad", "TabloMaddesiId", e, null, "parabirimi");
+            val.result ? $("#IhracatParaBirimiId").val(val.data.TabloMaddesiId) : $("#IhracatParaBirimiId").val(null);
+        });
+        $("#TeslimatSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=TeslimatSekli&tur=11", "Ad", "TabloMaddesiId", e, null, "teslimatsekli");
+            val.result ? $("#TeslimatSekliId").val(val.data.TabloMaddesiId) : $("#TeslimatSekliId").val(null);
+        });
+        $("#UlasimSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=UlasimSekli&tur=12", "Ad", "TabloMaddesiId", e, null, "ulasimsekli");
+            val.result ? $("#UlasimSekliId").val(val.data.TabloMaddesiId) : $("#UlasimSekliId").val(null);
+        });
+        $("#OdemeSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=OdemeSekli&tur=13", "Ad", "TabloMaddesiId", e, null, "odemesekli");
+            val.result ? $("#OdemeSekliId").val(val.data.TabloMaddesiId) : $("#OdemeSekliId").val(null);
+        });
+        $("#SiparisNo").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/SiparisGetir?isInput=True&target=SiparisNo", "SiparisNo", "SiparisId", e, null, "siparisno");
+            val.result ? $("#SiparisId").val(val.data.SiparisId) : $("#SiparisId").val(null);
+        });
+        $("#FiyatReferansFaturaNo").on("focusout", async function (e) {
+            var faturaid = $("#FaturaId").val();
+            var carikartid = $("#CariKartId").val();
+            var tip = $("#Tip").val();
+            var val = await getData($(this), `/Common/FiyatRefFatGetir?isInput=True&target=FiyatReferansFaturaNo&tip=${tip}&cariKartId=${carikartid}&faturaId=${faturaid}`, "SiparisNo", "SiparisId", e, null, "reffatura");
+            val.result ? $("#FiyatReferansFaturaId").val(val.data.FaturaId) : $("#FiyatReferansFaturaId").val(null);
+        });
+    </script>
+}

@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC41DC0C-EEFA-4C11-BC80-62C2A64866B5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OfisHal.Data</RootNamespace>
+    <AssemblyName>OfisHal.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Configurations\Tables\CevapTablosuConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambAmbarFiyatiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambNavlunDizayniConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambNavlunFaturaSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambNavlunFaturasiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambSevkIrsaliyesiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\ToambSevkIrsaliyesiSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalBagkurDosyasiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalBankaHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalBankaHesabiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalCariHareketConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalCariKartConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalCariSifatConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalDigerAdConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalDokumDefteriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalEvrakKdvConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalEvrakMasrafiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFaturaConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFaturaSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFisSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFiyatListesiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalFiyatListesiSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalGibKullaniciConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalHalConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalHesapConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalHesapHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalHksMalConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalImgeConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleEvrakMasrafiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleFaturaSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleMakbuzSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleObSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleRehinFisiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalIskeleStokHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKapConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKapHareketConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKayitsizMusteriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKdvTevkifatTanimiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKullaniciConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKullaniciYetkisiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKullanilanKunyeConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalKunyeConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMagazaConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMakbuzConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMakbuzSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMalConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMalHksBagiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMarkaConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMuhFiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMuhFisSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalMuhHesapConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalNavlunFaturasiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalObSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalOdemeAraciConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalOdemeBordrosuConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalPosCihaziConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalRaporParamDegeriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalRehinFisiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalSatisKunyeSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalSatisMakbuzSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalSipariConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalSiparisSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalStokHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalStokIadeConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalTabloMaddesiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalTanimConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalTeslimatYeriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalYaziciConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalYerConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohksIskeleKunyeListesiConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohksKayitliKunyeListesiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaDokumConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaFaturaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaKapConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaKesilmeyenSatisFaturasiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaMakbuzConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaOdemeAraciConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaRehinHesabiOlmayanMusterilerConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaTeslimatYeriConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalBankaHesabiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalbFaturaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalCariHareketConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalCariKartConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalEIrsaliyeConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalEIrsaliyeSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalEntegreEdilmeyenFaturaSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalEvrakMasrafiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalFaturaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalFaturaSatiriTukConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalFaturaSatiriUrtConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalFaturaSonToplamConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalGonderimeHazirEFaturaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalGonderimeHazirEIrsaliyeConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalGonderimeHazirEMustahsilMakbuzuConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHesapBakiyeListesiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHesapConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHesapHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHksMalConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalKapConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalKapHareketConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalKullaniciConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMagazaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMakbuzSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMalConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMalHksBagiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMarkaConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalObSatiriConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalOdemeBordrosuConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalRehinFisiBekleyen01Configuration.cs" />
+    <Compile Include="Configurations\Views\VohalRehinFisiBekleyenConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalRehinFisiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalMakbuzConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalSipariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalStokHareketiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAlisTanimlariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalDigerTanimlarConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalDokumTanimlariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalEBelgeTanimiConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalFirmaTanimlariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHesapTanimlariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalHksTanimlarConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalSatisTanimlariConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaDokumdenKunyeConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohalAramaKunyeConfiguration.cs" />
+    <Compile Include="Configurations\Views\VohksHksKayitliKunyeBilgileriConfiguration.cs" />
+    <Compile Include="Configurations\Tables\TohalNumeratorConfiguration.cs" />
+    <Compile Include="Context\CatalogDb.cs" />
+    <Compile Include="Context\Db.Tables.cs" />
+    <Compile Include="Context\Db.Views.cs" />
+    <Compile Include="FormattedDbEntityValidationException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OfisHal.Core\OfisHal.Core.csproj">
+      <Project>{08874322-2D02-498E-B1B2-4E496549AF1F}</Project>
+      <Name>OfisHal.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="EntityFramework">
+      <Version>6.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="Hangfire">
+      <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="Hangfire.SqlServer">
+      <Version>1.8.14</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configurations\_Old\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

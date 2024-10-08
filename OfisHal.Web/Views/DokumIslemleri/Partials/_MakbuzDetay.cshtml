@@ -1,0 +1,102 @@
+@model VohalMakbuz
+@{
+    var muhatapEFPath = "/Common/GibPostaKutular?target=GibMuhatapPostaKutusu&vkn=" + Model.VergiKimlikNo + "&dokTip=0";
+}
+    <div class="modal fade" id="makbuzDetayModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Makbuz Detay</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label for="StokGirisTarihi" class="col-sm-4 col-form-label pb-0">Stok Giriþ Tarihi</label>
+                        <div class="col-sm-8">
+                            <input type="date" name="StokGirisTarihi" id="StokGirisTarihi" class="form-control form-control-sm me-2" value="@Model.StokGirisTarihi.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="DokumNo" class="col-sm-4 col-form-label pb-0">Döküm No</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="DokumNo" id="DokumNo" class="form-control form-control-sm" value="@Model.DokumNo" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="IrsaliyeNo" class="col-sm-4 col-form-label pb-0">Ýrsaliye No</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="IrsaliyeNo" id="IrsaliyeNo" class="form-control form-control-sm" value="@Model.IrsaliyeNo" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="FaturaNo" class="col-sm-4 col-form-label pb-0">Fatura No</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="FaturaNo" id="FaturaNo" class="form-control form-control-sm" value="@Model.FaturaNo" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EPosta" class="col-sm-4 col-form-label pb-0">E-Posta</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="EPosta" id="EPosta" class="form-control form-control-sm" value="@Model.EPosta" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="HksWebSiraNo" class="col-sm-4 col-form-label pb-0">Hks Web Sýra No</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="HksWebSiraNo" id="HksWebSiraNo" class="form-control form-control-sm" value="@Model.HksWebSiraNo" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EFaturaEttn" class="col-sm-4 col-form-label pb-0">ETTN</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="EFaturaEttn" id="EFaturaEttn" class="form-control form-control-sm" value="@Model.EFaturaEttn" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="GibFirmamizPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Firmamýz Posta Kutusu</label>
+                        <div class="col-sm-6">
+                            <input type="hidden" name="GibFirmamizPostaKutusuId" id="GibFirmamizPostaKutusuId" value="@Model.GibFirmamizPostaKutusuId" />
+                            <div class="input-group">
+                                <input id="GibFirmamizPostaKutusu" name="GibFirmamizPostaKutusu" class="form-control form-control-sm" value="@Model.GibFirmamizPostaKutusu" />
+                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest('/Common/GibFirmaPostaKutular?target=GibFirmamizPostaKutusu&dokTip=0&pkTip=0&kayitSekli=1&tip=1','firmapostakutusu')">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="GibMuhatapPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Muhatap Posta Kutusu</label>
+                        <div class="col-sm-6">
+                            <input type="hidden" name="GibMuhatapPostaKutusuId" id="GibMuhatapPostaKutusuId" value="@Model.GibMuhatapPostaKutusuId" />
+                            <div class="input-group">
+                                <input id="GibMuhatapPostaKutusu" name="GibMuhatapPostaKutusu" class="form-control form-control-sm" value="@Model.GibMuhatapPostaKutusu">
+                                <button type="button" class="btn btn-sm btn-primary" id="GibMuhatapPostaKutusuBut" onclick="apiRequest('@muhatapEFPath','muhatappostakutusu')">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EFaturaNot" class="col-sm-4 col-form-label pb-0">EFatura Not</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="EFaturaNot" id="EFaturaNot" class="form-control form-control-sm" value="@Model.EFaturaNot" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EFaturaBolgeKodu" class="col-sm-4 col-form-label pb-0">Bölge Kodu</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="EFaturaBolgeKodu" id="EFaturaBolgeKodu" class="form-control form-control-sm" value="@Model.EFaturaBolgeKodu" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.title = "Yer Kayıt";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Hks Tanımları";
+    ViewBag.ptitle = "Yer Kayıt";
+}
+<form method="post">
+    <div class="row">
+        <div class="col d-flex">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="il" name="yerKayit" checked>
+                <label class="form-check-label" for="il">
+                    Il
+                </label>
+            </div>
+            <div class="form-check mx-2">
+                <input class="form-check-input" type="radio" id="ilce" name="yerKayit">
+                <label class="form-check-label" for="ilce">
+                    Ilçe
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="belde" name="yerKayit">
+                <label class="form-check-label" for="belde">
+                    Belde
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-sm btn-success">Tamam</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,286 @@
+@model VohalMal
+@{
+    ViewBag.title = "Mal Düzenle";
+
+    ViewBag.pagetitle = "Teknik Ýþlemler";
+    ViewBag.pagesubtitle = "Mal";
+    ViewBag.ptitle = "Mal Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalMals/Create";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/Mallar?target=null&isNavigator=true";
+    ViewBag.firstDataUrl = "/TohalMals/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "/TohalMals/sonrakiOncekiKayit?&afterOrBefore=false&currentId=" + Model.MalId;
+    ViewBag.afterDataUrl = "/TohalMals/sonrakiOncekiKayit?&afterOrBefore=true&currentId=" + Model.MalId;
+    ViewBag.lastDataUrl = "/TohalMals/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = false;
+    if (Model.SonKullanmaTarihi == null || Model.SonKullanmaTarihi == DateTime.MinValue)
+    {
+        Model.SonKullanmaTarihi = DateTime.Now.AddMonths(1);
+    }
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+}
+<style>
+    .ui-state-default.slick-header-column {
+        background-color: #97c5dd;
+    }
+
+    .ui-state-default.slick-footerrow-column {
+        background-color: #97c5dd;
+    }
+
+    .ui-widget-content.slick-row.even {
+        background-color: #fff5da;
+    }
+
+    .ui-widget-content.slick-row.odd {
+        background-color: #fcf8e3;
+    }
+</style>
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form id="malForm">
+    <input type="hidden" name="MalId" id="MalId" value="@Model.MalId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label for="Kod" class="col-sm-4 col-form-label pb-0">Mal Kodu</label>
+                <div class="col-sm-8">
+                    <input value="@Model.Kod" id="Kod" name="Kod" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kod)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Ad" class="col-sm-4 col-form-label pb-0">Mal Adý</label>
+                <div class="col-sm-8">
+                    <input value="@Model.Ad" id="Ad" name="Ad" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Ad)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tur" class="col-sm-4 col-form-label pb-0">Tür</label>
+                <div class="col-sm-8">
+                    <select value="@Model.Tur" id="Tur" name="Tur" class="form-select form-select-sm">
+                        <option value="0">Meyve</option>
+                        <option value="1">Sebze</option>
+                    </select>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Tur)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Birim" class="col-sm-4 col-form-label pb-0">Birimi</label>
+                <div class="col-sm-8">
+                    <select value="@Model.Birim" id="Birim" name="Birim" class="form-select form-select-sm">
+                        <option value="0">KG</option>
+                        <option value="1">ADET</option>
+                        <option value="2">BAÐ</option>
+                    </select>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Birim)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-4 form-check-label" for="faturaBirimi">Fatura Birimi </label>
+                <div class="col-sm-8 d-flex align-items-center">
+                    <input class="form-check-input me-1" type="checkbox" id="faturaBirimi" name="faturaBirimi">
+                    <select value="@Model.FaturaBirimi" name="FaturaBirimi" class="form-select form-select-sm" id="faturaBirimiInput" disabled="true">
+                        <option value="0">KG</option>
+                        <option value="1">ADET</option>
+                        <option value="2">BAÐ</option>
+                        <option value="3">Paket</option>
+                    </select>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.FaturaBirimi)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="GrupNo" class="col-sm-4 col-form-label pb-0">Grup No</label>
+                <div class="col-sm-8">
+                    <input value="@Model.GrupNo" type="number" id="GrupNo" name="GrupNo" class="form-control form-control-sm" min="0" max="99" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GrupNo)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-4 col-form-label pb-0" for="DigerAdId">Diðer ADý</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input value="@Model.DigerAdId" id="DigerAdId" name="DigerAdId" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("..", "Common", new { target = "DigerAdId", isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="KdvOrani" class="col-sm-4 col-form-label pb-0">Kdv Oraný</label>
+                <div class="col-sm-8">
+                    <input value="@Model.KdvOrani" type="number" id="KdvOrani" name="KdvOrani" class="form-control form-control-sm" min="0" max="99"/>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.KdvOrani)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="SonKullanmaTarihi" class="col-sm-4 col-form-label pb-0">Son Kullanma Tarihi</label>
+                <div class="col-sm-8">
+                    <input type="date" value="@Model.SonKullanmaTarihi.ToString("yyyy-MM-dd")" id="SonKullanmaTarihi" name="SonKullanmaTarihi" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.SonKullanmaTarihi)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="GtipNo" class="col-sm-4 col-form-label pb-0">GTÝP No</label>
+                <div class="col-sm-8">
+                    <input value="@Model.GtipNo" id="GtipNo" name="GtipNo" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GtipNo)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="KdvTevkifatTanimiId" class="col-sm-4 col-form-label pb-0">Kdv Tevkifat Tanýmý</label>
+                <div class="col-sm-8">
+                    @Html.DropDownList("KdvTevkifatTanimiId", ViewBag.KdvTevkifatTanimiId as SelectList, "Seçiniz", new { @class = "form-control form-control-sm" })
+                    <!-- <span class="text-danger">@Html.ValidationMessageFor(model => model.KdvTevkifatTanimiId)</span> -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-5">
+            <input type="hidden" id="gridMalAdi" name="gridMalAdi" />
+            <input type="hidden" id="gridMalCinsi" name="gridMalCinsi" />
+            <div id="myGrid" class="slick-container" style="height:100%;"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button type="button" id="kaydetMalBut" value="Kaydet" class="btn btn-primary" >Kaydet</button>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    <script src="~/assets/libs/cleave.js/cleave.min.js"></script>
+    <script src="~/assets/js/pages/form-masks.init.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @Html.Partial("~/Views/TohalMals/Partials/_hksMalGrid.cshtml")
+    <script>
+
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var malid = document.getElementById("gridMalAdi").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                if (target == "malCins")
+                    malid > 0 ? container.load(btn.data("remote-url") + `&malId=${malid}`) : container.load(btn.data("remote-url") + `&malId=0`);
+                else
+                    container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var malId = document.getElementById("gridMalAdi").getAttribute("data-id");
+            var malCinsId = document.getElementById("gridMalCinsi").getAttribute("data-id");
+            var urtSekli = document.getElementById("gridMalCinsi").getAttribute("data-urt");
+            switch (target) {
+                case "malAd": updateMalAdCell(malId, $("#gridMalAdi").val()); break;
+                case "malCins": updateMalCinsCell(malCinsId, $("#gridMalCinsi").val(), urtSekli); break;
+                case "arabtn":
+                    sessionStorage.getItem('malId') > 0 ? window.location.href = `/TohalMals/Edit/${sessionStorage.getItem('malId')}` : null;
+                    sessionStorage.removeItem("malId");
+                    break;
+            }
+        });
+        var inputs = document.querySelectorAll(".numberFormat");
+        for (var i = 0; i < inputs.length; i++) {
+            new Cleave(inputs[i], {
+                numeral: true,
+            });
+        }
+        var FaturaBirimi = document.getElementById("faturaBirimi");
+        var FaturaBirimiInput = document.getElementById("faturaBirimiInput");
+        FaturaBirimi.addEventListener("change", (e) => {
+            if (e.target.checked) {
+                FaturaBirimiInput.removeAttribute("disabled");
+                FaturaBirimiInput.focus();
+            } else {
+                FaturaBirimiInput.setAttribute("disabled", "true");
+                FaturaBirimiInput.value = null;
+            }
+        });
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    var id = $('#MalId').val();
+                    window.location.href = `/TohalMals/Delete?malId=${id}`
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+        document.getElementById('malForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+        $(document).ready(function () {
+            document.getElementById('kaydetMalBut').addEventListener('click', function () {
+               
+                faturaSave();
+            });
+        });
+    </script>
+}

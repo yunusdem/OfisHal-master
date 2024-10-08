@@ -1,0 +1,295 @@
+@model VohalDokumTanimlari
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="DokRusumOrani" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Rusum Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokRusumOrani" id="DokRusumOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokRusumOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBagkurOrani" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Baðkur Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokBagkurOrani" id="DokBagkurOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokBagkurOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBorsaOrani" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            Borsa Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokBorsaOrani" id="DokBorsaOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokBorsaOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokStopajOrani" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            Stopaj Oraný (Normal) %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokStopajOrani" id="DokStopajOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokStopajOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBorsaStopajOrani" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            Stopaj Oraný (Borsa) %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokBorsaStopajOrani" id="DokBorsaStopajOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokBorsaStopajOrani" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="DokKomisyonOrani" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            Hal Komisyon Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" name="DokKomisyonOrani" id="DokKomisyonOrani" class="form-control form-control-sm" maxlength="5" value="@Model.DokKomisyonOrani" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="DokKomisyonKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>7-</span>
+            Hal Komisyon KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokKomisyonKdvOrani" id="DokKomisyonKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokKomisyonKdvOrani" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="DokTuccarKapKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>8-</span>
+            Tüccar Kap KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokTuccarKapKdvOrani" id="DokTuccarKapKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokTuccarKapKdvOrani" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="DokNavlunKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>9-</span>
+            Navlun KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="DokNavlunKdvOrani" id="DokNavlunKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.DokNavlunKdvOrani" />
+        </div>
+    </div>
+
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokDokumDefteriVar">
+            <span>10-</span>
+            Döküm Defteri Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokDokumDefteriVar" name="DokDokumDefteriVar" value="true" @(Model.DokDokumDefteriVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokDokumAmbar" class="col-sm-6 col-form-label pb-0">
+            <span>11-</span>
+            Döküm / Ambar
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokDokumAmbar" id="DokDokumAmbar">
+                <option value="0" @(Model.DokDokumAmbar == 0 ? "selected" : "")>Döküm</option>
+                <option value="1" @(Model.DokDokumAmbar == 1 ? "selected" : "")>Ambar</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokDokumDefterTipi" class="col-sm-6 col-form-label pb-0">
+            <span>12-</span>
+            Döküm Defteri Tipi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokDokumDefterTipi" id="DokDokumDefterTipi">
+                <option value="0" @(Model.DokDokumDefterTipi == 0 ? "selected" : "")>Normal</option>
+                <option value="1" @(Model.DokDokumDefterTipi == 1 ? "selected" : "")>Detaylý</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokDokumDefterGosterimi" class="col-sm-6 col-form-label pb-0">
+            <span>13-</span>
+            Döküm Defteri Gösterimi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokDokumDefterGosterimi" id="DokDokumDefterGosterimi">
+                <option value="0" @(Model.DokDokumDefterGosterimi == 0 ? "selected" : "")>Dos</option>
+                <option value="1" @(Model.DokDokumDefterGosterimi == 1 ? "selected" : "")>Crystal Report</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokFaturaSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>14-</span>
+            Fatura Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" name="DokFaturaSiraNo" id="DokFaturaSiraNo" class="form-control form-control-sm" value="@Model.DokFaturaSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokMustahsilCiroSiniri" class="col-sm-6 col-form-label pb-0">
+            <span>15-</span>
+            Müstahsil Ciro Sýnýrý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" name="DokMustahsilCiroSiniri" id="DokMustahsilCiroSiniri" class="form-control form-control-sm" value="@Model.DokMustahsilCiroSiniri" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokOtomatikHamaliye">
+            <span>16-</span>
+            Otomatik Hamaliye
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokOtomatikHamaliye" name="DokOtomatikHamaliye" value="true" @(Model.DokOtomatikHamaliye == true ? "checked" : "") >
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokHamaliyeHesaplamaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>
+            Hamaliye Hesaplama Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokHamaliyeHesaplamaSekli" id="DokHamaliyeHesaplamaSekli">
+                <option value="0" @(Model.DokHamaliyeHesaplamaSekli == 0 ? "selected" : "")>Kilo Bazýnda</option>
+                <option value="1" @(Model.DokHamaliyeHesaplamaSekli == 1 ? "selected" : "")>Kap Bazýnda</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBirimHamaliye" class="col-sm-6 col-form-label pb-0">
+            <span>18-</span>
+            Birim Hamaliye
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" name="DokBirimHamaliye" id="DokBirimHamaliye" class="form-control form-control-sm numberFormat" maxlength="14" value="@Model.DokBirimHamaliye"/>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBirimNakliye" class="col-sm-6 col-form-label pb-0">
+            <span>19-</span>
+            Birim Nakliye
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" name="DokBirimNakliye" id="DokBirimNakliye" class="form-control form-control-sm numberFormat" maxlength="5" value="@Model.DokBirimNakliye"/>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokKapKomisyonaDahil">
+            <span>20-</span>
+            Kap Komisyona Dahil
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokKapKomisyonaDahil" name="DokKapKomisyonaDahil" value="true" @(Model.DokKapKomisyonaDahil == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokAyniMallariToplamaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>21-</span>
+            Ayný Mallarý Toplama Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokAyniMallariToplamaSekli" id="DokAyniMallariToplamaSekli">
+                <option value="0" @(Model.DokAyniMallariToplamaSekli == 0 ? "selected" : "")>Yok</option>
+                <option value="1" @(Model.DokAyniMallariToplamaSekli == 1 ? "selected" : "")>Topla</option>
+                <option value="2" @(Model.DokAyniMallariToplamaSekli == 2 ? "selected" : "")>Ayný Fiyatlarý Topla</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="IadeliKapTutarRehindenAl">
+            <span>22-</span>
+            Ýadeli Kap Tutarýný Rehinden Al
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="IadeliKapTutarRehindenAl" name="IadeliKapTutarRehindenAl" value="true" @(Model.IadeliKapTutarRehindenAl == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokFiyatGirilsin">
+            <span>23-</span>
+            Fiyat Girilsin
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokFiyatGirilsin" name="DokFiyatGirilsin" value="true" @(Model.DokFiyatGirilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokCariyeIslemeSekli" class="col-sm-6 col-form-label pb-0">
+            <span>24-</span>
+            Cariye Ýþleme Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokCariyeIslemeSekli" id="DokCariyeIslemeSekli">
+                <option value="0" @(Model.DokCariyeIslemeSekli == 0 ? "selected" : "")>Fatura Alacak (Müstahsil)</option>
+                <option value="1" @(Model.DokCariyeIslemeSekli == 1 ? "selected" : "")>Stok Alacak (Tüccar)</option>
+                <option value="2" @(Model.DokCariyeIslemeSekli == 2 ? "selected" : "")>Stok Borç (Soðuk Hava Deposu)</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokCariIslemeDegissin">
+            <span>25-</span>
+            Cariye Ýþleme Þekli Deðiþebilir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokCariIslemeDegissin" name="DokCariIslemeDegissin" value="true" @(Model.DokCariIslemeDegissin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokToplamaMalCalisir">
+            <span>26-</span>
+            Toplama Mal Çalýþýr
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokToplamaMalCalisir" name="DokToplamaMalCalisir" value="true" @(Model.DokToplamaMalCalisir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="dokumHizmetBedeliHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>27-</span>
+            Hizmet Bedeli Hesabý
+        </label>
+        <div class="col-sm-6">
+            <input type="hidden" id="DokHizmetBedeliHesabiId" name="DokHizmetBedeliHesabiId" value="@(Model.DokHizmetBedeliHesabiId != null ? Model.DokHizmetBedeliHesabiId : null)"/>
+            <div class="input-group">
+                <input type="text" id="dokumHizmetBedeliHesabi" name="dokumHizmetBedeliHesabi" class="form-control form-control-sm" data-id="@(Model.DokHizmetBedeliHesabiId != null ? Model.DokHizmetBedeliHesabiId : null)" value="@(Model.DokHizmetBedeliHesabiId != null ? Model.DokHizmetBedeliHesabiKodu : null)"/>
+                <button type="button" data-btarget="dokumhizmetbedeliid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "dokumHizmetBedeliHesabi", isCode = true, inputType = "code", isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokKapliEntegrasyonYap">
+            <span>28-</span>
+            Kaplý Stoksuz Entegrasyon Yap
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokKapliEntegrasyonYap" name="DokKapliEntegrasyonYap" value="true" @(Model.DokKapliEntegrasyonYap == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DokSatirdaStokGirisTarihi">
+            <span>29-</span>
+            Stok Kayýt Satýrda Stok Giriþ Tarihi Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DokSatirdaStokGirisTarihi" name="DokSatirdaStokGirisTarihi" value="true" @(Model.DokSatirdaStokGirisTarihi == true ? "checked" : "")>
+        </div>
+    </div>
+</div>

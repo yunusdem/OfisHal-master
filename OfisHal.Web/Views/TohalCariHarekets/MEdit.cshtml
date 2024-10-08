@@ -1,0 +1,310 @@
+﻿@model VohalCariHareket
+
+@{
+    ViewBag.title = "Veresiye Düzenle";
+
+    ViewBag.pagetitle = "Müşteri Cari";
+    ViewBag.pagesubtitle = "Veresiye";
+    ViewBag.ptitle = "Veresiye Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalCariHarekets/MCreate";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/CariHareketler?tip=1";
+    ViewBag.firstDataUrl = "/TohalCariHarekets/ilkSonKayit?tip=1&firstOrLast=true";
+    ViewBag.beforeDataUrl = "/TohalCariHarekets/sonrakiOncekiKayit?tip=1&afterOrBefore=false&currentId=" + Model.CariHareketId;
+    ViewBag.afterDataUrl = "/TohalCariHarekets/sonrakiOncekiKayit?tip=1&afterOrBefore=true&currentId=" + Model.CariHareketId;
+    ViewBag.lastDataUrl = "/TohalCariHarekets/ilkSonKayit?tip=1&firstOrLast=false";
+    ViewBag.disabledBeforeAfter = false;
+    ViewBag.raporYazdirVar = true;
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" enctype="multipart/form-data" action="@Url.Action("MEdit")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="CariHareketId" id="CariHareketId" value="@Model.CariHareketId" />
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label for="RefNo" class="col-sm-3 col-form-label pb-0">Ref.No</label>
+                <div class="col-sm-9">
+                    <input id="RefNo" name="RefNo" class="form-control form-control-sm" value="@Model.RefNo" />
+                </div>
+            </div>
+            <span class="text-danger">@Html.ValidationMessageFor(model => model.CariKartId)</span>
+            <div class="row">
+                <input type="hidden" name="CariKartId" id="CariKartId" value="@Model.CariKartId" />
+                <label for="cariKartKod" class="col-sm-3 col-form-label pb-0">Kod</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="cariKartKod" name="cariKartKod" class="form-control form-control-sm" data-id="@Model.CariKartId" value="@Model.Kod" />
+                        <button type="button" data-btarget="code" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "cariKartKod", tip = 1,isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="cariKartAd" class="col-sm-3 col-form-label pb-0">Ad</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="cariKartAd" name="cariKartAd" class="form-control form-control-sm" data-id="@Model.CariKartId" value="@Model.Ad" />
+                        <button type="button" data-btarget="name" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "cariKartAd", tip = 1,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="Aciklama">Açıklama</label>
+                <div class="col-sm-9">
+                    <input type="text" name="Aciklama" id="Aciklama" class="form-control form-control-sm" value="@Model.Aciklama" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Aciklama)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="Tarih">Tarih</label>
+                <div class="col-sm-3">
+                    <input type="date" name="Tarih" id="Tarih" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Tarih)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="IslemTipi" class="col-sm-3 col-form-label pb-0">İşlem Tipi</label>
+                <div class="col-sm-3">
+                    <select id="IslemTipi" name="IslemTipi" class="form-control form-control-sm" value="@Model.IslemTipi">
+                        <option value="0" @(Model.IslemTipi == 0 ? "selected" : "")>Nakit</option>
+                        <option value="1" @(Model.IslemTipi == 1 ? "selected" : "")>Fatura</option>
+                        <option value="2" @(Model.IslemTipi == 2 ? "selected" : "")>Çek</option>
+                        <option value="3" @(Model.IslemTipi == 3 ? "selected" : "")>Senet</option>
+                        <option value="4" @(Model.IslemTipi == 4 ? "selected" : "")>Dekont</option>
+                        <option value="5" @(Model.IslemTipi == 5 ? "selected" : "")>Kredi Kartı</option>
+                        <option value="6" @(Model.IslemTipi == 6 ? "selected" : "")>Rehin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="Meblag">Meblağ</label>
+                <div class="col-sm-3">
+                    <input type="text" data-type="num" name="Meblag" id="Meblag" class="form-control form-control-sm" value="@Model.Meblag.ToString()" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Meblag)</span>
+                </div>
+                <div class="col-sm-6 d-flex align-items-center">
+                    <span class="fs-6 w-75">Rehin Bakiye</span> <input type="text" class="form-control form-control-sm" data-type="num" id="rehinBakiye" value="0" disabled readonly /> <span id="rehinBakiyeSpan" class="fs-4 fw-bold ms-1"></span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tip" class="col-sm-3 col-form-label pb-0">Tip</label>
+                <div class="col-sm-3">
+                    <select id="Tip" name="Tip" class="form-control form-control-sm" value="@Model.Tip">
+                        <option value="1" @(Model.Tip == 1 ? "selected" : "")>Alınan</option>
+                        <option value="0" @(Model.Tip == 0 ? "selected" : "")>Veresiye</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 d-flex align-items-center">
+                    <span class="fs-6 me-1">Bakiye</span> <input type="text" class="form-control form-control-sm" data-type="num" id="bakiye" value="0" disabled readonly /> <span id="bakiyeSpan" class="fs-4 fw-bold ms-1"></span>
+                </div>
+            </div>
+            @*<div class="row">
+                    <div class="col d-flex justify-content-center">
+                        <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal" data-bs-target="#faturalarModal">Ödenen Faturalar</button>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" style="text-align: center;" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="faturalarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Ödenen Faturalar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm table-striped">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Fatura No</th>
+                            <th>Tutar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FT2023222</td>
+                            <td>1500 $</td>
+                        </tr>
+                        <tr>
+                            <td>FT2023222</td>
+                            <td>1500 $</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning">
+                    Seç
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    @Html.Partial("_ValidationScriptsPartial")
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        bakiyeSoyle();
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            target == "name" ? autoFill("cariKartAd") : autoFill("cariKartKod");
+            if (target == "arabtn") {
+                sessionStorage.getItem('cariHareketId') > 0 ? window.location.href = `/TohalCariHarekets/MEdit/${sessionStorage.getItem('cariHareketId')}` : null;
+                sessionStorage.removeItem("cariHareketId");
+            }
+        });
+        function autoFill(idValElement) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            if (parseInt(idVal) > 0) {
+                $.ajax({
+                    url: "/Common/getCariById",
+                    type: "GET",
+                    data: { id: parseInt(idVal) },
+                    cache: false,
+                    success: (res) => {
+                        fillData(res.CariKartId, res.Kod, res.Ad);
+                    }
+                });
+            } else {
+                fillData(null, null, null);
+            }
+        }
+        $("#cariKartKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartKod&tip=1&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "code");
+            val.result ? autoFill("cariKartKod") : fillData(null, null, null);
+        });
+        $("#cariKartAd").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartAd&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "name");
+            val.result ? autoFill("cariKartAd") : fillData(null, null, null);
+        });
+        function fillData(cariId, kod, ad) {
+            $("#cariKartKod").val(kod);
+            $("#cariKartAd").val(ad);
+            $("#CariKartId").val(cariId);
+            $("#cariKartKod").attr("data-id", cariId);
+            $("#cariKartAd").attr("data-id", cariId);
+            bakiyeSoyle();
+            if (cariId > 0) setTimeout(() => $("#cariKartAd").closest('.row').next('.row').find('input').focus(), 150);
+        }
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    var id = $('#CariHareketId').val();
+                    window.location.href = `/TohalCariHarekets/Delete?cariHareketId=${id}&kullaniciId=${0}&kartTipi=${1}`
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+        async function bakiyeSoyle() {
+            var res = await BakiyeSoyle("/TohalCariHarekets/BakiyeSoyleAsync", $("#CariKartId").val());
+            // sonuç negatif yada pozitif eğer negatifse borç pozitif ise alacak oluyor müstahsil için tam tersi
+            UpdateBakiye(res.bakiye, "bakiye", "bakiyeSpan");
+            UpdateBakiye(res.rehinBakiye, "rehinBakiye", "rehinBakiyeSpan");
+
+            //if (res.bakiye != "" && res.bakiye != null) {
+            //    var posOrNeg = parseInt(res.bakiye) > 0 ? true : false;
+            //    if (!posOrNeg)
+            //        res.bakiye = res.bakiye.slice(1);
+            //    $("#bakiye").val(res.bakiye);
+            //    formatNumberInput(document.getElementById("bakiye"));
+            //    !posOrNeg ? $("#bakiyeSpan").text(" A") : $("#bakiyeSpan").text(" B");
+            //}
+            //if (res.rehinBakiye != "" && res.rehinBakiye != null) {
+            //    // sonuç negatif yada pozitif eğer negatifse borç pozitif ise alacak oluyor müstahsil için tam tersi
+            //    var posOrNeg = parseInt(res.rehinBakiye) > 0 ? true : false;
+            //    if (!posOrNeg)
+            //        res.rehinBakiye = res.rehinBakiye.slice(1);
+            //    $("#rehinBakiye").val(res.rehinBakiye);
+            //    formatNumberInput(document.getElementById("rehinBakiye"));
+            //    !posOrNeg ? $("#rehinBakiyeSpan").text(" A") : $("#rehinBakiyeSpan").text(" B");
+            //}
+        }
+        function UpdateBakiye(bakiye, bakiyeInputId, bakiyeSpanId) {
+            if (bakiye != "" && bakiye != null && parseInt(bakiye) > 0) {
+                var posOrNeg = parseInt(bakiye) >= 0 ? true : false;
+                if (!posOrNeg)
+                    bakiye = bakiye.slice(1);
+                $("#" + bakiyeInputId).val(bakiye);
+                formatNumberInput(document.getElementById(bakiyeInputId));
+                !posOrNeg ? $("#" + bakiyeSpanId).text(" A") : $("#" + bakiyeSpanId).text(" B");
+            } else {
+                $("#" + bakiyeInputId).val(0);
+                formatNumberInput(document.getElementById(bakiyeInputId));
+                !posOrNeg ? $("#" + bakiyeSpanId).text(" ") : $("#" + bakiyeSpanId).text(" ");
+            }
+        }
+    </script>
+}

@@ -1,0 +1,356 @@
+@model List<VohksHksKayitliKunyeBilgileri>
+@{
+    var color = "#ffffff";
+    var checkState = "";
+}
+<form id="kayitliKunyeForm">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="row">
+                <label for="ilkTarihKunye" class="col-sm-4 col-form-label pb-0">
+                    Ýlk Tarih
+                </label>
+                <div class="col-sm-8">
+                    <input type="date" name="ilkTarihKunye" id="ilkTarihKunye" class="form-control form-control-sm kunyeFormat" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="sonTarihKunye" class="col-sm-4 col-form-label pb-0">
+                    Son Tarih
+                </label>
+                <div class="col-sm-8">
+                    <input type="date" name="sonTarihKunye" id="sonTarihKunye" class="form-control form-control-sm kunyeFormat" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="TeslimatYeriIdKunye" class="col-sm-4 col-form-label pb-0">
+                    Teslimat Yeri
+                </label>
+                <div class="col-sm-8">
+                    @Html.DropDownList("TeslimatYeriIdKunye", ViewBag.TeslimatYerKunye as SelectList, new { @class = "form-select form-select-sm kunyeFormat" })
+                </div>
+            </div>
+            <div class="row">
+                <label for="SifatiKunye" class="col-sm-4 col-form-label pb-0">
+                    Sýfatý
+                </label>
+                <div class="col-sm-8">
+                    <select id="SifatiKunye" name="SifatiKunye" class="form-select form-select-sm kunyeFormat">
+                        @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                        {
+                            <option value="@Convert.ToInt32(sifat)">
+                                @EnumHelperFunc.GetDisplayName((Sifat)sifat)
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="kiloAltSinirKunye" class="col-sm-6 col-form-label pb-0">
+                            Kilo Alt Sýnýrý
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="kiloAltSinirKunye" id="kiloAltSinirKunye" class="form-control form-control-sm kunyeFormat" value="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="kapAltSinirKunye" class="col-sm-6 col-form-label pb-0">
+                            Kap Alt Sýnýrý
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="kapAltSinirKunye" id="kapAltSinirKunye" class="form-control form-control-sm kunyeFormat" value="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <select id="filterKunye" name="filterKunye" class="form-select form-select-sm kunyeFormat">
+                                <option value="0">Sýnýrýn Üstündekiler</option>
+                                <option value="1">Sýnýrýn Altýndakiler</option>
+                                <option value="2">Hepsi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm mt-0" id="kunyeTable" style="width: auto;">
+                <thead class="table-primary">
+                    <tr>
+                        <td>#</td>
+                        <td>Tarih</td>
+                        <td>Künye</td>
+                        <td>Mal Adý</td>
+                        <td>Mal Cinsi</td>
+                        <td>Kap</td>
+                        <td>Kilo</td>
+                        <td>Fiyat</td>
+                        <td>Gönderen Kimlik No</td>
+                        <td>Gönderen</td>
+                        <td>Üretici</td>
+                        <td>Teslimat Yeri</td>
+                        <td>Plaka No</td>
+                        <td>Belge No</td>
+                        <td>Sifatý</td>
+                        <td>Bildirim Miktarý</td>
+                        <td>Rüsum</td>
+                    </tr>
+                </thead class="table-primary">
+                <tbody class="table-group-divider">
+                    @for (var i = 0; i < Model?.Count; i++)
+                    {
+                        var item = Model.ElementAtOrDefault(i);
+                        if (item.MalId == null)
+                        {
+                            color = "#FFFF00";
+                            checkState = "";
+                        }
+                        else
+                        {
+                            color = "#FFFFFF";
+                            checkState = "checked";
+                        }
+                        <tr class="rows" ondblclick="closeModal()">
+                            <th scope="row">
+                                @(i + 1)
+                                <input type="checkbox" data-id="@item.KunyeNo" class="form-check-input ms-1" data-no="@item.KunyeNo" @checkState />
+                            </th>
+                            <td>@(item.BildirimTarihi.HasValue ? item.BildirimTarihi?.ToString("dd.MM.yyyy") : String.Empty)</td>
+                            <td>@item.KunyeNo</td>
+                            <td style="background-color: @color;" @(color == "#FFFF00" ? $"ondblclick='MallarModal({item.MalinCinsKodNo})'" : " ")>@item.HksMalinAdi</td>
+                            <td style="background-color: @color;" @(color == "#FFFF00" ? $"ondblclick='MallarModal({item.MalinCinsKodNo})'" : " ")>@item.MalinCinsi</td>
+                            <td class="column-sayi">@item.KapKalanMiktar</td>
+                            @if (item.KiloKalanMiktar != 0)
+                            {
+                                <td class="column-sayi">@item.KiloKalanMiktar</td>
+                            }
+                            else
+                            {
+                                <td class="column-sayi"></td>
+                            }
+                            <td class="column-sayi">@item.MalinSatisFiyati</td>
+                            <td>@item.MalinSahibiVergiNo</td>
+                            <td style="text-wrap: nowrap;">@item.MalinSahibiAdi</td>
+                            <td style="text-wrap: nowrap;">@item.UreticiAdi</td>
+                            <td style="text-wrap: nowrap;">@item.TeslimatYeri</td>
+                            <td>@item.PlakaNo</td>
+                            <td>@item.BelgeNo</td>
+                            <td>@item.Sifat</td>
+                            <td class="column-sayi">@item.MalinMiktari</td>
+                            <td class="column-sayi">@item.RusumMiktari</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-7">
+            <button type="button" class="btn btn-sm btn-success" onclick="hksIstekKunye()">Künyeleri Getir</button>
+            <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Vazgeç</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="sendSelectedItems()">Satýþ Ýçin Sakla</button>
+            <button type="button" class="btn btn-sm btn-secondary" style="display:none;">Hks Ürünlerini Al</button>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <label for="kunyeTuru" class="col-sm-5 col-form-label">
+                    Künye Türü
+                </label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" name="kunyeTuru" id="kunyeTuru">
+                        <option value="1" selected>Referans Künye</option>
+                        <option value="2">Nihai Tüketim</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="saklananlariSil" name="saklananlariSil" value="true">
+                    <label class="form-check-label" for="saklananlariSil">
+                        Önceki Saklananlarý Sil
+                    </label>
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="kaldirilanGoster" name="kaldirilanGoster" value="true">
+                    <label class="form-check-label" for="kaldirilanGoster">
+                        Kullanýmdan Kadýrýlanlarý Göster
+                    </label>
+                </div>
+            </div>*@
+        </div>
+    </div>
+</form>
+<script>
+    var table = null;
+    //$(document).on("show.bs.modal", "#kayitliKunyeModal", function (e) {
+    //    $.get("/TohalFaturas/KunyelerGetir", function (data, status) {
+    //        //ViewData["Kunyeler"]
+    //        console.log(data);
+    //        console.log(status);
+    //    });
+    //});
+    $(document).on("click", "tbody .rows", function (e) {
+        var state = $(this).find("input").prop("checked");
+        $(this).find("input").prop("checked", !state);
+    });
+    $(document).ready(function () {
+        table = CreateDatatable('#kunyeTable');
+        $('#kunyeTable thead th').eq(3).attr('width', '30%');
+        var table = $('#kunyeTable').DataTable().settings({
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
+        });
+
+ 
+
+
+    });
+    function closeModal() {
+        //$("#kunyeTable").find("input:checked").each(function (i, e) {
+        //    var item = $(e);
+        //    console.log(e);
+        //    // SEÇÝLEN SEÇENEKLER ÝÇÝN UYGULANACAK ÝÞLEM
+        //});
+        $("#modal").modal("hide");
+    }
+    function hksIstekKunye() {
+        var data = {
+            saklananlariSil: $("#saklananlariSil").is(":checked"),
+            kunyeTuru: $("#kunyeTuru").val(),
+            ilkTarihKunye: $("#ilkTarihKunye").val(),
+            sonTarihKunye: $("#sonTarihKunye").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "/TohalFaturas/HksIstekKunye",
+            data: data,
+            success: function (response) {
+                if (response.success) {
+                    ShowAlert(true, response.message);
+                    var tbody = $('#kunyeTable tbody');
+                    var rowHtml = "";
+
+                    tbody.empty();
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        var item = response.data[i];
+                        if (item.MalId == null) {
+                            color = "#FFFF00";
+                            checkState = "";
+                        }
+                        else {
+                            color = "#FFFFFF";
+                            checkState = "checked";
+                        }
+                        rowHtml += `
+                            <tr class="rows" ondblclick="closeModal()">
+                                <th scope="row">
+                                    ${i + 1}
+                                    <input type="checkbox" data-id="${item.KunyeId}" class="form-check-input ms-1" data-no="${item.KunyeNo}" ${checkState}/>
+                                </th>
+                                <td>${item?.BildirimTarihi}</td>
+                                <td>${item.KunyeNo}</td>
+                                <td class="colorId${item.MalinCinsKodNo}" ondblclick="MallarModal(${item.MalinCinsKodNo})" style="background-color:${color}">${item.HksMalinAdi}</td>
+                                <td class="colorId${item.MalinCinsKodNo}" ondblclick="MallarModal(${item.MalinCinsKodNo})" style="background-color:${color}">${item.MalinCinsi}</td>
+                                <td class="column-sayi">${item.KapKalanMiktar}</td>
+                                <td class="column-sayi">${item.KiloKalanMiktar !== 0 ? item.KiloKalanMiktar : ''}</td>
+                                <td class="column-sayi">${item.MalinSatisFiyati}</td>
+                                <td>${item.MalinSahibiVergiNo}</td>
+                                <td>${item.MalinSahibiAdi != null ? item.MalinSahibiAdi : " "}</td>
+                                <td>${item.UreticiAdi != null ? item.UreticiAdi : " "}</td>
+                                <td>${item.TeslimatYeri != null ? item.TeslimatYeri : " "}</td>
+                                <td>${item.PlakaNo != null ? item.PlakaNo : " "}</td>
+                                <td>${item.BelgeNo != null ? item.BelgeNo : " "}</td>
+                                <td>${item.Sifat}</td>
+                                <td>${item.MalinMiktari}</td>
+                                <td>${item.RusumMiktari}</td>
+                            </tr>
+                        `;
+                    }
+                    tbody.append(rowHtml);
+                }
+            },
+            error: function (error) {
+                ShowAlert(false, "Fatura Hata " + error);
+
+            }
+        });
+    }
+
+    function MallarModal(cinsKod) {
+        $.ajax({
+            url: "/Common/MalAdlar",
+            type: "GET",
+            data: { isKunye: "True", target: "empty", malCinsKod: cinsKod },
+            success: function (e) {
+                loadModal(e, "empty");
+            }
+        });
+    }
+    $(".kunyeFormat").each(function (index, elm) {
+        $(elm).on("change", function (ev) {
+            KunyelerFormat();
+        });
+    });
+    function KunyelerFormat() {
+        var visibleRows = $("tbody .rows");
+    };
+    
+</script>
+
+<script>
+    function sendSelectedItems() {
+        var selectedKunyeNos = [];
+
+        // Seçili satýrlarý bul
+        var selectedRows = document.querySelectorAll('.rows input[type="checkbox"]:checked');
+
+        // Seçili satýrlarýn kunyeNo'larýný al
+        selectedRows.forEach(function (row) {
+            var kunyeNo = row.getAttribute('data-no');
+            selectedKunyeNos.push(kunyeNo);
+        });
+
+        // Action'a gönder
+        if (selectedKunyeNos.length > 0) {
+            // AJAX isteði ile action'a gönderme iþlemini gerçekleþtir
+            $.ajax({
+                url: '/TohalFaturas/SatisKunyeSakla',
+                type: 'POST', // veya 'GET' olarak ayarlayabilirsiniz
+                data: { kunyeNoList: selectedKunyeNos },
+                success: function (result) {
+                    ShowAlert(true, "Künye/Künyeler saklandý.");
+                },
+                error: function (error) {
+            
+                        ShowAlert(false, "Künye Saklama Hata " + error.message);
+                }
+            });
+        } else {
+            console.log("Hiçbir satýr seçili deðil.");
+        }
+    }
+</script>
+

@@ -1,0 +1,110 @@
+﻿@model VohalFatura
+@{
+    ViewBag.title = "Fatura Aktarma";
+
+    ViewBag.pagetitle = "Satış İşlemleri";
+    ViewBag.ptitle = "Fatura Aktarma";
+    var WorkSpaces = DependencyResolver.Current.GetService<OfisHal.Services.ITenantService>().GetWorkSpaces(null, true);
+
+}
+
+<form id="faturaAktarmaForm">
+    <div class="modal fade" id="faturaAktarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="row mb-5">
+                        @Html.Label(OfisHal.Core.Constants.WorkSpaceCookieName, "Lütfen aktaracağınız veritabanını seçiniz", new { @class = "col-sm-6 col-form-label pb-0", required = "required" })
+                        <div class="col-sm-6">
+                            @Html.DropDownList(OfisHal.Core.Constants.WorkSpaceCookieName, WorkSpaces, "-Çalışma Alanı Seç-", new { @class = "form-control-sm" })
+                        </div>
+                    </div>
+                    <input type="hidden" name="aktarFaturaId" id="aktarFaturaId" class="form-control form-control-sm" value="@Model.FaturaId" />
+                    <div class="row my-1">
+                        <div class="col">
+                            <div class="row">
+                                <label for="startDate" class="col-sm-4 col-form-label pb-0">
+                                    İlk Tarih
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="date" name="startDate" id="startDate" class="form-control form-control-sm" value="@Model.Tarih.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <label for="endDate" class="col-sm-4 col-form-label pb-0">
+                                    Son Tarih
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="date" name="endDate" id="endDate" class="form-control form-control-sm" value="@Model.Tarih.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <label for="firstInvoiceNo" class="col-sm-4 col-form-label pb-0">
+                                    İlk Fatura No
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="firstInvoiceNo" id="firstInvoiceNo" class="form-control form-control-sm" value="@Model.FaturaNo" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <label for="lastInoviceNo" class="col-sm-4 col-form-label pb-0">
+                                    Son Fatura No
+                                </label>
+                                <div class="col-sm-8">
+
+                                    <input type="text" name="lastInoviceNo" id="lastInoviceNo" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col d-flex justify-content-center">
+                            <button onclick="faturaAktar()" class="btn btn-success">Aktar</button>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-1">
+                        <div class="col-md-6">
+                            <h6 class="text-center">Aktarılan Faturalar</h6>
+                            <ul class="list-group list-group-flush border-top" data-simplebar style="max-height: 190px;">
+                                @*<li class="list-group-item py-2">aaa</li>*@
+
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-center">Hata Mesajları</h6>
+                            <ul class="list-group list-group-flush border-top" data-simplebar style="max-height: 190px;">
+                                @*<li class="list-group-item py-2">bbbb</li>*@
+                            </ul>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    @*<button id="faturaAktarBtn" type="button" class="btn btn-primary">
+                            Kaydet
+                        </button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

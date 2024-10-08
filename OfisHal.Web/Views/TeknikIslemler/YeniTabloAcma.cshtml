@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.title = "Yeni Tablo Açma";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Servis İşlemleri";
+    ViewBag.ptitle = "Yeni Tablo Açma";
+}
+@{
+    ViewBag.title = "Devir Ayarları";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Servis İşlemleri";
+    ViewBag.ptitle = "Devir Ayarları";
+}
+<form method="post">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="tumunuIsaretle" name="tumunuIsaretle">
+                <label class="form-check-label" for="tumunuIsaretle">
+                    Tümünü İşaretle
+                </label>
+            </div>
+            <div class="border p-2">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input tumu" type="checkbox" id="cariHareket" name="cariHareket">
+                            <label class="form-check-label" for="cariHareket">
+                                Cari Hareket
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input tumu" type="checkbox" id="mustahsilFaturasi" name="mustahsilFaturasi">
+                            <label class="form-check-label" for="mustahsilFaturasi">
+                                Müstahsil Fatuası
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input tumu" type="checkbox" id="hesapHareketi" name="hesapHareketi">
+                            <label class="form-check-label" for="hesapHareketi">
+                                Hesap Hareketi
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input tumu" type="checkbox" id="satisFaturasi" name="satisFaturasi">
+                            <label class="form-check-label" for="satisFaturasi">
+                                Satış Faturası
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-check">
+                            <input class="form-check-input tumu" type="checkbox" id="kapHareketi" name="kapHareketi">
+                            <label class="form-check-label" for="kapHareketi">
+                                Kap Hareketi
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button class="btn btn-sm btn-success">Oluştur</button>
+                    <button class="btn btn-sm btn-danger">Vazgeç</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    var chks = document.getElementsByClassName("tumu");
+    document.getElementById("tumunuIsaretle").addEventListener("change", (e) => {
+        if (e.target.checked) {
+            for (var i = 0; i < chks.length; i++) {
+                chks[i].checked = true;
+                chks[i].disabled = true;
+            }
+        } else {
+            for (var i = 0; i < chks.length; i++) {
+                chks[i].checked = false;
+                chks[i].disabled = false;
+            }
+        }
+    });
+</script>

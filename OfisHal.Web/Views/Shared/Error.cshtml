@@ -1,0 +1,19 @@
+﻿@model HandleErrorInfo
+@{
+    ViewData["Title"] = "Hata";
+}
+<main>
+    <hgroup>
+        <h1 class="text-danger">Hata</h1>
+        <h4 class="text-danger">
+            @if (Model.Exception is ArgumentNullException argEx)
+            {
+                @argEx.ParamName @:parametresi boş olduğundan hata oluştu
+            }
+            else
+            {
+                @:İsteğiniz işlenirken bir hata oluştu.
+            }
+        </h4>
+    </hgroup>
+</main>

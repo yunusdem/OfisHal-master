@@ -1,0 +1,570 @@
+﻿
+@{
+    var faturaModel4 = (List<OfisHal.Web.Models.VohalObSatiri>)ViewData["faturaModel4"];
+}
+<script>
+    flatpickr.defaultConfig = {
+        locale: flatpickr.l10ns.tr
+    };
+    var dataView4xq;
+    var grid4xq;
+    var data4xq = [];
+    var columns4xq = [
+        { id: "id", name: "ID", width: 10, field: "id", cssClass: "cell-title", editable: false },
+        { id: "cekno4xq", name: "Senet No", field: "cekno4xq", editor: Slick.Editors.Text },
+        { id: "vadetarihi4xq", name: "Vade Tarihi", field: "vadetarihi4xq", editor: Slick.Editors.Flatpickr },
+        { id: "meblag4xq", name: "Meblağ", field: "meblag4xq", cssClass: "column-sayi", editor: Slick.Editors.Integer },
+        { id: "aciklama4xq", name: "Açıklama", field: "aciklama4xq", editor: Slick.Editors.Text },
+    ];
+
+    var options4xq = {
+        columnPicker: {
+            columnTitle: "Sütunlar",
+            hideForceFitButton: false,
+            hideSyncResizeButton: false,
+            forceFitTitle: "Genişliğe sığdırmaya zorla",
+            syncResizeTitle: "Senkron yeniden boyutlandırma",
+        },
+        editable: true,
+        enableAddRow: true,
+        enableCellNavigation: true,
+        asyncEditorLoading: false,
+        rowHeight: 40,
+        forceFitColumns: true,
+        createFooterRow: true,
+        showFooterRow: true,
+        footerRowHeight: 28
+    };
+
+    function UpdateAllTotals4xq() {
+        var columnIdx = grid4xq.getColumns().length;
+        while (columnIdx--) {
+            UpdateTotal4xq(columnIdx, grid4xq);
+        }
+    }
+
+
+
+    function UpdateTotal4xq(cell, grid4xq) {
+        var columnId = grid4xq.getColumns()[cell].id;
+
+        // Sadece istenen sütunlara odaklan
+        if (["meblag4xq"].includes(columnId)) {
+            var total = 0;
+            var i = data4xq.length;
+            while (i--) {
+
+                total += parseFloat(data4xq[i][columnId]);
+
+            }
+
+            var columnElement = grid4xq.getFooterRowColumn(columnId);
+            //total NaN ise 0 yap short if ile
+            total = isNaN(total) ? 0 : total;
+            columnElement.textContent = `${total}`;
+
+            // tutar toplamını hesapla ve fatTop id li inputa yaz
+            if (columnId === "meblag4xq") {
+                var vadeTarihiToplam = 0;
+                for (var i = 0; i < data4xq.length; i++) {
+                    vadeTarihiToplam += parseDateToMillis(data4xq[i].vadetarihi4xq);
+                }
+                var averageMillis = vadeTarihiToplam / data4xq.length;
+
+                // Ortalama tarihi elde etme
+                var averageDate = new Date(averageMillis);
+
+                // Ortalama tarihi formatlama
+                var averageDateString = ("0" + averageDate.getDate()).slice(-2) + "/" +
+                    ("0" + (averageDate.getMonth() + 1)).slice(-2) + "/" +
+                    averageDate.getFullYear();
+                total = total.toFixed(2);
+
+                $("#geneltoplam4").attr('value', total.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                $("#ortalamavade4").attr('value', averageDateString); // Ondalık ayraç olarak virgül kullan
+                $("#itibarideger4").attr('value', total.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+
+                var geneltoplam = [1, 2, 3, 4].map(function (i) {
+                    return parseFloatOrZero("#geneltoplam" + i);
+                }).reduce((a, b) => a + b, 0).toFixed(2);
+
+                var itibarideger = [1, 2, 3, 4].map(function (i) {
+                    return parseFloatOrZero("#itibarideger" + i);
+                }).reduce((a, b) => a + b, 0).toFixed(2);
+
+                var ortalamavade = [1, 2, 3, 4].map(function (i) {
+                    return getValue("#ortalamavade" + i);
+                });
+
+                var ortalamaDateString = "";
+                if (ortalamavade.every(v => v !== "")) {
+                    var ortalamaVadeToplam = ortalamavade.map(parseDateToMillis).reduce((a, b) => a + b, 0);
+                    var ortalamaMillis = ortalamaVadeToplam / 4;
+                    var ortalamaDate = new Date(ortalamaMillis);
+                    ortalamaDateString = ("0" + ortalamaDate.getDate()).slice(-2) + "/" +
+                        ("0" + (ortalamaDate.getMonth() + 1)).slice(-2) + "/" +
+                        ortalamaDate.getFullYear();
+                }
+
+                $("#genelToplam").attr('value', geneltoplam.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                $("#genelOrtalamaVade").attr('value', ortalamaDateString); // Ondalık ayraç olarak virgül kullan
+                $("#genelItibariDeger").attr('value', itibarideger.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                if (activetab == 4) {
+                    $("#toplam").attr('value', total.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                    $("#ortalamaVade").attr('value', averageDateString); // Ondalık ayraç olarak virgül kullan
+                    $("#itibariDeger").attr('value', total.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                }
+            }
+        }
+        else {
+            var columnElement = grid4xq.getFooterRowColumn(columnId);
+            columnElement.textContent = "-";
+        }
+
+    }
+
+
+    function toggleFilterRow4xq() {
+        grid4xq.setTopPanelVisibility(!grid4xq.getOptions().showTopPanel);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const savedColumnStates4xq = loadcolumnSettingsOdeme4xq();
+
+    @if (faturaModel4.Count == 0)
+    {
+        @:var d = (data4xq[0] = {});
+        @:d["id"] = 1;
+        @:d["satirId4xq"] = "";
+        @:d["cekno4xq"] = "";
+        @:d["guid4xq"] = "@Html.Raw(Guid.Empty)";
+        @:d["vadetarihi4xq"] = "01/01/2024";
+        @:d["meblag4xq"] = "";
+        @:d["aciklama4xq"] = "";
+                @:d["odemeAraciId4xq"] = "";
+    }
+    else
+    {
+        for (var i = 0; i < faturaModel4.Count; i++)
+        {
+            @:var d = (data4xq[@i] = {});
+            @:d["id"] = @i+1;
+            @:d["cekno4xq"] = "@Html.Raw(faturaModel4[i].OdemeAraciNo)";
+            @:d["guid4xq"] = "@Html.Raw(Guid.Empty)";
+            @:d["vadetarihi4xq"] = "@Html.Raw(faturaModel4[i].VadeTarihi.ToString("dd/MM/yyyy").Replace('.', '/'))";
+            @:d["meblag4xq"] = parseFloat('@Html.Raw(faturaModel4[i].Meblag)'.replace(',', '.'));
+            @:d["aciklama4xq"] = "@Html.Raw(faturaModel4[i].Aciklama)";
+            @:d["odemeAraciId4xq"] = "@Html.Raw(faturaModel4[i].OdemeAraciId)";
+        }
+    }
+
+        dataView4xq = new Slick.Data.DataView({ inlineFilters: true });
+        grid4xq = new Slick.Grid("#myGrid4xq", dataView4xq, columns4xq, options4xq);
+        grid4xq.setSelectionModel(new Slick.RowSelectionModel());
+
+        var columnpicker4xq = new Slick.Controls.ColumnPicker(columns4xq, grid4xq, {
+            ...options4xq,
+        });
+
+
+        // Sütun seçim ayarları değiştikçe localStorage'a kaydet
+        columnpicker4xq.onColumnsChanged.subscribe(function (e, args) {
+            var storedColumns = grid4xq.getColumns();
+            savecolumnSettingsOdeme4xq(storedColumns);
+        });
+        grid4xq.onColumnsResized.subscribe(function (e, args) {
+            var storedColumns = grid4xq.getColumns();
+            savecolumnSettingsOdeme4xq(storedColumns);
+        });
+        if (savedColumnStates4xq) {
+            grid4xq.setColumns(savedColumnStates4xq);
+        }
+
+        grid4xq.onCellChange.subscribe(async function (e, args) {
+
+            var rowId = args.row;
+
+
+            if (args.cell === grid4xq.columnsById["meblag4xq"] ||
+                args.cell === grid4xq.columnsById["vadetarihi4xq"]) {
+                UpdateAllTotals4xq();
+            }
+
+            if (args.cell === grid4xq.columnsById["id"]) {
+                if (Number.isInteger(args.item.id)) {
+                    dataView4xq.updateItem(args.item.id, args.item);
+                } else {
+                    // Çevrim yap ve kontrol et.
+                    var itemIdAsInteger = parseInt(args.item.id, 10);
+                    dataView4xq.updateItem(itemIdAsInteger, args.item);
+                }
+
+
+            }
+
+            switch (args.column.field) {
+                case "banka":
+                    var val = await gridGetData("/Common/maddeGetir?isGrid=True&target=gridBanka&tur=3&inputType=name", args.item[args.column.field], "banka");
+                    val.result ? updateBankaCell(val.data4xq.TabloMaddesiId, val.data4xq.Ad) : null;
+                    break;
+            }
+
+        });
+
+
+        grid4xq.onKeyDown.subscribe(function (e) {
+            var activeCell = grid4xq.getActiveCell();
+
+            if (activeCell != null) {
+                var column = grid4xq.getColumns()[activeCell.cell];
+                if (column.cssClass == "column-sayi") {
+                    //harf girişini engelle
+                    if (
+                        (e.key.length === 1 && e.key.match(/[^0-9.]/)) || // rakam veya nokta değilse engelle
+                        (e.key === "." && $(e.target).val().includes(".")) // nokta varsa ve yeni nokta giriliyorsa engelle
+                    ) {
+                        e.preventDefault();
+                    }
+
+
+                }
+            }
+
+            if (e.key === 'F12') {
+                var formatterColumns = ["banka"];
+                var field = column.field;
+                // İlgili buttonun id'sini belirle
+                if (formatterColumns.includes(field)) {
+
+                    var buttonId = field + "Button4xq";
+                    var button = document.getElementById(buttonId);
+                    if (button) {
+                        button.click();
+                    }
+
+                    e.preventDefault();
+                }
+            }
+
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+
+                DeleteConfirm().then(p => {
+                    if (p.isConfirmed) {
+                        // DataView'dan satırı kaldır
+                        dataView4xq.deleteItem(activeCell.row + 1);
+
+                        // İlgili satırı grid üzerinden kaldır
+                        grid4xq.invalidateRow(activeCell.row + 1);
+                        grid4xq.render();
+
+                        // Eğer gerekiyorsa, veriyi güncelle
+                        dataView4xq.refresh();
+                    }
+                });
+            }
+
+            if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) {
+                e.preventDefault();
+
+                onAddNewRow4xq()
+            }
+
+            if (e.which === 13) { // Enter tuşu
+
+                if (grid4xq.getActiveCell().row === dataView4xq.getLength()) {
+                    onAddNewRow4xq();
+                }
+            }
+
+            // select all rows on ctrl-a
+            if (e.which != 65 || !e.ctrlKey) {
+                return false;
+            }
+            var rows = [];
+            for (var i = 0; i < dataView4xq.getLength(); i++) {
+                rows.push(i);
+            }
+
+            grid4xq.setSelectedRows(rows);
+            e.preventDefault();
+        });
+
+        dataView4xq.onRowCountChanged.subscribe(function (e, args) {
+            grid4xq.updateRowCount();
+            grid4xq.render();
+        });
+
+        dataView4xq.onRowsChanged.subscribe(function (e, args) {
+            grid4xq.invalidateRows(args.rows);
+            grid4xq.render();
+        });
+
+        grid4xq.onClick.subscribe(function (e) {
+            var cell = grid4xq.getCellFromEvent(e);
+            var clickedColumn = grid4xq.getColumns()[cell.cell];
+
+            if (cell.row === dataView4xq.getLength() && grid4xq.getCellFromEvent(e).cell === 0) {
+                onAddNewRow4xq();
+            }
+        });
+
+        grid4xq.onAddNewRow.subscribe(function (e, args) {
+
+            var newDataRow = {
+                id: dataView4xq.getLength() + 1, // Yeni bir numara oluştur
+                satirId4xq: "",
+                guid4xq: "@Html.Raw(Guid.Empty)",
+                cekno4xq: "",
+                vadetarihi4xq: "",
+                meblag4xq: "",
+                aciklama4xq: ""
+            };
+            if (!isLastRowEmpty4xq()) {
+                Slick.Utils.extend(newDataRow, args.item);
+                dataView4xq.addItem(newDataRow);
+                dataView4xq.refresh();
+            }
+        });
+
+
+
+        function onAddNewRow4xq() {
+
+            var newDataRow = {
+                id: dataView4xq.getLength() + 1, // Yeni bir numara oluştur
+                satirId4xq: "",
+                guid4xq: "@Html.Raw(Guid.Empty)",
+                cekno4xq: "",
+                vadetarihi4xq: "",
+                meblag4xq: "",
+                aciklama4xq: ""
+            };
+            if (!isLastRowEmpty4xq()) {
+                dataView4xq.addItem(newDataRow);
+                dataView4xq.refresh();
+            }
+        }
+        function isLastRowEmpty4xq() {
+            var lastRow = data4xq[data4xq.length - 1];
+            return !lastRow.cekno4xq.trim();
+        }
+
+        var dataArray4xq = data4xq;
+
+        dataView4xq.beginUpdate();
+        dataView4xq.setItems(dataArray4xq);
+        dataView4xq.endUpdate();
+
+        // if you don't want the items that are not visible (due to being filtered out
+        // or being on a different page) to stay selected, pass 'false' to the second arg
+        dataView4xq.syncGridSelection(grid4xq, true);
+        //Set last row's Kod field selected and editable on page load
+        //document.getElementById("CariKod").focus();
+    });
+
+    // BANKA
+
+
+    function updateRowValues4xq(rowId, type) {
+        //var miktar = parseInt(data[rowId].darali, 10) - parseInt(data[rowId].dara, 10);
+        //var adet = parseInt(data[rowId].adet, 10);
+
+
+        // Grid'i güncelle
+        grid4xq.updateRow(rowId);
+
+    }
+
+
+    // localStorage üzerinde sütun seçim ayarlarını kaydet
+    function savecolumnSettingsOdeme4xq(columnStates) {
+        var columnsToSave = columnStates.map(column => {
+            var formattedColumn = {
+                ...column,
+                formatter: column.formatter ? column.formatter.toString() : null
+            };
+
+            //// Eğer editor bir fonksiyon ise, onu ad olarak kaydet
+            //if (typeof column.editor === 'function') {
+            //    formattedColumn.editor = 'function';
+            //} else if (typeof column.editor === 'object') {
+            //    // Eğer editor bir nesne ise, tüm özelliklerini kaydet
+            //    formattedColumn.editor = { ...column.editor };
+            //} else {
+            //    formattedColumn.editor = null;
+            //}
+
+            if (column.editor != undefined && column.editor != null) {
+                formattedColumn.editor = column.editor.name;
+            }
+
+            return formattedColumn;
+        });
+
+        localStorage.setItem('columnSettingsOdeme4xq', JSON.stringify(columnsToSave));
+    }
+
+
+    $('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+        if (e.target.getAttribute('data-bs-target') === '#pills-firmasenedi') {
+            activetab = 4;
+            UpdateAllTotals4xq();
+            grid4xq.resizeCanvas();
+        }
+    });
+
+    // localStorage'dan sütun seçim ayarlarını al
+    function loadcolumnSettingsOdeme4xq() {
+        const savedColumnStates = localStorage.getItem('columnSettingsOdeme4xq');
+        if (savedColumnStates) {
+            const columns = JSON.parse(savedColumnStates);
+            return columns.map(column => {
+                var restoredColumn = {
+                    ...column,
+                    formatter: column.formatter ? new Function('return ' + column.formatter)() : null
+                };
+
+                // Eğer editor 'function' olarak kaydedilmişse, geri yüklenirken bir fonksiyon olarak atandı
+                //if (column.editor === 'function') {
+                //    restoredColumn.editor = Slick.Editors.Text;
+                //} else {
+                //    restoredColumn.editor = null;
+                //}
+
+
+                if (column.editor === "TextEditor") {
+                    restoredColumn.editor = Slick.Editors.Text;
+                }
+                else if (column.editor === "IntegerEditor") {
+                    restoredColumn.editor = Slick.Editors.Integer;
+                }
+                else if (column.editor === "_FloatEditor") {
+                    restoredColumn.editor = Slick.Editors.Float;
+                }
+                else {
+                    restoredColumn.editor = null;
+                }
+
+                return restoredColumn;
+            });
+        }
+        return null;
+    }
+
+    function postGridElements4xq() {
+        var gridData = grid4xq.getData();
+
+        grid4xq.getEditController().commitCurrentEdit();
+        grid4xq.resetActiveCell();
+
+        var requestDataList = [];
+
+        for (var i = 0; i < gridData.items.length; i++) {
+            var rowData = gridData.items[i];
+            var formattedDate = validateDate(rowData.vadetarihi4xq, "MM/dd/yyyy");
+            if (rowData.cekno4xq !== "" && rowData.cekno4xq !== null) {
+
+                var requestData = {
+                    SatirNo: rowData.id - 1,
+                    Guid: "@Html.Raw(Guid.Empty)",
+                    OdemeAraciNo: rowData.cekno4xq,
+                    Vadetarihi: formattedDate ? formattedDate : null,
+                    Meblag: parseFloat(rowData.meblag4xq),
+                    Aciklama: rowData.aciklama4xq,
+                    OdemeAraciTuru: 3,
+                    OdemeAraciId: rowData.odemeAraciId4xq,
+                    OdemeAraciSahibi: true
+                };
+
+                for (const key in requestData) {
+                    if (requestData.hasOwnProperty(key) && typeof requestData[key] === 'number' && isNaN(requestData[key])) {
+                        requestData[key] = 0;
+                    }
+                }
+
+                requestDataList.push(requestData);
+            }
+        }
+
+        var requestPostData = JSON.stringify(requestDataList);
+
+        $.ajax({
+            url: '/CekSenetIslemleri/CreateFaturaSatir',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: requestPostData,
+            success: function (responsedata) {
+                if (responsedata.success) {
+                    faturaSave();
+                }
+                else {
+                    ShowAlert(false, "Hata Oluştu " + responsedata.message);
+                }
+                //console.log(':', responsedata);
+            },
+            error: function (error) {
+                ShowAlert(false, "Hata Oluştu " + error);
+                //console.error('Hata oluştu:', error);
+            }
+        });
+    }
+
+
+
+</script>
+<script>
+
+    function updateBankaCell4xq(bankaId, bankaAd) {
+        // Tıklanan satırın indisini al
+        var rowId = grid4xq.getActiveCell().row;
+
+        // SlickGrid'deki veriyi güncelle
+        data[rowId].bankaId = bankaId;
+        data[rowId].banka = bankaAd;
+
+        // SlickGrid'deki satırı güncelle
+        grid4xq.updateRow(rowId);
+        UpdateAllTotals4xq();
+
+    }
+
+    function goToNextCol4xq() {
+
+        var activeCell = grid4xq.getActiveCell();
+        var column = grid4xq.getColumns()[activeCell.cell];
+
+        var nextCell = null;
+        if (activeCell) {
+            nextCell = {
+                row: activeCell.row,
+                cell: activeCell.cell + 1
+            };
+        }
+
+        if (nextCell && nextCell.cell < grid4xq.getColumns().length) {
+            grid4xq.gotoCell(nextCell.row, nextCell.cell, true);
+        }
+    }
+
+    function goToPrevColumn4xq(remove) {
+        var activeCell = grid4xq.getActiveCell();
+
+        // Eğer aktif bir hücre varsa
+        if (activeCell) {
+            // Aktif hücrenin sütununu al
+            var currentColumn = activeCell.cell;
+
+            // Eğer sütun 0'dan büyükse, bir önceki sütuna git
+            if (currentColumn > 0) {
+                grid4xq.gotoCell(activeCell.row, currentColumn - 1, true);
+                var prevColumnField = grid4xq.getColumns()[currentColumn - 1].field;
+                data[activeCell.row][prevColumnField] = '';
+                grid4xq.updateRow(activeCell.row);
+            }
+        }
+    }
+
+</script>
+

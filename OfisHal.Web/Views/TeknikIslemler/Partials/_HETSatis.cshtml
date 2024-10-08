@@ -1,0 +1,587 @@
+@model VohalSatisTanimlari
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="SatIadesizKapKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Iadesiz Kap KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="SatIadesizKapKdvOrani" id="SatIadesizKapKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.SatIadesizKapKdvOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatVerMukMalKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Vergi Mükellerf Mal KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="SatVerMukMalKdvOrani" id="SatVerMukMalKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.SatVerMukMalKdvOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatDigerMalKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            Diðer Mal KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="SatDigerMalKdvOrani" id="SatDigerMalKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.SatDigerMalKdvOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="satisRusumOranCheck">
+            <span>4-</span>
+            Rüsum Oraný %
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="satisRusumOranCheck" name="satisRusumOranCheck" value="true" @(Model.SatRusumOrani != null ? "checked" : "")>
+            <input type="text" data-type="num" id="SatRusumOrani" name="SatRusumOrani" class="form-control form-control-sm" maxlength="5" @(Model.SatRusumOrani == null ? "disabled" : "") value="@(Model.SatRusumOrani != null ? Model.SatRusumOrani : "")">
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatKiloOkumaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            Kilo Okuma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatKiloOkumaSekli" id="SatKiloOkumaSekli">
+                <option value="0" @(Model.SatKiloOkumaSekli == 0 ? "selected" : "")>Daralý / Dara</option>
+                <option value="1" @(Model.SatKiloOkumaSekli == 1 ? "selected" : "")>Daralý / Safi</option>
+                <option value="2" @(Model.SatKiloOkumaSekli == 2 ? "selected" : "")>Dara / Safi</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatCiftciTuccarKdv">
+            <span>6-</span>
+            Çiftçi Malýna Kdv Uygulanmasýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatCiftciTuccarKdv" name="SatCiftciTuccarKdv" value="true" @(Model.SatCiftciTuccarKdv == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatKdvAtlama">
+            <span>7-</span>
+            Kdv Atlama
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatKdvAtlama" name="SatKdvAtlama" value="true" @(Model.SatKdvAtlama == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatRusumAtlama">
+            <span>8-</span>
+            Rüsum Atlama
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatRusumAtlama" name="SatRusumAtlama" value="true" @(Model.SatRusumAtlama == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatDaraDaraliAtlama">
+            <span>9-</span>
+            Dara / Daralý Atlama
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatDaraDaraliAtlama" name="SatDaraDaraliAtlama" value="true" @(Model.SatDaraDaraliAtlama == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatDaraRehinIliski">
+            <span>10-</span>
+            Dara - Rehin Ýliþki
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatDaraRehinIliski" name="SatDaraRehinIliski" value="true" @(Model.SatDaraRehinIliski == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatAyniMallariTopla">
+            <span>11-</span>
+            Ayný Mallarý Topla
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatAyniMallariTopla" name="SatAyniMallariTopla" value="true" @(Model.SatAyniMallariTopla == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatMalariSirala">
+            <span>12-</span>
+            Mallarý Sýrala
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatMalariSirala" name="SatMalariSirala" value="true" @(Model.SatMalariSirala == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatSatirdaFiatKontrol">
+            <span>13-</span>
+            Satýrda Fiyat Kontrolü
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatSatirdaFiatKontrol" name="SatSatirdaFiatKontrol" value="true" @(Model.SatSatirdaFiatKontrol == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatVeresiyeUyarisi">
+            <span>14-</span>
+            Veresiye Uyarýsý
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatVeresiyeUyarisi" name="SatVeresiyeUyarisi" value="true" @(Model.SatVeresiyeUyarisi == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatRehinOtomatikHesaplansin">
+            <span>15-</span>
+            Rehin Otomatik Hesaplansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatRehinOtomatikHesaplansin" name="SatRehinOtomatikHesaplansin" value="true" @(Model.SatRehinOtomatikHesaplansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatIadesizKapHesaplansin">
+            <span>16-</span>
+            Ýadesiz Kap Otomatik Hesaplansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatIadesizKapHesaplansin" name="SatIadesizKapHesaplansin" value="true" @(Model.SatIadesizKapHesaplansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatSatFaturaSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>
+            Satýþ Faturasý Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" name="SatSatFaturaSiraNo" id="SatSatFaturaSiraNo" class="form-control form-control-sm" value="@Model.SatSatFaturaSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatRehindeMarkaVar">
+            <span>18-</span>
+            Rehin Satýrýnda Marka Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatRehindeMarkaVar" name="SatRehindeMarkaVar" value="true" @(Model.SatRehindeMarkaVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatRehinIadeIslenecegiHsp" class="col-sm-6 col-form-label pb-0">
+            <span>19-</span>
+            Rehin Ýade Ýþleneceði Hesap
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatRehinIadeIslenecegiHsp" id="SatRehinIadeIslenecegiHsp">
+                <option value="0" @(Model.SatRehinIadeIslenecegiHsp == 0 ? "selected" : "")>Kasa</option>
+                <option value="1" @(Model.SatRehinIadeIslenecegiHsp == 1 ? "selected" : "")>Müþteri</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatIskontoVar">
+            <span>20-</span>
+            Ýskonto Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatIskontoVar" name="SatIskontoVar" value="true" @(Model.SatIskontoVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatFaturaMalGorunumSekli" class="col-sm-6 col-form-label pb-0">
+            <span>21-</span>
+            Fatura Mal Görünüm Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatFaturaMalGorunumSekli" id="SatFaturaMalGorunumSekli">
+                <option value="0" @(Model.SatFaturaMalGorunumSekli == 0 ? "selected" : "")>Kod</option>
+                <option value="1" @(Model.SatFaturaMalGorunumSekli == 1 ? "selected" : "")>Ad</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatRusumKdvIliskisi" class="col-sm-6 col-form-label pb-0">
+            <span>22-</span>
+            Rüsum Kdv Ýliþkisi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatRusumKdvIliskisi" id="SatRusumKdvIliskisi">
+                <option value="0" @(Model.SatRusumKdvIliskisi == 0 ? "selected" : "")>Rüsüm Kdvye Dahil Deðildir</option>
+                <option value="1" @(Model.SatRusumKdvIliskisi == 1 ? "selected" : "")>Mal Bedeli Üzerine Rüsum Eklenerek</option>
+                <option value="2" @(Model.SatRusumKdvIliskisi == 2 ? "selected" : "")>Direkt Rüsumdan Kdv Alarak</option>
+            </select>
+        </div>
+    </div>
+    @*KONTROL EDÝLECEK*@
+    <div class="row">
+        <label for="SatRusumKdvGosterimi" class="col-sm-6 col-form-label pb-0">
+            <span>23-</span>
+            Rüsum Kdv Gösterimi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatRusumKdvGosterimi" id="SatRusumKdvGosterimi">
+                @if (Model.SatRusumKdvIliskisi == 2)
+                {
+                    <option value="0" @(Model.SatRusumKdvGosterimi == 0 ? "selected" : "")>Satýr Kýsmýnda</option>
+                    <option value="1" @(Model.SatRusumKdvGosterimi == 1 ? "selected" : "")>Genel Toplam Kýsmýnda</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="satisRusumKdvOraniCheck">
+            <span>24-</span>
+            Rüsum Kdv Oraný
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="satisRusumKdvOraniCheck" name="satisRusumKdvOraniCheck" value="true" @(Model.SatRusumKdvOrani != null ? "checked" : "")>
+            <input type="number" id="SatRusumKdvOrani" name="SatRusumKdvOrani" class="form-control form-control-sm" min="0" max="99" @(Model.SatRusumKdvOrani == null ? "disabled" : "") value="@(Model.SatRusumKdvOrani != null ? Model.SatRusumKdvOrani : "")">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatStokKunyesiDegistir">
+            <span>25-</span>
+            Stok Künyesi Deðiþtir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatStokKunyesiDegistir" name="SatStokKunyesiDegistir" value="true" @(Model.SatStokKunyesiDegistir != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatDokumdenKunyeVar">
+            <span>26-</span>
+            Dökümden Künye Ver
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatDokumdenKunyeVar" name="SatDokumdenKunyeVar" value="true" @(Model.SatDokumdenKunyeVar != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatFaturaSatirSayisi">
+            <span>27-</span>
+            Fatura Satýr Sayýsý
+        </label>
+        <div class="col-sm-6">
+            <input type="number" id="SatFaturaSatirSayisi" name="SatFaturaSatirSayisi" class="form-control form-control-sm" min="0" max="999" value="@Model.SatFaturaSatirSayisi">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatStokMiktariGoster">
+            <span>28-</span>
+            Stok Miktarýný Göster
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatStokMiktariGoster" name="SatStokMiktariGoster" value="true" @(Model.SatStokMiktariGoster != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatSubeAdresiniKullan">
+            <span>29-</span>
+            Faturada Þube Adresi Kullanýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatSubeAdresiniKullan" name="SatSubeAdresiniKullan" value="true" @(Model.SatSubeAdresiniKullan != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatKunyesizSatirlardaUyar">
+            <span>30-</span>
+            Künyesiz Fatura Kesilirken Uyar
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatKunyesizSatirlardaUyar" name="SatKunyesizSatirlardaUyar" value="true" @(Model.SatKunyesizSatirlardaUyar != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatRusumuHksdenAl">
+            <span>31-</span>
+            Rüsum HKS den Alýnsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatRusumuHksdenAl" name="SatRusumuHksdenAl" value="true" @(Model.SatRusumuHksdenAl != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatDokumRusumuAsilabilir">
+            <span>32-</span>
+            HKS Rüsumu Tanýmdaki Rüsumu Geçebilir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatDokumRusumuAsilabilir" name="SatDokumRusumuAsilabilir" value="true" @(Model.SatDokumRusumuAsilabilir != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatKesilirkenKunyeAl">
+            <span>33-</span>
+            Fatura Kesilirken Künye Alýnsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatKesilirkenKunyeAl" name="SatKesilirkenKunyeAl" value="true" @(Model.SatKesilirkenKunyeAl != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatFaturaDefaultVeresiye">
+            <span>34-</span>
+            Yeni Fatura Veresiye Olarak Açýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatFaturaDefaultVeresiye" name="SatFaturaDefaultVeresiye" value="true" @(Model.SatFaturaDefaultVeresiye != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatPesinKayitYapilmasin">
+            <span>35-</span>
+            Peþin Kayýt Yapýlmasýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatPesinKayitYapilmasin" name="SatPesinKayitYapilmasin" value="true" @(Model.SatPesinKayitYapilmasin != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatBarkoduDirekYazdir">
+            <span>36-</span>
+            Künye Barkodu Direkt Yazdýrýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatBarkoduDirekYazdir" name="SatBarkoduDirekYazdir" value="true" @(Model.SatBarkoduDirekYazdir != null ? "checked" : "")>
+        </div>
+    </div>
+    @*BURDA KALDIK*@
+    <div class="row">
+        <label for="SatFaturaBelgesi" class="col-sm-6 col-form-label pb-0">
+            <span>37-</span>
+            Fatura Belgesi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatFaturaBelgesi" id="SatFaturaBelgesi">
+                <option value="0" @(Model.SatFaturaBelgesi == 0 ? "selected" : "")>Satýþ Faturasý</option>
+                <option value="1" @(Model.SatFaturaBelgesi == 1 ? "selected" : "")>Satýþ Faturasý_A5Sag</option>
+                <option value="2" @(Model.SatFaturaBelgesi == 2 ? "selected" : "")>Satýþ Faturasý_A5Sol</option>
+                <option value="3" @(Model.SatFaturaBelgesi == 3 ? "selected" : "")>Satýþ Faturasý_A5Dikey</option>
+                <option value="4" @(Model.SatFaturaBelgesi == 4 ? "selected" : "")>Satýþ Faturasý_POS</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatBarkodBelgesi" class="col-sm-6 col-form-label pb-0">
+            <span>38-</span>
+            Barkod Belgesi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatBarkodBelgesi" id="SatBarkodBelgesi">
+                <option value="0" @(Model.SatBarkodBelgesi == 0 ? "selected" : "")>Ürün Etiketi Basma</option>
+                <option value="1" @(Model.SatBarkodBelgesi == 1 ? "selected" : "")>Künye Barkod Basma</option>
+                <option value="2" @(Model.SatBarkodBelgesi == 2 ? "selected" : "")>Künye Etiket Belgesi</option>
+                <option value="3" @(Model.SatBarkodBelgesi == 3 ? "selected" : "")>Künye Barkod Basma Toplu</option>
+                <option value="4" @(Model.SatBarkodBelgesi == 4 ? "selected" : "")>Künye Barkod Basma Yatay</option>
+                <option value="5" @(Model.SatBarkodBelgesi == 5 ? "selected" : "")>Fatura Ürün Künyesi</option>
+                <option value="6" @(Model.SatBarkodBelgesi == 6 ? "selected" : "")>Künye Barkod Basma POS</option>
+                <option value="7" @(Model.SatBarkodBelgesi == 7 ? "selected" : "")>Künye Etiket Belgesi POS</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatIrsaliyeSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>39-</span>
+            Ýrsaliye Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" name="SatIrsaliyeSiraNo" id="SatIrsaliyeSiraNo" class="form-control form-control-sm" value="@Model.SatIrsaliyeSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatIrsaliyeNoBasinaSifir">
+            <span>40-</span>
+            Ýrsaliye No Baþýna Sýfýr Konsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatIrsaliyeNoBasinaSifir" name="SatIrsaliyeNoBasinaSifir" value="true" @(Model.SatIrsaliyeNoBasinaSifir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatHamaliyeAdlandirma" class="col-sm-6 col-form-label pb-0">
+            <span>41-</span>
+            Fatura Masraf #1
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="SatHamaliyeAdlandirma" id="SatHamaliyeAdlandirma" class="form-control form-control-sm" value="@Model.SatHamaliyeAdlandirma" /> @*Yükleme*@
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="satisKdvOraniCheck">
+            <span>42-</span>
+            @Model.SatHamaliyeAdlandirma Kdv Oraný %
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="satisKdvOraniCheck" name="satisKdvOraniCheck" value="true" @(Model.SatYuklemeKdvOrani != null ? "checked" : "")>
+            <input type="number" id="SatYuklemeKdvOrani" name="SatYuklemeKdvOrani" class="form-control form-control-sm" min="0" max="99" @(Model.SatYuklemeKdvOrani == null ? "disabled" : "") value="@(Model.SatYuklemeKdvOrani != null ? Model.SatYuklemeKdvOrani : "")">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatOtomatikHamaliye">
+            <span>43-</span>
+            Otomatik @Model.SatHamaliyeAdlandirma
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatOtomatikHamaliye" name="SatOtomatikHamaliye" value="true" @(Model.SatOtomatikHamaliye != null ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatHamaliyeHesaplamaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>44-</span>
+            @Model.SatHamaliyeAdlandirma Hesaplama Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatHamaliyeHesaplamaSekli" id="SatHamaliyeHesaplamaSekli">
+                <option value="0" @(Model.SatHamaliyeHesaplamaSekli == 0 ? "selected" : "")>Kilo Bazýnda</option>
+                <option value="1" @(Model.SatHamaliyeHesaplamaSekli == 1 ? "selected" : "")>Kap Bazýnda</option>
+            </select>
+        </div>
+    </div>
+    @*<div class="row">
+            <label for="" class="col-sm-6 col-form-label pb-0">
+                <span>45-</span>
+                Birim @Model.SatHamaliyeAdlandirma (Kilo)
+            </label>
+            <div class="col-sm-6">
+                <button class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalKiloBaz"><i class="ri-arrow-right-s-fill"></i></button>
+            </div>
+        </div>
+        <div class="row">
+            <label for="" class="col-sm-6 col-form-label pb-0">
+                <span>46-</span>
+                Birim @Model.SatHamaliyeAdlandirma (Kap)
+            </label>
+            <div class="col-sm-6">
+                <button class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalKapBaz"><i class="ri-arrow-right-s-fill"></i></button>
+            </div>
+        </div>*@
+    <div class="row">
+        <label for="SatNakliyeAdlandirma" class="col-sm-6 col-form-label pb-0">
+            <span>47-</span>
+            Fatura Masraf #2
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="SatNakliyeAdlandirma" id="SatNakliyeAdlandirma" class="form-control form-control-sm" value="@Model.SatNakliyeAdlandirma" /> @*Nakliye*@
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="satisNakliyeKdvOraniCheck">
+            <span>48-</span>
+            @Model.SatNakliyeAdlandirma Kdv Oraný %
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="satisNakliyeKdvOraniCheck" name="satisNakliyeKdvOraniCheck" value="true" @(Model.SatNakliyeKdvOrani != null ? "checked" : "")>
+            <input type="number" id="SatNakliyeKdvOrani" name="SatNakliyeKdvOrani" class="form-control form-control-sm" min="0" max="99" @(Model.SatNakliyeKdvOrani == null ? "disabled" : "") value="@(Model.SatNakliyeKdvOrani != null ? Model.SatNakliyeKdvOrani : "")">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatOtomatikNakliye">
+            <span>49-</span>
+            Otomatik @Model.SatNakliyeAdlandirma
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatOtomatikNakliye" name="SatOtomatikNakliye" value="true" @(Model.SatOtomatikNakliye == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatNakliyeHesaplamaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>50-</span>
+            @Model.SatNakliyeAdlandirma Hesaplama Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatNakliyeHesaplamaSekli" id="SatNakliyeHesaplamaSekli">
+                <option value="0" @(Model.SatNakliyeHesaplamaSekli == 0 ? "selected" : "")>Kilo Bazýnda</option>
+                <option value="1" @(Model.SatNakliyeHesaplamaSekli == 1 ? "selected" : "")>Kap Bazýnda</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatBirimKiloNakliye">
+            <span>51-</span>
+            Birim @Model.SatNakliyeAdlandirma (Kilo)
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input type="text" data-type="num" id="SatBirimKiloNakliye" name="SatBirimKiloNakliye" class="form-control form-control-sm" maxlength="14" value="@Model.SatBirimKiloNakliye">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatBirimKapNakliye">
+            <span>52-</span>
+            Birim @Model.SatNakliyeAdlandirma (Kap)
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" id="SatBirimKapNakliye" name="SatBirimKapNakliye" class="form-control form-control-sm " maxlength="14" value="@Model.SatBirimKapNakliye">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatTeslimatYeriKopyalansin">
+            <span>53-</span>
+            Aktarmada Teslimat Yeri Kopyalansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatTeslimatYeriKopyalansin" name="SatTeslimatYeriKopyalansin" value="true" @(Model.SatTeslimatYeriKopyalansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatFaturaUyarmaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>54-</span>
+            Fatura Kesilirken Uyarma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatFaturaUyarmaSekli" id="SatFaturaUyarmaSekli">
+                <option value="0" @(Model.SatFaturaUyarmaSekli == 0 ? "selected" : "")>Uyarý Yok</option>
+                <option value="1" @(Model.SatFaturaUyarmaSekli == 1 ? "selected" : "")>KDV siz Fatura Kesilirken Uyar</option>
+                <option value="2" @(Model.SatFaturaUyarmaSekli == 2 ? "selected" : "")>Rüsumsuz Fatura Kesilirken Uyar</option>
+                <option value="3" @(Model.SatFaturaUyarmaSekli == 3 ? "selected" : "")>Rüsumsuz Veya KDV siz Fatura Kesilirken Uyar</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatKunyeFiyatiSinirOrani">
+            <span>55-</span>
+            Künye Fiyatý Sýnýr Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" id="SatKunyeFiyatiSinirOrani" name="SatKunyeFiyatiSinirOrani" class="form-control form-control-sm" maxlength="5" value="@Model.SatKunyeFiyatiSinirOrani">
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatKunyeFiyatiSinirDenetim" class="col-sm-6 col-form-label pb-0">
+            <span>56-</span>
+            Künye Fiyatý Sýnýrý Denetim Türü
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatKunyeFiyatiSinirDenetim" id="SatKunyeFiyatiSinirDenetim">
+                <option value="0" @(Model.SatKunyeFiyatiSinirDenetim == 0 ? "selected" : "")>Yok</option>
+                <option value="1" @(Model.SatKunyeFiyatiSinirDenetim == 1 ? "selected" : "")>Uyar</option>
+                <option value="2" @(Model.SatKunyeFiyatiSinirDenetim == 2 ? "selected" : "")>Yasakla</option>
+                <option value="3" @(Model.SatKunyeFiyatiSinirDenetim == 3 ? "selected" : "")>Künye Alma</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="SatKunyedeListeFiyatiVar">
+            <span>57-</span>
+            Künyede Liste Fiyatý Uygulansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="SatKunyedeListeFiyatiVar" name="SatKunyedeListeFiyatiVar" value="true" @(Model.SatKunyedeListeFiyatiVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatKunyePlakaNoKontrolu" class="col-sm-6 col-form-label pb-0">
+            <span>58-</span>
+            Künye Alýrken Plaka No Kontrolü
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatKunyePlakaNoKontrolu" id="SatKunyePlakaNoKontrolu">
+                <option value="0" @(Model.SatKunyePlakaNoKontrolu == 0 ? "selected" : "")>Uyar</option>
+                <option value="1" @(Model.SatKunyePlakaNoKontrolu == 1 ? "selected" : "")>Yasakla</option>
+                <option value="2" @(Model.SatKunyePlakaNoKontrolu == 2 ? "selected" : "")>Yok</option>
+            </select>
+        </div>
+    </div>
+</div>
+

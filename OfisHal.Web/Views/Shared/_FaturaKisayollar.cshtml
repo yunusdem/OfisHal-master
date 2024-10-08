@@ -1,0 +1,421 @@
+<!-- right offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width:20rem;">
+    @*  <div class="offcanvas-header">
+                <h5 id="offcanvasRightLabel">Offcanvas Right</h5>
+                <button type="button" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>*@
+    <div class="offcanvas-body">
+        <button type="button" id="kaydetBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kaydet</span>
+            <span>F1</span>
+        </button>
+        <button type="button" id="kaydetVeSifirlaBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kaydet ve sýfýrla</span>
+            <span>Shft+F1</span>
+        </button>
+        <button type="button" id="silBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Sil</span>
+            <span>Ctrl+F5</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="tazeleBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Tazele</span>
+            <span>Shft+F5</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="araBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ara</span>
+            <span>F9</span>
+        </button>
+        <button type="button" id="ilkBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ýlk</span>
+            <span>Ctrl+<i class="ri-arrow-left-line"></i></span>
+        </button>
+        <button type="button" id="oncekiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Önceki</span>
+            <span>PgUp</span>
+        </button>
+        <button type="button" id="sonrakiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Sonraki</span>
+            <span>PgDn</span>
+        </button>
+        <button type="button" id="sonBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Son</span>
+            <span>Ctrl+<i class="ri-arrow-right-line"></i></span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="kesBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kes</span>
+            <span>F10</span>
+        </button>
+        <button type="button" id="irsaliyeYazdirBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ýrsaliye Yazdýr</span>
+            <span>Shft+F10</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="adBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ad</span>
+            <span>F2</span>
+        </button>
+        <button type="button" id="malBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Mal</span>
+            <span>F3</span>
+        </button>
+        <button type="button" id="iadesizKapBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ýadesiz Kap</span>
+            <span>F4</span>
+        </button>
+        <button type="button" id="ekstraBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ekstra</span>
+            <span>F5</span>
+        </button>
+        <button type="button" id="rehinBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Rehin</span>
+            <span>F6</span>
+        </button>
+        <button type="button" id="pesinVeresiyeBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Peþin / Veresiye</span>
+            <span>F7</span>
+        </button>
+        <button type="button" id="cariBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Cari</span>
+            <span>F8</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="adKismiSilBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ad kýsmýný sil</span>
+            <span>Shft+F2</span>
+        </button>
+        <button type="button" id="mustahsilMakbuzuBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Müstahsil Makbuzu</span>
+            <span>Shft+F3</span>
+        </button>
+        <button type="button" id="rehinIadeBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Rehin iade</span>
+            <span>Shft+F6</span>
+        </button>
+        <button type="button" id="dokumBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Döküm</span>
+            <span>Shft+F7</span>
+        </button>
+        <button type="button" id="mustahsilCariBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Müstahsil Cari</span>
+            <span>Shft+F8</span>
+        </button>
+        <button type="button" id="genelAramaBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Genel Arama</span>
+            <span>Shft+F9</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="faturaIptalBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Fatura iptal</span>
+            <span>Ctrl+F2</span>
+        </button>
+        <button type="button" id="faturaTemizleBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Fatura Temizle</span>
+            <span>Ctrl+F3</span>
+        </button>
+        <button type="button" id="hksKunyeDurumBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Hks künye durum</span>
+            <span>Ctrl+F6</span>
+        </button>
+        <button type="button" id="kunyeDurumBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Künye durum</span>
+            <span>Ctrl+F7</span>
+        </button>
+        <button type="button" id="stokDurumuBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Stok durumu</span>
+            <span>Ctrl+F9</span>
+        </button>
+        <button type="button" id="kunyeBildirimFormuBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Künye Bildirim formu</span>
+            <span>Ctrl+F10</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="faturaCogaltmaBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Fatura Çoðaltma</span>
+            <span>Ctrl+B</span>
+        </button>
+        <button type="button" id="cekTahsilatBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Çek tahsilat</span>
+            <span>Ctrl+C</span>
+        </button>
+        <button type="button" id="faturaDetayBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Fatura detay</span>
+            <span>Ctrl+D</span>
+        </button>
+        <button type="button" id="musteriBilgisiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Müþteri bilgisi</span>
+            <span>Ctrl+F</span>
+        </button>
+        <button type="button" id="kasaHareketKayitBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kasa hareket kayýt</span>
+            <span>Ctrl+K</span>
+        </button>
+        <button type="button" id="musteriKayitBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Müþteri kayýt</span>
+            <span>Ctrl+M</span>
+        </button>
+        <button type="button" id="ortalamaFiyatBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Ortalama fiyat</span>
+            <span>Ctrl+O</span>
+        </button>
+        <button type="button" id="mustahsilKayitBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Müstahsil kayýt</span>
+            <span>Ctrl+U</span>
+        </button>
+        <button type="button" id="kesilmemisFaturalarBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kesilmemiþ faturalar</span>
+            <span>Ctrl+X</span>
+        </button>
+        <button type="button" id="kesilmemisFaturalarHepsiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kesilmemiþ faturalar (hepsi)</span>
+            <span>Ctrl+Shft+X</span>
+        </button>
+        <button type="button" id="kayitsizMusteriBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Kayýtsýz müþteri</span>
+            <span>Ctrl+Y</span>
+        </button>
+        <button type="button" id="hataliKunyeIstekleriBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Hatalý künye istekleri</span>
+            <span>Ctrl+H</span>
+        </button>
+        <button type="button" id="hksKayitliKunyeListesiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Hks kayýtlý künye listesi</span>
+            <span>Ctrl+L</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="masraflarBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Masraflar</span>
+            <span>Alt+F5</span>
+        </button>
+        <button type="button" id="satisTakibiBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Satýþ takibi</span>
+            <span>Alt+F7</span>
+        </button>
+        <button type="button" id="kunyeDagilimBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Künye daðýlýmý</span>
+            <span>Ctrl+Shift+F8</span>
+        </button>
+        <button type="button" id="faturalanmayanSatisFisleriBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Faturalanmayan satýþ fiþleri</span>
+            <span>Ctrl+Z</span>
+        </button>
+        <button type="button" id="faturalanmayanMalKabullerBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Faturalanmayan mal kabuller</span>
+            <span>Alt+Z</span>
+        </button>
+        <hr class="my-1" />
+        <button type="button" id="satirEkleBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Satýr ekle</span>
+            <span>Ctrl+E</span>
+        </button>
+        <button type="button" id="satirSilBtn" class="btn btn-sm btn-light waves-effect w-100 d-flex justify-content-between mb-1 shortCutBtns">
+            <span>Satýr sil</span>
+            <span>Ctrl+S</span>
+        </button>
+    </div>
+</div>
+<script>
+    let shortCuts = new bootstrap.Offcanvas($("#offcanvasRight"), { backdrop: true });
+    //ctrl ile kýsa yol týklandýðýnda hangi buton tetiklenmesi gerek...
+    const ctrlShortcuts = {
+        "r": () => shortCuts.toggle(),
+        "f5": () => $("#silBtn").trigger("click"),// tarayýcý kapatýyor deðiþmesi gerek
+        "f2": () => $("#faturaIptalBtn").trigger("click"),
+        "f3": () => $("#faturaTemizleBtn").trigger("click"),
+        "f6": () => $("#hksKunyeDurumBtn").trigger("click"),
+        "f7": () => $("#kunyeDurumBtn").trigger("click"),
+        "f9": () => $("#stokDurumuBtn").trigger("click"),
+        "f10": () => $("#kunyeBildirimFormuBtn").trigger("click"),
+        "b": () => $("#faturaCogaltmaBtn").trigger("click"),
+        "c": () => $("#cekTahsilatBtn").trigger("click"),
+        "d": () => $("#faturaDetayBtn").trigger("click"),
+        "f": () => $("#musteriBilgisiBtn").trigger("click"),
+        "k": () => $("#kasaHareketKayitBtn").trigger("click"),
+        "m": () => $("#musteriKayitBtn").trigger("click"),
+        "o": () => $("#ortalamaFiyatBtn").trigger("click"),
+        "u": () => $("#mustahsilKayitBtn").trigger("click"),
+        "x": () => $("#kesilmemisFaturalarBtn").trigger("click"),
+        "y": () => $("#kayitsizMusteriBtn").trigger("click"),
+        "h": () => $("#hataliKunyeIstekleriBtn").trigger("click"),
+        "l": () => $("#hksKayitliKunyeListesiBtn").trigger("click"),
+        "z": () => $("#faturalanmayanSatisFisleriBtn").trigger("click"),
+        "e": () => $("#satirEkleBtn").trigger("click"),
+        "s": () => $("#satirSilBtn").trigger("click"),
+        "arrowleft": () => $("#ilkBtn").trigger("click"),
+        "arrowright": () => $("#sonBtn").trigger("click"),
+    };
+
+    const shiftShortcuts = {
+        "f1": () => $("#kaydetVeSifirlaBtn").trigger("click"),
+        "f5": () => $("#tazeleBtn").trigger("click"),
+        "f10": () => $("#irsaliyeYazdirBtn").trigger("click"),
+        "f2": () => $("#adKismiSilBtn").trigger("click"),
+        "f3": () => $("#mustahsilMakbuzuBtn").trigger("click"),
+        "f6": () => $("#rehinIadeBtn").trigger("click"),
+        "f7": () => $("#dokumBtn").trigger("click"),
+        "f8": () => $("#mustahsilCariBtn").trigger("click"),
+        "f9": () => $("#genelAramaBtn").trigger("click"),
+    };
+    const altShortcuts = {
+        "f5": () => $("#masraflarBtn").trigger("click"),
+        "f7": () => $("#satisTakibiBtn").trigger("click"),
+        "z": () => $("#faturalanmayanMalKabullerBtn").trigger("click"),
+    };
+    const generalshortCuts = {
+        "F1": "#kaydetBtn",
+        "F9": "#araBtn",
+        "F10": "#kesBtn",
+        "F2": "#adBtn",
+        "F3": "#malBtn",
+        "F4": "#iadesizKapBtn",
+        "F5": "#ekstraBtn",
+        "F6": "#rehinBtn",
+        "F7": "#pesinVeresiyeBtn",
+        "F8": "#cariBtn",
+        "PageUp": "#oncekiBtn",
+        "PageDown": "#sonrakiBtn"
+    }
+
+    //eðer tarayýcýda bu kýsa yollara denk gelip etkileyen eklenti yoksa hepsi çalýþýyor ve tek tek test edildi sadece ctrl+f4 pencereyi kapatýyor
+    // ctrl + pageup ve pagedown çalýþmýyor
+    document.addEventListener("keydown", function (ev) {
+        if (ev.ctrlKey && ev.shiftKey && ev.key.toLowerCase() === "x") {
+            $("#kesilmemisFaturalarHepsiBtn").trigger("click");
+        } else if (ev.ctrlKey && ev.shiftKey && ev.key === "F8") {
+            ev.preventDefault();
+            $("#kunyeDagilimBtn").trigger("click");
+        } else if (ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
+            if (ctrlShortcuts[ev.key.toLowerCase()]) {
+                ev.preventDefault();
+                ctrlShortcuts[ev.key.toLowerCase()]();
+            }
+        } else if (ev.shiftKey && !ev.ctrlKey && !ev.altKey) {
+            if (shiftShortcuts[ev.key.toLowerCase()]) {
+                ev.preventDefault();
+                shiftShortcuts[ev.key.toLowerCase()]();
+            }
+        } else if (ev.altKey && !ev.ctrlKey && !ev.shiftKey) {
+            if (altShortcuts[ev.key.toLowerCase()]) {
+                ev.preventDefault();
+                altShortcuts[ev.key.toLowerCase()]();
+            }
+        } else {
+            if (generalshortCuts[ev.key]) {
+                ev.preventDefault();
+                $(generalshortCuts[ev.key]).trigger("click");
+            }
+        }
+    });
+
+    // buton týklanýnca çalýþacak fonksyionlar
+    $("#kaydetBtn").click(() => $("#gridPostButton").trigger("click"));
+    $("#kaydetVeSifirlaBtn").click(() => {
+        postGrid();
+        // form sýfýrlama iþlemi yapýlacak methodu promise yapmamz gerek sonuç döndükten sonra sýfýrlamak için
+    });
+    $("#silBtn").click(() => $("#hideRemoveBtn").trigger("click"));
+    $("#tazeleBtn").click(() => location.reload());
+    $("#araBtn").click(() => console.log("Ara butonuna týklandý"));
+    $("#ilkBtn").click(() => $("#firstBtn").trigger("click"));
+    $("#oncekiBtn").click(() => $("#prevBtn").trigger("click"));
+    $("#sonrakiBtn").click(() => $("#nextBtn").trigger("click"));
+    $("#sonBtn").click(() => $("#lastBtn").trigger("click"));
+    $("#kesBtn").click(() => FaturaKes());
+    $("#irsaliyeYazdirBtn").click(() => IrsaliyeKes());
+    $("#adBtn").click(() => $("#CariKod").focus());
+    $("#malBtn").click(() => console.log("Mal butonuna týklandý"));
+    $("#iadesizKapBtn").click(() => $("#IadesizKapKdv").focus());
+    $("#ekstraBtn").click(() => console.log("Ekstra butonuna týklandý"));
+    $("#rehinBtn").click(() => console.log("Rehin butonuna týklandý"));
+    $("#pesinVeresiyeBtn").click(() => changeText());
+    $("#cariBtn").click(() => window.open("/TohalCariHarekets/MCreate", "_blank"));
+    $("#adKismiSilBtn").click(() => {
+        $("#hiddenCariKartId").val(null);
+        $("#CariKod").val(null);
+        $("#CariUnvan").val(null);
+        $("#CariKod").removeAttr("data-id");
+        $("#CariUnvan").removeAttr("data-id");
+    });
+    $("#mustahsilMakbuzuBtn").click(() => console.log("Müstahsil Makbuzu butonuna týklandý"));
+    $("#rehinIadeBtn").click(() => console.log("Rehin iade butonuna týklandý"));
+    $("#dokumBtn").click(() => window.open("/DokumIslemleri/Stok", "_blank"));
+    $("#mustahsilCariBtn").click(() => window.open("/TohalCariHarekets/Create", "_blank"));
+    $("#genelAramaBtn").click(() => $("#kayitAraBtn").trigger("click"));
+    $("#faturaIptalBtn").click(() => console.log("Fatura iptal butonuna týklandý"));
+    $("#faturaTemizleBtn").click(() => console.log("Fatura Temizle butonuna týklandý"));
+    $("#hksKunyeDurumBtn").click(() => console.log("Hks künye durum butonuna týklandý"));
+    $("#kunyeDurumBtn").click(() => console.log("Künye durum butonuna týklandý"));
+    $("#stokDurumuBtn").click(() => console.log("Stok durumu butonuna týklandý"));
+    $("#kunyeBildirimFormuBtn").click(() => console.log("Künye Bildirim formu butonuna týklandý"));
+    $("#faturaCogaltmaBtn").click(() => console.log("Fatura Çoðaltma butonuna týklandý"));
+    $("#cekTahsilatBtn").click(() => console.log("Çek tahsilat butonuna týklandý"));
+    $("#faturaDetayBtn").click(() => $('#faturaDetayModal').modal('show'));
+    $("#musteriBilgisiBtn").click(() => console.log("Müþteri bilgisi butonuna týklandý"));
+    $("#kasaHareketKayitBtn").click(() => window.open("/KasaIslemleri/KasaHareketKayit", "_blank"));
+    $("#musteriKayitBtn").click(() => window.open("/TohalCariKarts/MCreate", "_blank"));
+    $("#ortalamaFiyatBtn").click(() => console.log("Ortalama fiyat butonuna týklandý"));
+    $("#mustahsilKayitBtn").click(() => window.open("/TohalCariKarts/Create", "_blank"));
+    $("#kesilmemisFaturalarBtn").click(() => KesilmemiþFaturalar(document.getElementById("Tarih").value, "satisfaturalar"));
+    $("#kesilmemisFaturalarHepsiBtn").click(() => KesilmemiþFaturalar(null, "satisfaturalar"));
+    $("#kayitsizMusteriBtn").click(() => console.log("Kayýtsýz müþteri butonuna týklandý"));
+    $("#hataliKunyeIstekleriBtn").click(() => console.log("Hatalý künye istekleri butonuna týklandý"));
+    $("#hksKayitliKunyeListesiBtn").click(() => console.log("Hks kayýtlý künye listesi butonuna týklandý"));
+    $("#masraflarBtn").click(() => console.log("Masraflar butonuna týklandý"));
+    $("#satisTakibiBtn").click(() => console.log("Satýþ takibi butonuna týklandý"));
+    $("#kunyeDagilimBtn").click(() => console.log("Künye daðýlýmý butonuna týklandý"));
+    $("#faturalanmayanSatisFisleriBtn").click(() => console.log("Faturalanmayan satýþ fiþleri butonuna týklandý"));
+    $("#faturalanmayanMalKabullerBtn").click(() => console.log("Faturalanmayan mal kabuller butonuna týklandý"));
+    $("#satirEkleBtn").click(() => console.log("Satýr ekle butonuna týklandý"));
+    $("#satirSilBtn").click(() => console.log("Satýr sil butonuna týklandý"));
+
+
+    function changeText() {
+        var spanElement = document.getElementById('pesinText');
+
+        if (spanElement) {
+            var currentText = spanElement.textContent.trim();
+
+            if (currentText === 'P') {
+                spanElement.textContent = 'V';
+                $("#Veresiye").attr('value', true);
+                $("#KrediKartiTahsilatiInput").attr('value', 0);
+                $("#KrediKartiTahsilatiInput").val(0);
+                $("#NakitTahsilatInput").attr('value', 0);
+                $("#NakitTahsilatInput").val(0);
+                postGridElements(false, false, false);
+            } else if (currentText === 'V') {
+                spanElement.textContent = 'P';
+                $("#Veresiye").attr('value', false);
+                postGridElements(false, false, false);
+            }
+        }
+    }
+    function KesilmemiþFaturalar(trh, trgt) {
+        $.ajax({
+            url: "/Common/KesilmeyenFaturalar",
+            type: "GET",
+            data: { tarih: trh },
+            cache: false,
+            success: (res) => {
+                loadModal(res, trgt);
+            }
+        });
+    }
+
+    function FaturaKes() {
+        $("#Kesildi").attr('value', true);
+        $("#IKesildi").attr('value', false);
+        var spanElement = document.getElementById('kesildiText');
+        spanElement.textContent = 'K';
+        postGridElements(false,true,false);
+    }
+    function IrsaliyeKes() {
+        $("#Kesildi").attr('value', true);
+        $("#IKesildi").attr('value', true);
+        var faturaElementi = document.getElementById('irsaliyekes');
+        postGridElements(false, true, false);
+        faturaElementi.click();
+    }
+</script>

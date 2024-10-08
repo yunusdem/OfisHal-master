@@ -1,0 +1,82 @@
+@model IList<VohalSipari>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="siparislerTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Sipariþ No</th>
+                <th scope="col">Tarih</th>
+                <th scope="col">Müþteri</th>
+                <th scope="col">Açýklama</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                            <input type="radio" name="siparisler" data-id="@item.SiparisId" class="form-check-input ms-1" data-name="@item.SiparisNo"/>
+                    </th>
+                    <td>@item.SiparisNo</td>
+                    <td>@(item.SiparisTarihi.HasValue ? item.SiparisTarihi?.ToString("dd.MM.yyyy") : String.Empty)</td>
+                    <td>@item.MusteriAdi</td>
+                    <td>@item.Aciklama</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+</div>
+
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#siparislerTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#siparislerTable").find("input:checked");
+        if (isInput) {
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

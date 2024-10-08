@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.title = "Detaylı Satış Bordrosu";
+
+    ViewBag.pagetitle = "Satış İşlemleri";
+    ViewBag.ptitle = "Detaylı Satış Bordrosu";
+}
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="docName" class="col-sm-3 col-form-label pb-0">
+                    Belge Adı
+                </label>
+                <div class="col-sm-9">
+                    <select class="form-select form-select-sm" id="docName" name="docName">
+                        <option>Detaylı Satış Bordrosu_Yevmiye</option>
+                        <option>Detaylı Satış Bordrosu_Yevmiye2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="kapDevri" class="col-sm-5 col-form-label pb-0">
+                            Kap Devri
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="number" value="0" name="kapDevri" id="kapDevri" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="kiloDevri" class="col-sm-5 col-form-label pb-0">
+                            Kilo Devri
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="number" value="0" name="kiloDevri" id="kiloDevri" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="firstDate" class="col-sm-5 col-form-label pb-0">
+                            İlk Tarih
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="date" name="firstDate" id="firstDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="lastDate" class="col-sm-5 col-form-label pb-0">
+                            Son Tarih
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="date" name="lastDate" id="lastDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="bordroNo" class="col-sm-5 col-form-label pb-0">
+                            Bordro No
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="number" value="0" name="bordroNo" id="bordroNo" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="showSubTotal" id="showSubTotal">
+                        <label class="form-check-label" for="showSubTotal">
+                            Son Toplam Gösterilsin
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-success">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

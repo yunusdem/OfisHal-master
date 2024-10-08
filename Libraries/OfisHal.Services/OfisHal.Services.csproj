@@ -1,0 +1,459 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C94B3852-B397-4FF3-AA3D-17B7A2F6E2CD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OfisHal.Services</RootNamespace>
+    <AssemblyName>OfisHal.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Connected Services\HksBildirimSvc\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\HksGenelSvc\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\HksUrunSvc\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\IceSvc\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="DataServices.cs" />
+    <Compile Include="FileService.cs" />
+    <Compile Include="HksService.cs" />
+    <Compile Include="IHksService.cs" />
+    <Compile Include="InvoiceApiClient.cs" />
+    <Compile Include="InvoiceService.cs" />
+    <Compile Include="OpenAPIs\swagger.cs" />
+    <Compile Include="OpenAPIs\v1.cs" />
+    <Compile Include="SmtpService.cs" />
+    <Compile Include="TenantService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OfisHal.Core\OfisHal.Core.csproj">
+      <Project>{08874322-2d02-498e-b1b2-4e496549af1f}</Project>
+      <Name>OfisHal.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OfisHal.Data\OfisHal.Data.csproj">
+      <Project>{fc41dc0c-eefa-4c11-bc80-62c2a64866b5}</Project>
+      <Name>OfisHal.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Connected Services\HksBildirimSvc\BildirimService.wsdl" />
+    <None Include="Connected Services\HksBildirimSvc\BildirimService1.wsdl" />
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.BelgeTipleriCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.BildirimEtiketCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.BildirimKayitCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.BildirimSorguCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.BildirimTurleriCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.ErrorModel1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.KayitliKisiSorguCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.ReferansKunyeCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.SifatCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksBildirimSvc\OfisHal.Services.HksBildirimSvc.TopluKunyeCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\GenelService.wsdl" />
+    <None Include="Connected Services\HksGenelSvc\GenelService1.wsdl" />
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.BeldelerCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.DepolarCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.ErrorModel1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.HalIciIsyeriCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.IlcelerCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.IllerCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.IsletmeTurleriCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.SubelerCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksGenelSvc\OfisHal.Services.HksGenelSvc.UlkelerCevap1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.ErrorModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.MalinNiteligiCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.UretimSekilleriCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.UrunBirimleriCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.UrunCinsleriCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.UrunlerCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\OfisHal.Services.HksUrunSvc.UrunMiktarBirimleriCevap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\HksUrunSvc\UrunService.wsdl" />
+    <None Include="Connected Services\HksUrunSvc\UrunService1.wsdl" />
+    <None Include="Connected Services\IceSvc\integration.wsdl" />
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.aktarilan_earsiv_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.base64Binary1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.despatchadvice1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.despatchadvice_check_validate_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.DocumentDataResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.DocumentDetailResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.Document_List_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.draft_document_approval_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.eAdisyon_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.EArchive1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.earsiv_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.EDocumentDetailListResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.EDovizBelgeDetay1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.EDovizGelenBelgeDetay1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.edoviz_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.EGiderPusulasi_HTML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.emustahsil_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.esmm_IptalType_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetDespatchadvice_HTML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetEDocumentArchiveRequestResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetEDocumentOtoSeriResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetEDoviz_XML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetESMM_XML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetInvoice_EMail_Statu_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetInvoice_Rapor_Statu_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.GetReceiptAdvice_HTML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.getUserList_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.getUserList_response_detail1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.getUserList_ZipFile_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.get_DespatchAdvice_status_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.get_earsiv_signature_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.Get_EDoviz_Status_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.get_invoice_status_detail_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.get_invoice_status_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.get_ReceiptAdvice_status_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.Get_Son_Belge_ID_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.Ge_EAdisyon_HTML_PDF_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.INVOICE1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.invoice_check_validate_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.INVOICE_List1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.invoice_preview_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.invoice_red_kabul_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.Login_Response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.ProducerReceipt1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.producerreceipt_check_validate_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.receiptadvice1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.SelfEmployedReceipt1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.SendDocumentEmailResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_DespatchAdvice_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_eAdisyon_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_earsiv_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_edoviz_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_emustahsil_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_esmm_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_invoice_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\IceSvc\OfisHal.Services.IceSvc.send_ReceiptAdvice_response1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="OpenAPIs\swagger.json">
+      <CodeGenerator>NSwagCSharp</CodeGenerator>
+      <SourceUri>https://localhost:7020/swagger/v1/swagger.json</SourceUri>
+    </None>
+    <None Include="OpenAPIs\v1.json">
+      <ClassName>ReportsClient</ClassName>
+      <CodeGenerator>NSwagCSharp</CodeGenerator>
+      <SourceUri>https://localhost:44301/swagger/docs/v1</SourceUri>
+    </None>
+    <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="elmah.corelibrary">
+      <Version>1.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="Hangfire">
+      <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="Hangfire.SqlServer">
+      <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="MailKit">
+      <Version>4.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="RestSharp">
+      <Version>106.15.0</Version>
+    </PackageReference>
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson">
+      <Version>106.15.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Serialization.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\HksBildirimSvc\" />
+    <WCFMetadataStorage Include="Connected Services\HksGenelSvc\" />
+    <WCFMetadataStorage Include="Connected Services\HksUrunSvc\" />
+    <WCFMetadataStorage Include="Connected Services\IceSvc\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\IceSvc\integration.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\IceSvc\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\IceSvc\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\IceSvc\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksBildirimSvc\BildirimService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksBildirimSvc\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksBildirimSvc\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksBildirimSvc\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksGenelSvc\GenelService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksGenelSvc\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksGenelSvc\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksGenelSvc\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksUrunSvc\UrunService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksUrunSvc\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksUrunSvc\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\HksUrunSvc\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

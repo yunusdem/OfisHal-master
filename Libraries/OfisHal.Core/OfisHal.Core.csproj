@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{08874322-2D02-498E-B1B2-4E496549AF1F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OfisHal.Core</RootNamespace>
+    <AssemblyName>OfisHal.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Domain\Admin\Customer.cs" />
+    <Compile Include="Domain\Admin\CustomerType.cs" />
+    <Compile Include="Domain\Admin\Database.cs" />
+    <Compile Include="Domain\Admin\Role.cs" />
+    <Compile Include="Domain\Admin\User.cs" />
+    <Compile Include="Domain\Admin\_BaseModel.cs" />
+    <Compile Include="Domain\Tables\CevapTablosu.cs" />
+    <Compile Include="Domain\Tables\ToambAmbarFiyati.cs" />
+    <Compile Include="Domain\Tables\ToambNavlunDizayni.cs" />
+    <Compile Include="Domain\Tables\ToambNavlunFaturaSatiri.cs" />
+    <Compile Include="Domain\Tables\ToambNavlunFaturasi.cs" />
+    <Compile Include="Domain\Tables\ToambSevkIrsaliyesi.cs" />
+    <Compile Include="Domain\Tables\ToambSevkIrsaliyesiSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalBagkurDosyasi.cs" />
+    <Compile Include="Domain\Tables\TohalBankaHareketi.cs" />
+    <Compile Include="Domain\Tables\TohalBankaHesabi.cs" />
+    <Compile Include="Domain\Tables\TohalCariHareket.cs" />
+    <Compile Include="Domain\Tables\TohalCariKart.cs" />
+    <Compile Include="Domain\Tables\TohalCariSifat.cs" />
+    <Compile Include="Domain\Tables\TohalDigerAd.cs" />
+    <Compile Include="Domain\Tables\TohalDokumDefteri.cs" />
+    <Compile Include="Domain\Tables\TohalEvrakMasrafi.cs" />
+    <Compile Include="Domain\Tables\TohalFatura.cs" />
+    <Compile Include="Domain\Tables\TohalFaturaSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalFi.cs" />
+    <Compile Include="Domain\Tables\TohalFisSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalFiyatListesi.cs" />
+    <Compile Include="Domain\Tables\TohalFiyatListesiSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalGibKullanici.cs" />
+    <Compile Include="Domain\Tables\TohalHal.cs" />
+    <Compile Include="Domain\Tables\TohalHesap.cs" />
+    <Compile Include="Domain\Tables\TohalHesapHareketi.cs" />
+    <Compile Include="Domain\Tables\TohalHksMal.cs" />
+    <Compile Include="Domain\Tables\TohalImge.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleEvrakMasrafi.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleFaturaSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleMakbuzSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleObSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleRehinFisi.cs" />
+    <Compile Include="Domain\Tables\TohalKap.cs" />
+    <Compile Include="Domain\Tables\TohalKapHareket.cs" />
+    <Compile Include="Domain\Tables\TohalKayitsizMusteri.cs" />
+    <Compile Include="Domain\Tables\TohalKdvTevkifatTanimi.cs" />
+    <Compile Include="Domain\Tables\TohalKullanici.cs" />
+    <Compile Include="Domain\Tables\TohalKullaniciYetkisi.cs" />
+    <Compile Include="Domain\Tables\TohalKullanilanKunye.cs" />
+    <Compile Include="Domain\Tables\TohalKunyeBakiye.cs" />
+    <Compile Include="Domain\Tables\TohalKunye.cs" />
+    <Compile Include="Domain\Tables\TohalMagaza.cs" />
+    <Compile Include="Domain\Tables\TohalMakbuz.cs" />
+    <Compile Include="Domain\Tables\TohalMakbuzSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalMal.cs" />
+    <Compile Include="Domain\Tables\TohalMalHksBagi.cs" />
+    <Compile Include="Domain\Tables\TohalMarka.cs" />
+    <Compile Include="Domain\Tables\TohalMuhFi.cs" />
+    <Compile Include="Domain\Tables\TohalMuhFisSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalMuhHesap.cs" />
+    <Compile Include="Domain\Tables\TohalNavlunFaturasi.cs" />
+    <Compile Include="Domain\Tables\TohalObSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalOdemeAraci.cs" />
+    <Compile Include="Domain\Tables\TohalOdemeBordrosu.cs" />
+    <Compile Include="Domain\Tables\TohalPosCihazi.cs" />
+    <Compile Include="Domain\Tables\TohalRaporParamDegeri.cs" />
+    <Compile Include="Domain\Tables\TohalRehinFisi.cs" />
+    <Compile Include="Domain\Tables\TohalSatisKunyeSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalSatisMakbuzSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalSipari.cs" />
+    <Compile Include="Domain\Tables\TohalSiparisSatiri.cs" />
+    <Compile Include="Domain\Tables\TohalStokHareketi.cs" />
+    <Compile Include="Domain\Tables\TohalStokIade.cs" />
+    <Compile Include="Domain\Tables\TohalTabloMaddesi.cs" />
+    <Compile Include="Domain\Tables\TohalTanim.cs" />
+    <Compile Include="Domain\Tables\TohalTeslimatYeri.cs" />
+    <Compile Include="Domain\Tables\TohalYazici.cs" />
+    <Compile Include="Domain\Tables\TohalYer.cs" />
+    <Compile Include="Domain\Tables\TohalEvrakKdv.cs" />
+    <Compile Include="Domain\Tables\TohksIskeleKunyeListesi.cs" />
+    <Compile Include="Domain\Tables\TohksKayitliKunyeListesi.cs" />
+    <Compile Include="Domain\Views\VohalAramaDokum.cs" />
+    <Compile Include="Domain\Views\VohalAramaFatura.cs" />
+    <Compile Include="Domain\Views\VohalAramaKap.cs" />
+    <Compile Include="Domain\Views\VohalAramaKesilmeyenSatisFaturasi.cs" />
+    <Compile Include="Domain\Views\VohalAramaMakbuz.cs" />
+    <Compile Include="Domain\Views\VohalAramaOdemeAraci.cs" />
+    <Compile Include="Domain\Views\VohalAramaRehinHesabiOlmayanMusteriler.cs" />
+    <Compile Include="Domain\Views\VohalAramaTeslimatYeri.cs" />
+    <Compile Include="Domain\Views\VohalBankaHesabi.cs" />
+    <Compile Include="Domain\Views\VohalbFatura.cs" />
+    <Compile Include="Domain\Views\VohalCariHareket.cs" />
+    <Compile Include="Domain\Views\VohalCariKart.cs" />
+    <Compile Include="Domain\Views\VohalEIrsaliye.cs" />
+    <Compile Include="Domain\Views\VohalEIrsaliyeSatiri.cs" />
+    <Compile Include="Domain\Views\VohalEntegreEdilmeyenFaturaSatiri.cs" />
+    <Compile Include="Domain\Views\VohalEvrakMasrafi.cs" />
+    <Compile Include="Domain\Views\VohalFatura.cs" />
+    <Compile Include="Domain\Views\VohalFaturaSatiriTuk.cs" />
+    <Compile Include="Domain\Views\VohalFaturaSatiriUrt.cs" />
+    <Compile Include="Domain\Views\VohalFaturaSonToplam.cs" />
+    <Compile Include="Domain\Views\VohalGonderimeHazirEFatura.cs" />
+    <Compile Include="Domain\Views\VohalGonderimeHazirEIrsaliye.cs" />
+    <Compile Include="Domain\Views\VohalGonderimeHazirEMustahsilMakbuzu.cs" />
+    <Compile Include="Domain\Views\VohalHesap.cs" />
+    <Compile Include="Domain\Views\VohalHesapBakiyeListesi.cs" />
+    <Compile Include="Domain\Views\VohalHesapHareketi.cs" />
+    <Compile Include="Domain\Views\VohalHksMal.cs" />
+    <Compile Include="Domain\Views\VohalKap.cs" />
+    <Compile Include="Domain\Views\VohalKapHareket.cs" />
+    <Compile Include="Domain\Views\VohalKullanici.cs" />
+    <Compile Include="Domain\Views\VohalMagaza.cs" />
+    <Compile Include="Domain\Views\VohalMakbuz.cs" />
+    <Compile Include="Domain\Views\VohalMakbuzSatiri.cs" />
+    <Compile Include="Domain\Views\VohalMal.cs" />
+    <Compile Include="Domain\Views\VohalMalHksBagi.cs" />
+    <Compile Include="Domain\Views\VohalMarka.cs" />
+    <Compile Include="Domain\Views\VohalObSatiri.cs" />
+    <Compile Include="Domain\Views\VohalOdemeBordrosu.cs" />
+    <Compile Include="Domain\Views\VohalRehinFisi.cs" />
+    <Compile Include="Domain\Views\VohalRehinFisiBekleyen.cs" />
+    <Compile Include="Domain\Views\VohalRehinFisiBekleyen01.cs" />
+    <Compile Include="Domain\Views\VohalSipari.cs" />
+    <Compile Include="Domain\Views\VohalStokHareketi.cs" />
+    <Compile Include="Domain\Views\VohalSatisTanimlari.cs" />
+    <Compile Include="Domain\Views\VohalDokumTanimlari.cs" />
+    <Compile Include="Domain\Views\VohalAlisTanimlari.cs" />
+    <Compile Include="Domain\Views\VohalHesapTanimlari.cs" />
+    <Compile Include="Domain\Views\VohalHksTanimlar.cs" />
+    <Compile Include="Domain\Views\VohalFirmaTanimlari.cs" />
+    <Compile Include="Domain\Views\VohalEBelgeTanimi.cs" />
+    <Compile Include="Domain\Views\VohalDigerTanimlar.cs" />
+    <Compile Include="Domain\Views\VohalAramaKunye.cs" />
+    <Compile Include="Domain\Views\VohalAramaDokumdenKunye.cs" />
+    <Compile Include="Domain\Views\VohksHksKayitliKunyeBilgileri.cs" />
+    <Compile Include="Domain\Tables\TohalNumerator.cs" />
+    <Compile Include="Extensions\CookieExtensions.cs" />
+    <Compile Include="Domain\Tables\TohalIskeleStokHareketi.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\DecimalExtensions.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\RouteExtensions.cs" />
+    <Compile Include="Extensions\SortExtension.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Framework\Engines\AppRazorViewEngine.cs" />
+    <Compile Include="Helpers\CryptHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="RequiredIfAttribute.cs" />
+    <Compile Include="ViewModels\AccountViewModels.cs" />
+    <Compile Include="ViewModels\Admin\DatabaseViewModel.cs" />
+    <Compile Include="ViewModels\Admin\CustomerDetailsViewModel.cs" />
+    <Compile Include="ViewModels\Admin\CustomersViewModel.cs" />
+    <Compile Include="ViewModels\Admin\UserViewModel.cs" />
+    <Compile Include="ViewModels\DigerAdlarViewModel.cs" />
+    <Compile Include="ViewModels\HalEntegreViewModel.cs" />
+    <Compile Include="ViewModels\InvoiceSearchResultViewModel.cs" />
+    <Compile Include="ViewModels\IsYerleriViewModel.cs" />
+    <Compile Include="ViewModels\MenuItemsViewModel.cs" />
+    <Compile Include="ViewModels\ReportParametersViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Hangfire">
+      <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="Hangfire.SqlServer">
+      <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.Mvc">
+      <Version>5.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.ComponentModel.Annotations">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq">
+      <Version>4.3.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Domain\_Old\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

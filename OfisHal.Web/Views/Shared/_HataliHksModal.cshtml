@@ -1,0 +1,69 @@
+@model List<OfisHal.Web.Models.CevapTablosu>
+@{
+
+
+}
+
+    <div class="row my-1">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm mt-0" id="hatalihkstable">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Hata No</th>
+                        <th>Hata Mesajý</th>
+                    </tr>
+                </thead class="table-primary">
+                <tbody class="table-group-divider">
+                    @for (var i = 0; i < Model?.Count; i++)
+                    {
+                        var item = Model.ElementAtOrDefault(i);
+                        <tr class="rows" ondblclick="closeModal()">
+
+                            <td>@item.HataKodu</td>
+                            <td>@item.HataMesaji</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-sm btn-secondary" onclick="deleteAllItems()">Sýfýrla</button>
+
+        </div>
+     
+    </div>
+
+<script>
+    $(document).ready(function () {
+        table = CreateDatatable('#hatalihkstable');
+        var table = $('#hatalihkstable').DataTable().settings({
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
+        });
+    });
+    function closeModal() {
+        $("#modal").modal("hide");
+    }
+
+    function deleteAllItems() {
+        $.ajax({
+            url: "/TohalFaturas/DeleteAllItems",
+            type: "GET",
+            data: { },
+            success: function (e) {
+                var tbody = $('#hatalihkstable tbody');
+                var rowHtml = "";
+
+                tbody.empty();
+            }
+        });
+    }
+    
+</script>
+
+

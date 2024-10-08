@@ -1,0 +1,150 @@
+﻿@model IList<VohalMarka>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="producersTable" style="width:100%;">
+        <thead>
+            <tr>
+                <td>
+                    <button id="addProducerBtn" class="btn btn-sm btn-primary">Ekle</button>
+                </td>
+                <td>
+                    <input id="addProducerName" type="text" class="form-control form-control-sm" placeholder="Ad, Soyad" />
+                </td>
+                <td>
+                    <input id="addProducerCode" type="text" class="form-control form-control-sm" placeholder="Kod" />
+                </td>
+                <td>
+                    <input id="addProducerTaxNo" type="text" class="form-control form-control-sm" placeholder="Vergi No" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Marka</th>
+                <th scope="col">Kod</th>
+                <th scope="col">Vergi No.</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+            <tr class="rows" ondblclick="closeModal()">
+                <th scope="row">
+                    @(i + 1)
+                    @if (Request.QueryString["isInput"] == "True" || Request.QueryString["isGrid"] == "True" || Request.QueryString["isNavigator"] == "true")
+                        {
+                    <input type="radio" name="procuder" data-id="@item.CariKartId" data-marka="@item.MarkaId" class="form-check-input ms-1" data-name="@item.Ad" data-code="@item.Kod" />
+                        }
+                        else
+                        {
+                    <input type="checkbox" data-id="@item.CariKartId" class="form-check-input ms-1" data-name="@item.Ad" data-code="@item.Kod" />
+                        }
+                </th>
+                <td>@item.Marka</td>
+                <td>@item.Kod</td>
+                <td>@item.VergiKimlikNo</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="modalTarget2" type="hidden" value="@Request.QueryString["target2"]" />
+    <input id="tip" type="hidden" value="@Request.QueryString["tip"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+    <input id="isgrid" type="hidden" value="@Request.QueryString["isGrid"]" />
+    <input id="isnavigator" type="hidden" value="@Request.QueryString["isNavigator"]" />
+    <input id="inputtype" type="hidden" value="@Request.QueryString["inputType"]" />
+</div>
+<script>
+    $(document).on("click", "#addProducerBtn", function (e) {
+        var name = $("#addProducerName");
+        var code = $("#addProducerCode");
+        var taxNo = $("#addProducerTaxNo");
+
+        var tip = $("#tip").val();
+        if (name.val() == "") {
+            alert("Ad dolu olmalı");
+            name.focus();
+        }
+        else if (code.val() == "") {
+            alert("Kod dolu olmalı");
+            code.focus();
+        }
+        else {
+            name = name.val();
+            code = code.val();
+            taxNo = taxNo.val();
+            var isCode = false;
+            $.post("@Url.Action("BrandSave","Common")", { name, code, taxNo, isCode, tip }, function (data, status) {
+                if (status = "success") {
+                    $("#modalContent").empty();
+                    $("#modalContent").html(data);
+                }
+                else {
+                    alert("Hata: " + status);
+                }
+            });
+        }
+    });
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#producersTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        var isGrid = $("#isgrid").val();
+        var isNavigator = $("#isnavigator").val();
+        var inputType = $("#inputtype").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#producersTable").find("input:checked");
+        if (isInput) {
+            inputType == "name" ? target.val(item.data("name")) : target.val(item.data("code"));
+            target.attr("data-id", item.data("id"));
+        } else if (isGrid) {
+            target.attr("data-id", item.data("id"));
+            target.attr("data-marka", item.data("marka"));
+            target.attr("data-code", item.data("code"));
+            target.attr("data-name", item.data("name"));
+        } else if (isNavigator) {
+            sessionStorage.setItem("cariKartId", item.data("id"));
+        } else {
+            $("#producersTable").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

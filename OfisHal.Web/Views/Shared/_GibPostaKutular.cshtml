@@ -1,0 +1,73 @@
+@model IList<TohalGibKullanici>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="postaKutularTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Posta Kutusu</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        <input type="radio" name="postalar" data-id="@item.GibKullaniciId"  data-name="@item.PostaKutusu" class="form-check-input ms-1"/>
+                    </th>
+                    <td>@item.PostaKutusu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+</div>
+
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#postaKutularTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#postaKutularTablo").find("input:checked");
+        target.val(item.data("name"));
+        target.attr("data-id", item.data("id"));
+        muhatapchange()
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

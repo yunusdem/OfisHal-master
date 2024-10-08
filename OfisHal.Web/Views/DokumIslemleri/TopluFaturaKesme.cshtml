@@ -1,0 +1,229 @@
+﻿@{
+    ViewBag.title = "Toplu Fatura Kesme";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.ptitle = "Toplu Fatura Kesme";
+}
+<style>
+    .selected-wrapper, .non-selected-wrapper {
+        height: 300px !important;
+    }
+
+    .multi-wrapper::before {
+        bottom: 140px !important
+    }
+</style>
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-4 d-flex justify-content-between">
+            <div class="form-check mt-2 me-3">
+                <input class="form-check-input" type="checkbox" id="invoiceDateCheck" name="invoiceDateCheck" checked disabled>
+                <label class="form-check-label" for="invoiceDateCheck">
+                    Fatura Tarihi
+                </label>
+            </div>
+            <input type="date" name="invoiceDate" id="invoiceDate" class="form-control form-control-sm w-50" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-4 d-flex justify-content-center mt-2">
+            <div class="col-md-4 d-flex justify-content-center mt-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="islemde" name="invoiceType">
+                    <label class="form-check-label" for="islemde">
+                        İşlemdeki
+                    </label>
+                </div>
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" id="hazir" name="invoiceType" checked>
+                    <label class="form-check-label" for="hazir">
+                        Hazır
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="kesilmis" name="invoiceType">
+                    <label class="form-check-label" for="kesilmis">
+                        Kesilmişler
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <label for="mustahsil" class="col-sm-3 col-form-label pb-0">
+                    Müstahsil
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="mustahsil" name="mustahsil" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "mustahsil", tip = 0,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-12 d-flex justify-content-around">
+            <h5>Kesilmemiş Faturalar</h5>
+            <h5>Kesilecek Faturalar</h5>
+        </div>
+        <div class="col-lg-12">
+            <select multiple="multiple" name="invoices" id="multiselect-basic">
+                @*<option>Fatura 1</option>
+                    <option>Fatura 2</option>
+                    <option>Fatura 3</option>*@
+            </select>
+        </div>
+        <div class="col d-flex justify-content-around mt-2">
+            <button type="button" class="btn btn-sm btn-success waves-effect waves-light" id="addAll">Hepsini Ekle</button>
+            <button type="button" class="btn btn-sm btn-danger waves-effect waves-light" id="removeAll">Hepsini Sil</button>
+        </div>
+    </div>
+    <div class="row mb-2 justify-content-end">
+        <button type="button" id="submitBtn" class="btn btn-primary w-auto me-2">Tamam</button>
+        @*<button type="button" id="submitPrintBtn" class="btn btn-secondary w-auto">Yazdır Ve Kaydet</button>*@
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section styles{
+    <link rel="stylesheet" type="text/css" href="~/assets/libs/multi.js/multi.min.css" />  <!-- multi.js css -->
+}
+@section Scripts {
+    <script src="~/assets/libs/multi.js/multi.min.js"></script>
+    <script src="~/assets/libs/@Html.Raw('@')tarekraafat/autocomplete.js/autoComplete.min.js"></script>
+    <script src="~/assets/js/pages/form-advanced.init.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        FaturalarGetir(false, true);
+        $("input[type='radio']").on("change", function () {
+            var type = $("input[type='radio']:checked").attr("id");
+            if (type == "islemde")
+                FaturalarGetir(false, false);
+            else if (type == "hazir")
+                FaturalarGetir(false, true);
+            else
+                FaturalarGetir(true, false);
+        });
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+        $("#mustahsil").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=mustahsil&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, null);
+        });
+
+        var addall = document.getElementById("addAll");
+        var removeall = document.getElementById("removeAll");
+        var select = document.getElementById("multiselect-basic");
+
+        addall.addEventListener("click", () => {
+            addRemoveSelect(true);
+        });
+        removeall.addEventListener("click", () => {
+            addRemoveSelect(false);
+        });
+
+        function addRemoveSelect(addOrRemove) {
+            for (var i = 0; i < select.options.length; i++) {
+                if (addOrRemove) select.options[i].selected = true;
+                else select.options[i].selected = false;
+            }
+            var event = new Event('change');
+            select.dispatchEvent(event);
+        }
+
+        var dateInput = document.getElementById("invoiceDate");
+        var dateCheck = document.getElementById("invoiceDateCheck");
+        var radioCheck = document.querySelectorAll("input[name='invoiceType']");
+        radioCheck.forEach(chk => {
+            chk.addEventListener("change", (e) => {
+                if (e.target.id === "kesilmis") {
+                    dateInput.style.display = "none";
+                    dateCheck.checked = false;
+                    dateCheck.disabled = false;
+                    dateCheck.addEventListener("change", (e) => {
+                        if (e.target.checked) dateInput.style.display = "block";
+                        else dateInput.style.display = "none";
+                    });
+                } else {
+                    dateCheck.disabled = true;
+                    dateInput.style.display = "block";
+                    dateCheck.checked = true;
+                }
+            });
+        });
+
+        function FaturalarGetir(ksldi, hzr) {
+            $.ajax({
+                url: "/DokumIslemleri/VohalAramaMakbuzlar",
+                data: { kesildi: ksldi, hazir: hzr },
+                type: "GET",
+                success: function (res) {
+                    select.innerHTML = "";
+                    for (var i = 0; i < res.length; i++) {
+                        var el = res[i];
+                        var opt = new Option(`${el.StokGirisTarihi} - ${el.DokumNo} - ${el.CariAdi}`, el.MakbuzId, false, false);
+                        opt.setAttribute("data-cariId", el.CariKartId);
+                        select.append(opt);
+                    }
+                    var event = new Event('change');
+                    select.dispatchEvent(event);
+                }
+            });
+        }
+        $("#submitBtn").click(() => SubmitData());
+        function SubmitData() {
+            var makbuzidler = [];
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected)
+                    makbuzidler.push(parseInt(select.options[i].value));
+            }
+            if (makbuzidler.length > 0) {
+                $.ajax({
+                    url: "/DokumIslemleri/TopluFaturaKes",
+                    traditional: true,
+                    data: { makbuzIdler: makbuzidler },
+                    type: "POST",
+                    success: function (res) {
+                        ShowAlert(true, "İşlem Tamamlandı");
+                        FaturalarGetir(false, false);
+                    }
+                });
+            }
+        }
+    </script>
+}

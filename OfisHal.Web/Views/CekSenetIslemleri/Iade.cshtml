@@ -1,0 +1,398 @@
+﻿@model OfisHal.Web.Models.VohalOdemeBordrosu
+@{
+    ViewBag.title = "İade";
+
+    ViewBag.pagetitle = "Çek - Senet İşlemleri";
+    ViewBag.ptitle = "İade";
+
+    ViewBag.addUrl = "/CekSenetIslemleri/Iade";
+    ViewBag.saveUrl = "";
+    ViewBag.firstDataUrl = "/CekSenetIslemleri/ilkSonKayit?firstOrLast=true&islemturu=5&actionName=Iade";
+    ViewBag.beforeDataUrl = "/CekSenetIslemleri/sonrakiOncekiKayit?afterOrBefore=true&currentId=" + Model.OdemeBordrosuId + "&islemturu=5&actionName=Iade";
+    ViewBag.afterDataUrl = "/CekSenetIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + Model.OdemeBordrosuId + "&islemturu=5&actionName=Iade";
+    ViewBag.lastDataUrl = "/CekSenetIslemleri/ilkSonKayit?firstOrLast=false&islemturu=5&actionName=Iade";
+    ViewBag.disabledBeforeAfter = true;
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- jQuery CDN -->
+    @* <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> *@
+    <style>
+        #arabtn {
+            display: none !important;
+        }
+    </style>
+}
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form id="faturaForm">
+    @Html.HiddenFor(model => model.CariKartId, new { id = "hiddenCariKartId" })
+    @Html.HiddenFor(model => model.EklemeZamani)
+    @Html.HiddenFor(model => model.GuncellemeZamani)
+    @Html.HiddenFor(model => model.OdemeBordrosuId)
+    @Html.Hidden("IslemTuru", 5)
+    <div class="row mb-1">
+        <div class="col-md-3">
+            <div class="row">
+                <label for="muhatap" class="col-sm-4 col-form-label pb-0">
+                    Muhatap
+                </label>
+                <div class="col-sm-8">
+                    <select id="muhatap" name="muhatap" class="form-select form-select-sm">
+                        <option value="1">Müşteri</option>
+                        <option value="0">Müstahsil</option>
+                    </select>
+                </div>
+            </div>
+            <div id="musteri">
+                <div class="row">
+                    <label for="musteriKod" class="col-sm-4 col-form-label pb-0">
+                        Kod
+                    </label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" id="musteriKod" name="musteriKod" class="form-control form-control-sm" />
+                            <button type="button" data-btarget="musteriCode" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "musteriKod", tip = 1,isInput = true ,inputType = "code" })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="musteriAd" class="col-sm-4 col-form-label pb-0">
+                        Ad
+                    </label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" id="musteriAd" name="musteriAd" class="form-control form-control-sm" />
+                            <button type="button" data-btarget="musteriName" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "musteriAd", tip = 1,isInput = true ,inputType = "name" })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="mustahsil" style="display:none;">
+                <div class="row">
+                    <label for="mustahsilKod" class="col-sm-4 col-form-label pb-0">
+                        Kod
+                    </label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" id="mustahsilKod" name="mustahsilKod" class="form-control form-control-sm" />
+                            <button type="button" data-btarget="mustahsilCode" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "mustahsilKod", tip = 0,isInput = true ,inputType = "code" })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="mustahsilAd" class="col-sm-4 col-form-label pb-0">
+                        Ad
+                    </label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" id="mustahsilAd" name="mustahsilAd" class="form-control form-control-sm" />
+                            <button type="button" data-btarget="mustahsilName" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "mustahsilAd", tip = 0,isInput = true ,inputType = "name" })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="num" class="col-sm-4 col-form-label pb-0">
+                    No
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" id="num" name="num" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="aciklama" class="col-sm-4 col-form-label pb-0">
+                    Açıklama
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" id="aciklama" name="aciklama" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 border p-2">
+            <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-cek" type="button" role="tab" aria-controls="pills-cek" aria-selected="true">
+                        Çek
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-senet" type="button" role="tab" aria-controls="pills-senet" aria-selected="false">
+                        Senet
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-cek" role="tabpanel" aria-labelledby="pills-cek-tab" tabindex="0">
+                    <div class="col-12">
+                        <table width="100%">
+                            <tr>
+                                <td valign="top" width="50%">
+                                    <input type="hidden" id="gridBanka" name="gridBanka" />
+                                    <input type="hidden" id="gridBankaHes" name="gridBankaHes" />
+                                    <input type="hidden" id="gridOAraci" name="gridOAraci" />
+                                    <div id="myGrid" class="slick-container" style="height:200px;"></div>
+                                    <div id="pager" style="width: 100%; height: 20px"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="pills-senet" role="tabpanel" aria-labelledby="pills-senet-tab" tabindex="0">
+                    <div class="col-12">
+                        <table width="100%">
+                            <tr>
+                                <td valign="top" width="50%">
+
+                                    <div id="myGrid2xq" class="slick-container" style="height:200px;"></div>
+                                    <div id="pager2xq" style="width: 100%; height: 20px"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row mb-1">
+    <div class="col-md-3 border p-2">
+        <input type="hidden" id="geneltoplam1" name="genelToplam1" class="form-control form-control-sm" disabled />
+        <input type="hidden" id="ortalamavade1" name="ortalamavade1" class="form-control form-control-sm" disabled />
+        <input type="hidden" id="itibarideger1" name="itibarideger1" class="form-control form-control-sm" disabled />
+        <input type="hidden" id="geneltoplam2" name="genelToplam2" class="form-control form-control-sm" disabled />
+        <input type="hidden" id="ortalamavade2" name="ortalamavade2" class="form-control form-control-sm" disabled />
+        <input type="hidden" id="itibarideger2" name="itibarideger2" class="form-control form-control-sm" disabled />
+        <h6>Genel</h6>
+        <div class="row">
+            <label for="genelToplam" class="col-sm-5 col-form-label pb-0">
+                Toplam
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="genelToplam" name="genelToplam" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+        <div class="row">
+            <label for="genelOrtalamaVade" class="col-sm-5 col-form-label pb-0">
+                Ortalama Vade
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="genelOrtalamaVade" name="genelOrtalamaVade" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+        <div class="row">
+            <label for="genelItibariDeger" class="col-sm-5 col-form-label pb-0">
+                İtibari Değer
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="genelItibariDeger" name="genelItibariDeger" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 border p-2">
+        <h6 id="changeLabel">Çek</h6>
+        <div class="row">
+            <label for="toplam" class="col-sm-5 col-form-label pb-0">
+                Toplam
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="toplam" name="toplam" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+        <div class="row">
+            <label for="ortalamaVade" class="col-sm-5 col-form-label pb-0">
+                Ortalama Vade
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="ortalamaVade" name="ortalamaVade" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+        <div class="row">
+            <label for="itibariDeger" class="col-sm-5 col-form-label pb-0">
+                İtibari Değer
+            </label>
+            <div class="col-sm-7">
+                <input type="text" id="itibariDeger" name="itibariDeger" class="form-control form-control-sm" disabled />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1 d-flex align-items-center justify-content-center flex-column">
+        <button class="btn btn-sm btn-success w-100 mb-1" id="gridPostButton">Kaydet</button>
+        <button class="btn btn-sm btn-danger w-100">Vazgeç</button>
+    </div>
+</div>
+<div class="row mb-1">
+    <div class="col-md-7 text-center">
+
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/CekSenetIslemleri/Partials/_faturaGridiade1.cshtml")
+    @Html.Partial("~/Views/CekSenetIslemleri/Partials/_faturaGridiade2.cshtml")
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var bankaId = document.getElementById("gridBanka").getAttribute("data-id");
+            var bankaAd = document.getElementById("gridBanka").value;
+            var bankahesId = document.getElementById("gridBankaHes").getAttribute("data-id");
+            var bankahesAd = document.getElementById("gridBankaHes").value;
+            var OdemeAraciId = document.getElementById("gridOAraci").getAttribute("data-id");
+            var OdemeAraciNo = document.getElementById("gridOAraci").getAttribute("data-name");
+            var BankaAdi = document.getElementById("gridOAraci").getAttribute("data-banka");
+            var HesapAdi = document.getElementById("gridOAraci").getAttribute("data-hesap");
+            var VadeTarihi = document.getElementById("gridOAraci").getAttribute("data-vadetarihi");
+            var Meblag = document.getElementById("gridOAraci").getAttribute("data-meblag");
+
+            switch (target) {
+                case "musteriCode": autoFill("musteriKod", "/Common/getCariById", "#musteriAd", "Ad", "CariKartId"); break;
+                case "musteriName": autoFill("musteriAd", "/Common/getCariById", "#musteriKod", "Kod", "CariKartId"); break;
+                case "mustahsilCode": autoFill("mustahsilKod", "/Common/getCariById", "#mustahsilAd", "Ad", "CariKartId"); break;
+                case "mustahsilName": autoFill("mustahsilAd", "/Common/getCariById", "#mustahsilKod", "Kod", "CariKartId"); break;
+                case "banka": updateBankaCell(bankaId, bankaAd); goToNextCol(); break;
+                case "oaraci": updateoAraciCell(OdemeAraciNo, OdemeAraciId, BankaAdi, VadeTarihi, Meblag); break;
+                case "oaraci2xq": updateoAraciCell2xq(OdemeAraciNo, OdemeAraciId, BankaAdi, VadeTarihi, Meblag); break;
+                case "oaraci3xq": updateoAraciCell3xq(OdemeAraciNo, OdemeAraciId, HesapAdi, VadeTarihi, Meblag); break;
+                case "oaraci4xq": updateoAraciCell4xq(OdemeAraciNo, OdemeAraciId, HesapAdi, VadeTarihi, Meblag); break;
+                case "banka3xq": updateBankaCell3xq(bankaId, bankaAd); goToNextCol3xq(); break;
+            }
+        });
+
+        function autoFill(idValElement, getUrl, updateElement, elmText, elmIdField) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            idVal ? getById(getUrl, idVal, $(updateElement), elmText, elmIdField) : null;
+        }
+        function getById(url, idval, elm, nameOrCode, idProp) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: { id: idval },
+                cache: false,
+                success: (res) => {
+                    $(elm).val(res[nameOrCode]);
+                    $(elm).attr("data-id", res[idProp]);
+                }
+            });
+        }
+
+        $("#musteriKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=musteriKod&tip=1&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "musteriCode");
+            val.result ? autoFill("musteriKod", "/Common/getCariById", "#musteriAd", "Ad", "CariKartId") : null;
+        });
+        $("#musteriAd").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=musteriAd&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "musteriName");
+            val.result ? autoFill("musteriAd", "/Common/getCariById", "#musteriKod", "Kod", "CariKartId") : null;
+        });
+        $("#mustahsilKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=mustahsilKod&tip=0&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "mustahsilCode");
+            val.result ? autoFill("mustahsilKod", "/Common/getCariById", "#mustahsilAd", "Ad", "CariKartId") : null;
+        });
+        $("#mustahsilAd").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=mustahsilAd&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "mustahsilName");
+            val.result ? autoFill("mustahsilAd", "/Common/getCariById", "#mustahsilKod", "Kod", "CariKartId") : null;
+        });
+
+        var lbl = document.getElementById("changeLabel");
+        var btns = document.querySelectorAll("button[role='tab']");
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].addEventListener("click", function () {
+                lbl.innerText = this.innerText;
+            });
+        }
+
+        var urlBtns = document.querySelectorAll("button[data-bs-toggle='modal']");
+        document.getElementById("muhatap").addEventListener("change", function () {
+            var selectedOpt = this.options[this.selectedIndex];
+            switch (selectedOpt.value) {
+                case "1":
+                    document.getElementById("musteri").style.display = "block";
+                    document.getElementById("mustahsil").style.display = "none";
+                    break;
+                case "0":
+                    document.getElementById("musteri").style.display = "none";
+                    document.getElementById("mustahsil").style.display = "block";
+                    break;
+            }
+            resetInputs();
+        });
+        function updateUrls(url1, url2) {
+            urlBtns[0].setAttribute("data-remote-url", url1);
+            urlBtns[1].setAttribute("data-remote-url", url2);
+        }
+        function resetInputs() {
+            document.getElementById("musteriKod").value = null;
+            document.getElementById("musteriAd").value = null;
+            document.getElementById("mustahsilKod").value = null;
+            document.getElementById("mustahsilAd").value = null;
+        }
+        $(document).ready(function () {
+            document.getElementById('gridPostButton').addEventListener('click', function () {
+                postGridElements();
+            });
+        });
+    </script>
+}

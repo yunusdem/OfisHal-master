@@ -1,0 +1,133 @@
+﻿@model VohalAramaMakbuz
+@{
+    ViewBag.title = "Kesilmiş Faturalar";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.ptitle = "Kesilmiş Faturalar Kayıt Arama";
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="kod" class="col-sm-3 col-form-label pb-0">
+                    Kod
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="kod" name="kod" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "kod", tip = 0,isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="ad" class="col-sm-3 col-form-label pb-0">
+                    Ad
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="ad" name="ad" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "ad", tip = 0,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="faturaNo" class="col-sm-3 col-form-label pb-0">
+                    Fatura No
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" name="faturaNo" id="faturaNo" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="tarih" class="col-sm-3 col-form-label pb-0">
+                    Fatura Tarihi
+                </label>
+                <div class="col-sm-9 d-flex align-items-center">
+                    <input class="form-check-input me-1" type="checkbox" id="tarihCheck" name="tarihCheck" value="true" checked>
+                    <input type="date" name="tarih" id="tarih" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <input type="submit" name="name" class="btn btn-primary" value="Tamam" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+        $("#kod").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=kod&tip=0&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, null);
+        });
+        $("#ad").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=ad&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, null);
+        });
+        $("#tarihCheck").on("change", function () {
+            $("#tarih").prop("disabled", !$(this).prop("checked"));
+            var date = new Date();
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            if (month < 10) month = "0" + month;
+            if (day < 10) day = "0" + day;
+            var today = `${year}-${month}-${day}`;
+            $(this).prop("checked") ? $("#tarih").val(today) : $("#tarih").val("");
+        });
+    </script>
+}
+

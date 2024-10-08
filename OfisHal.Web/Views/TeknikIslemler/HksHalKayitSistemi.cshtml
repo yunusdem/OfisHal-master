@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.title = "Hal Kayıt Sistemi Mal Kayıt";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Hks Tanımları";
+    ViewBag.ptitle = "Hal Kayıt Sistemi Mal Kayıt";
+}
+<form method="post">
+    <div class="row">
+        <div class="col d-flex">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="ad" name="kayitsistem" checked>
+                <label class="form-check-label" for="ad">
+                    Mal Adı
+                </label>
+            </div>
+            <div class="form-check ms-2">
+                <input class="form-check-input" type="radio" id="cins" name="kayitsistem">
+                <label class="form-check-label" for="cins">
+                    Mal Cinsi
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-sm btn-success">Tamam</button>
+        </div>
+    </div>
+</form>

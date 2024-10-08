@@ -1,0 +1,308 @@
+﻿@{
+    ViewBag.title = "Künye Bildirim Listesi";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.ptitle = "Künye Bildirim Listesi";
+}
+<div class="row mb-3">
+    <div class="col" data-simplebar style="max-height: 350px;">
+        <table class="table table-sm table-bordered mb-0">
+            <thead class="bg-light-subtle">
+                <tr>
+                    <th>Stok Giriş Tarihi</th>
+                    <th>Döküm No</th>
+                    <th>Müstahsil Kodu</th>
+                    <th>Müstahsil Adı</th>
+                    <th>Mal Adı</th>
+                    <th>Miktar</th>
+                    <th>Fiyat</th>
+                    <th>Künye No</th>
+                    <th>Künye Durumu</th>
+                    <th>Plaka No</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>11.22.2023</td>
+                    <td>1</td>
+                    <td>1111111111</td>
+                    <td>Ahmet</td>
+                    <td>Domates</td>
+                    <td>35</td>
+                    <td>1500</td>
+                    <td>897465</td>
+                    <td>durum</td>
+                    <td>07aa11111</td>
+                    <td>durum2</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-9">
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-basic" type="button" role="tab" aria-controls="pills-basic" aria-selected="true">
+                    Basit
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-detail" type="button" role="tab" aria-controls="pills-detail" aria-selected="false">
+                    Detaylı
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-basic" role="tabpanel" aria-labelledby="pills-basic-tab" tabindex="0">
+                <div class="row border border-dark border-opacity-10 p-2">
+                    <div class="col-md-4">
+                        <div class="row mb-3">
+                            <label for="colomnType" class="col-sm-2 col-form-label">
+                                Kolon
+                            </label>
+                            <div class="col-sm-10">
+                                <select class="form-select form-select-sm" name="colomnType" id="colomnType">
+                                    <option value="1">Stok Giriş Tarihi</option>
+                                    <option value="2">Döküm No</option>
+                                    <option value="3">Müstahsil Kodu</option>
+                                    <option value="4">Müstahsil Adı</option>
+                                    <option value="5">Mal Adı</option>
+                                    <option value="6">Miktar</option>
+                                    <option value="7">Fiyat</option>
+                                    <option value="8">Künye No</option>
+                                    <option value="9">Künye Durumu</option>
+                                    <option value="10">Plaka No</option>
+                                    <option value="11">Durum</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row mb-3">
+                            <h6>Arama Sözcüğü</h6>
+                            <label for="searchKey" class="col-sm-3 col-form-label">
+                                Stok Giriş Tarihi
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="date" name="searchKey" id="searchKeyDate" class="form-control form-control-sm w-50" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                                <input type="text" name="searchKey" id="searchKey" class="form-control form-control-sm w-50" style="display:none" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-detail" role="tabpanel" aria-labelledby="pills-detail-tab" tabindex="0">
+                <div class="row border border-dark border-opacity-10 p-2">
+                    <div class="col-md-6" data-simplebar style="max-height: 150px;">
+                        <div class="row">
+                            <label for="stokGirisTarih" class="col-sm-4 col-form-label">
+                                Stok Giriş Tarihi
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="date" name="stokGirisTarih" id="stokGirisTarih" class="form-control form-control-sm " value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="dokumNo" class="col-sm-4 col-form-label">
+                                Döküm No
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" name="dokumNo" id="dokumNo" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="mustahsilKodu" class="col-sm-4 col-form-label">
+                                Müstahsil Kodu
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" name="mustahsilKodu" id="mustahsilKodu" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="mustahsilAdi" class="col-sm-4 col-form-label">
+                                Müstahsil Adı
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" name="mustahsilAdi" id="mustahsilAdi" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="miktar" class="col-sm-4 col-form-label">
+                                Miktar
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="number" name="miktar" id="miktar" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="fiyat" class="col-sm-4 col-form-label">
+                                Fiyat
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="number" name="fiyat" id="fiyat" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="kunyeNo" class="col-sm-4 col-form-label">
+                                Künye No
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" name="kunyeNo" id="kunyeNo" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="kunyeDurum" class="col-sm-4 col-form-label">
+                                Künye Durumu
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" name="kunyeDurum" id="kunyeDurum" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" data-simplebar style="max-height: 150px;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="stokGirisCheck" name="stokGirisCheck">
+                                    <label class="form-check-label" for="stokGirisCheck">
+                                        Stok Giriş Tarihi
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="dokumNoCheck" name="dokumNoCheck">
+                                    <label class="form-check-label" for="dokumNoCheck">
+                                        Döküm No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="mustahsilKoduCheck" name="mustahsilKoduCheck">
+                                    <label class="form-check-label" for="mustahsilKoduCheck">
+                                        Müstahsil Kodu
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="mustahsilAdiCheck" name="mustahsilAdiCheck">
+                                    <label class="form-check-label" for="mustahsilAdiCheck">
+                                        Müstahsil Adı
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="malAdiCheck" name="malAdiCheck">
+                                    <label class="form-check-label" for="malAdiCheck">
+                                        Mal Adı
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="miktarCheck" name="miktarCheck">
+                                    <label class="form-check-label" for="miktarCheck">
+                                        Miktar
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fiyatCheck" name="fiyatCheck">
+                                    <label class="form-check-label" for="fiyatCheck">
+                                        Fiyat
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="kunyeNoCheck" name="kunyeNoCheck">
+                                    <label class="form-check-label" for="kunyeNoCheck">
+                                        Künye No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="kunyeDurumCheck" name="kunyeDurumCheck">
+                                    <label class="form-check-label" for="kunyeDurumCheck">
+                                        Künye Durumu
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="plakaNoCheck" name="plakaNoCheck">
+                                    <label class="form-check-label" for="plakaNoCheck">
+                                        Plaka No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 d-flex align-items-end justify-content-evenly">
+        <button class="btn btn-success w-100">Künye</button>
+        <button class="btn btn-danger w-100 mx-2">Vazgeç</button>
+
+    </div>
+</div>
+@section scripts{
+
+    <script>
+        var keyInputDate = document.getElementById("searchKeyDate");
+        var keyInput = document.getElementById("searchKey");
+        document.getElementById("colomnType").addEventListener("change", function () {
+            var label = document.querySelector("label[for='searchKey']");
+            label.textContent = this.options[this.selectedIndex].text;
+
+            switch (this.options[this.selectedIndex].value) {
+                case "1": enableDate(true, false); break;
+                case "6":
+                case "7": enableDate(false, true); break;
+                default: enableDate(false, false); break;
+            };
+
+        });
+
+        function enableDate(val, isNumber) {
+            if (val) {
+                keyInputDate.style.display = "block";
+                keyInput.style.display = "none";
+                keyInputDate.value = null;
+            } else {
+                keyInputDate.style.display = "none";
+                isNumber ? keyInput.type = "number" : keyInput.type = "text";
+                keyInput.style.display = "block";
+                keyInput.value = null;
+            }
+        }
+
+    </script>
+}

@@ -1,0 +1,132 @@
+﻿@model IList<TohalYer>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+
+</style>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="ilTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <td>
+                    <button id="ekleIlBtn" class="btn btn-sm btn-primary">Ekle</button>
+                </td>
+                <td>
+                    <input id="ekleIlAd" type="text" class="form-control form-control-sm" placeholder="Ad" />
+                </td>
+                <td>
+                    <input id="ekleIlTur" type="text" class="form-control form-control-sm" placeholder="Tür" value="@Request.QueryString["tur"]" disabled readonly />
+                </td>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ad</th>
+                <th scope="col">Tür</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        @if (Request.QueryString["isInput"] == "True")
+                        {
+                            <input type="radio" name="iller" data-id="@item.YerId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-id="@item.YerId" class="form-check-input ms-1" data-name="@item.Ad" />
+                        }
+                    </th>
+                    <td>@item.Ad</td>
+                    <td>@item.Tur</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+</div>
+
+<script>
+    $(document).on("click", "#ekleIlBtn", function (e) {
+        var ad = $("#ekleIlAd");
+        var tur = $("#ekleIlTur");
+        if (ad.val() == "") {
+            alert("Ad dolu olmalı");
+            name.focus();
+        }
+        else if (tur.val() == "") {
+            alert("Tür dolu olmalı");
+            code.focus();
+        }
+        else {
+            ad = ad.val();
+            tur = tur.val();
+            var isCode = false;
+            $.post("@Url.Action("IlKaydet","Common")", { ad, tur }, function (data, status) {
+                if (status = "success") {
+                    $("#modalContent").empty();
+                    $("#modalContent").html(data);
+                }
+                else {
+                    alert("Hata: " + status);
+                }
+            });
+        }
+    });
+
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#ilTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        target.empty();
+        target.removeAttr("data-id");
+        if (isInput || isInput == "True") {
+            var item = $("#ilTablo").find("input:checked");
+            target.val(item.data("name"));
+            $("#IlceId").prop("disabled", false);
+            $("#IlceIdBtn").prop("disabled", false);
+            target.attr("data-id", item.data("id"));
+        } else {
+            $("#ilTablo").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

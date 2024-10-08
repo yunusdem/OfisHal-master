@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.title = "Kasa Notu";
+
+    ViewBag.pagetitle = "Kasa İşlemleri";
+    ViewBag.ptitle = "Kasa Notu";
+}
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="date" class="col-sm-3 col-form-label pb-0">
+                    Tarih
+                </label>
+                <div class="col-sm-9">
+                    <input type="date" name="date" id="date" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                </div>
+            </div>
+            <div class="row">
+                <label for="note" class="col-sm-3 col-form-label pb-0">
+                    Not
+                </label>
+                <div class="col-sm-9">
+                    <textarea type="text" name="note" id="note" class="form-control form-control-sm" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<string>
+@{
+    bool.TryParse(Request.QueryString["ownFile"], out bool ownFile);
+}
+<h2>@ViewData["Title"]</h2>
+<ul>
+    @foreach (var item in Model)
+    {
+        var url = ownFile ? Url.Action("ExportReport", new { id = item, IslemId = 0 }) : Url.Action("Details", new { id = item });
+        <li>
+            <a href="@url">@item</a>
+        </li>
+    }
+</ul>

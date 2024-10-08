@@ -1,0 +1,64 @@
+@model IList<TohalKunyeBakiye>
+
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="stokKunyeTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Künye</th>
+                <th scope="col">Mal Adý</th>
+                <th scope="col">Kap Bakiyesi</th>
+                <th scope="col">Miktar Bakiyesi</th>
+                <th scope="col">Malýn Miktarý</th>
+                <th scope="col">Fiyat</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        <input type="radio" name="procuder" data-id="@item.KUNYE_ID" class="form-check-input ms-1" data-name="@item.KUNYE" />
+
+                    </th>
+                    <td>@item.KUNYE</td>
+                    <td>@item.MAL_ADI</td>
+                    <td class="column-sayi">@Math.Round(item.KAP_BAKIYE, 2)</td>
+                    <td class="column-sayi">@Math.Round(item.MIKTAR_BAKIYE, 2)</td>
+                    <td class="column-sayi">@Math.Round(item.MALIN_MIKTARI, 2)</td>
+                    <td class="column-sayi">@Math.Round(item.FIYAT, 2)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="tur" type="hidden" value="@Request.QueryString["tur"]" />
+    <input id="isgrid" type="hidden" value="@Request.QueryString["isGrid"]" />
+    <input id="marka" type="hidden" value="@Request.QueryString["marka"]" />
+    <input id="mal" type="hidden" value="@Request.QueryString["mal"]" />
+</div>
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#stokKunyeTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isGrid = $("#isgrid").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#stokKunyeTable").find("input:checked");
+        if (isGrid) {
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        }
+        $("#modal").modal("hide");
+    }
+</script>

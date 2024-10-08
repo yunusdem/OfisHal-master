@@ -1,0 +1,251 @@
+@model OfisHal.Web.Models.VohalHesapHareketi
+@{
+    ViewBag.title = "Kasa Hareket Düzenle";
+
+    ViewBag.pagetitle = "Kasa Ýþlemleri";
+    ViewBag.ptitle = "Kasa Hareket Düzenle";
+
+    ViewBag.addUrl = "/KasaIslemleri/KasaHareketKayit";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/HesapHareketler";
+    ViewBag.firstDataUrl = "/KasaIslemleri/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "/KasaIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + Model.HesapHareketiId;
+    ViewBag.afterDataUrl = "/KasaIslemleri/sonrakiOncekiKayit?afterOrBefore=true&currentId=" + Model.HesapHareketiId;
+    ViewBag.lastDataUrl = "/KasaIslemleri/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = false;
+    ViewBag.raporYazdirVar = true;
+    ViewBag.belgeUrl = $"/reports/exportreport/kasa hareket/?IslemId={Model.HesapHareketiId}";
+    ViewBag.raporUrl = $"/reports/details/kasadefteri";
+
+    var tipler = new List<SelectListItem>
+    {
+        new SelectListItem{ Text="Giriþ",Value="0" },
+        new SelectListItem{ Text="Çýkýþ",Value="1" }
+    };
+
+    var hareketTipleri = new List<SelectListItem>
+    {
+        new SelectListItem{ Text="Kasa Hareketi",Value="0" },
+        new SelectListItem{ Text="Hesap Hareketi",Value="1" }
+    };
+}
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" action="@Url.Action("KasaHareketDuzenle")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="HesapHareketiId" id="HesapHareketiId" value="@Model.HesapHareketiId" />
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <input type="hidden" name="HesapId" id="HesapId" value="@Model.HesapId" />
+                <span class="text-danger">@Html.ValidationMessageFor(model => model.HesapId)</span>
+                <label for="hesapKodu" class="col-sm-3 col-form-label pb-0">
+                    Hesap Kodu
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hesapKodu" name="hesapKodu" class="form-control form-control-sm" data-id="@Model.HesapId" value="@Model.Kod" />
+                        <button type="button" data-btarget="hesapkod" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action(" HesapKodlar", "Common" , new { target="hesapKodu" , isCode=true, inputType="code" , isInput=true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="hesapAdi" class="col-sm-3 col-form-label pb-0">
+                    Hesap Adý
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hesapAdi" name="hesapAdi" class="form-control form-control-sm" data-id="@Model.HesapId" value="@Model.Ad" />
+                        <button type="button" data-btarget="hesapad" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action(" HesapAdlar", "Common" , new { target="hesapAdi" , isCode=false, inputType="name" , isInput=true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tarih" class="col-sm-3 col-form-label pb-0">Tarih</label>
+                <div class="col-sm-9">
+                    <input type="date" name="Tarih" id="Tarih" class="form-control form-control-sm" value="@Model.Tarih.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Aciklama" class="col-sm-3 col-form-label pb-0">Açýklama</label>
+                <div class="col-sm-9">
+                    <input type="text" name="Aciklama" id="Aciklama" class="form-control form-control-sm" value="@Model.Aciklama" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Meblag" class="col-sm-3 col-form-label pb-0">Meblað</label>
+                <div class="col-sm-3">
+                    <input type="text" data-type="num" name="Meblag" id="Meblag" class="form-control form-control-sm" value="@Model.Meblag.ToString()" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="KdvOrani" class="col-sm-3 col-form-label pb-0">Kdv %</label>
+                <div class="col-sm-3">
+                    <input type="number" name="KdvOrani" id="KdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.KdvOrani" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Kdv" class="col-sm-3 col-form-label pb-0">Kdv</label>
+                <div class="col-sm-3">
+                    <input type="text" data-type="num" name="Kdv" id="Kdv" class="form-control form-control-sm" readonly value="@Model.Kdv.ToString()" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tip" class="col-sm-3 col-form-label pb-0">Kayýt Tipi</label>
+                <div class="col-sm-3">
+                    @Html.DropDownListFor(m => m.Tip, tipler, new { @class = "form-control form-control-sm" })
+                </div>
+            </div>
+            <div class="row">
+                <label for="HareketTipi" class="col-sm-3 col-form-label pb-0">Hareket Tipi</label>
+                <div class="col-sm-3">
+                    @Html.DropDownListFor(m => m.HareketTipi, hareketTipleri, new { @class = "form-control form-control-sm" })
+                </div>
+                <div class="col-sm-4 d-flex">
+                    <input type="text" class="form-control form-control-sm" data-type="num" id="bakiye" value="0" disabled readonly /> <span id="borcAlacak" class="fs-4 fw-bold ms-1"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+<script src="~/assets/customscripts/sharedfuncs.js"></script>
+<script>
+    bakiyeSoyle();
+    var target = "";
+    $(document).on("show.bs.modal", "#modal", function (e) {
+        var btn = $(e.relatedTarget);
+        var container = $("#modalContent");
+        var label = $("#modalLabel");
+
+        container.empty();
+        label.empty();
+
+        if (btn.data("remote-url")) {
+            target = btn.data("btarget");
+            container.load(btn.data("remote-url"));
+            label.text(btn.data("label"))
+        } else {
+            target = e.relatedTarget.target;
+        }
+    });
+
+    $(document).on("hidden.bs.modal", "#modal", function (e) {
+        $("#modalContent").empty();
+        $("#modalLabel").empty();
+        switch (target) {
+            case "hesapkod": autoFill("hesapKodu"); break;
+            case "hesapad": autoFill("hesapAdi"); break;
+            case "arabtn":
+                sessionStorage.getItem('hesapHareketId') > 0 ? window.location.href = `/KasaIslemleri/KasaHareketDuzenle/${sessionStorage.getItem('hesapHareketId')}` : null;
+                sessionStorage.removeItem("hesapHareketId");
+                break;
+        }
+    });
+
+
+    $("#hesapKodu").on("focusout", async function (e) {
+        var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapKodu&codeOrName=true", "Kod", "HesapId", e, null, "hesapkod");
+        val.result ? autoFill("hesapKodu") : fillData(null, null, null);
+    });
+    $("#hesapAdi").on("focusout", async function (e) {
+        var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=name&target=hesapAdi&codeOrName=false", "Ad", "HesapId", e, null, "hesapad");
+        val.result ? autoFill("hesapAdi") : fillData(null, null, null);
+    });
+
+    $("#Meblag, #KdvOrani").on("change", function () {
+        var meb = parseFloat($("#Meblag").val().replace(".", "").replace(",", "."));
+        var kdvOran = parseInt($("#KdvOrani").val()) / 100;
+        var kdv = parseFloat(meb * kdvOran).toFixed(2);
+        $("#Kdv").val(kdv.replace(".", ","));
+        formatNumberInput(document.getElementById("Kdv"));
+    });
+
+    function autoFill(idValElement) {
+        var idVal = document.getElementById(idValElement).getAttribute("data-id");
+        if (parseInt(idVal) > 0) {
+            $.ajax({
+                url: "/Common/getHesapById",
+                type: "GET",
+                data: { id: parseInt(idVal) },
+                cache: false,
+                success: (res) => {
+                    fillData(res.HesapId, res.Kod, res.Ad);
+                }
+            });
+        } else {
+            fillData(null, null, null);
+        }
+    }
+    function fillData(hesapId, kod, ad) {
+        $("#hesapKodu").val(kod);
+        $("#hesapAdi").val(ad);
+        $("#HesapId").val(hesapId);
+        $("#hesapKodu").attr("data-id", hesapId);
+        $("#hesapAdi").attr("data-id", hesapId);
+        if (hesapId > 0) setTimeout(() => $("#hesapAdi").closest('.row').next('.row').find('input').focus(), 150);
+    }
+    $("#hideRemoveBtn").click(function () {
+        DeleteConfirm().then(p => {
+            if (p.isConfirmed) {
+                var id = $('#HesapHareketiId').val();
+                window.location.href = `/KasaIslemleriC/Delete?hesaHareketId=${id}&kullaniciId=${0}`
+            }
+        });
+    });
+    $("#recordDeleteBtn").click(function () {
+        $("#hideRemoveBtn").trigger("click");
+    });
+    function bakiyeSoyle() {
+        $.ajax({
+            url: "/KasaIslemleri/BakiyeSoyleAsync",
+            type: "GET",
+            data: { id: $("#HesapId").val() },
+            cache: false,
+            success: (res) => {
+                if (res && res != null) {
+                    // sonuç negatif yada pozitif eðer negatifse alacak pozitif ise alacak borç
+                    var posOrNeg = parseInt(res.Bakiye) > 0 ? true : false;
+                    if (!posOrNeg)
+                        res.Bakiye = res.Bakiye.toString().slice(1);
+                    $("#bakiye").val(res.Bakiye);
+                    formatNumberInput(document.getElementById("bakiye"));
+                    posOrNeg ? $("#borcAlacak").text(" B") : $("#borcAlacak").text(" A");
+                }
+            }
+        });
+    }
+    $("#navigatorSaveBtn").click(function () {
+        $("form").first().trigger("submit");
+    });
+</script>
+}

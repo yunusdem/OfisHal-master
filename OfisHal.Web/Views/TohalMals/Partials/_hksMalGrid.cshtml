@@ -1,0 +1,391 @@
+﻿@{
+    var HksMalModel = (List<VohalHksMal>)ViewData["HksMalModel"];
+}
+<script>
+    var dataView;
+    var grid;
+    var data = [];
+    var columns = [
+        { id: "id", name: "ID", width: 10, field: "id", cssClass: "cell-title", selectable: false, editable: false, editor: Slick.Editors.Text },
+        { id: "hksmaladi", name: "Hks mal adı", field: "hksmaladi", editor: Slick.Editors.Text, formatter: hksmalFormatter },
+        { id: "hksmalcinsi", name: "Hks mal cinsi", field: "hksmalcinsi", editor: Slick.Editors.Text, formatter: hksmalcinsFormatter },
+        { id: "uretimsekli", name: "Üretim şekli", field: "uretimsekli" },
+    ];
+
+    var options = {
+        columnPicker: {
+            columnTitle: "Columns",
+            hideForceFitButton: false,
+            hideSyncResizeButton: false,
+            forceFitTitle: "Force fit columns",
+            syncResizeTitle: "Synchronous resize",
+        },
+        editable: true,
+        enableAddRow: true,
+        enableCellNavigation: true,
+        asyncEditorLoading: false,
+        rowHeight: 40,
+        forceFitColumns: true,
+    };
+
+
+    function toggleFilterRow() {
+        grid.setTopPanelVisibility(!grid.getOptions().showTopPanel);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        debugger;
+    @if (HksMalModel.Count == 0)
+    {
+        @:var d = (data[0] = {});
+        @:d["id"] = 1;
+        @:d["hksmaladi"] = "";
+        @:d["hksmalcinsi"] = "";
+        @:d["uretimsekli"] = "";
+        @:d["hksmaladiid"] = "";
+        @:d["hksmalcinsiid"] = "";
+    }
+    else
+    {
+        for (var i = 0; i < HksMalModel.Count; i++)
+        {
+            @:var d = (data[@i] = {});
+            @:d["id"] = @i+1;
+            @:d["hksmaladi"] = "@Html.Raw(HksMalModel[i].MalAdi)";
+            @:d["hksmalcinsi"] = "@Html.Raw(HksMalModel[i].MalCinsi)";
+            @:d["uretimsekli"] = "@Html.Raw(HksMalModel[i].UretimSekliAciklamasi)";
+            @:d["hksmaladiid"] = "@Html.Raw(HksMalModel[i].MalAdiHksId)";
+            @:d["hksmalcinsiid"] = "@Html.Raw(HksMalModel[i].MalCinsiId)";
+
+            @:$("#gridMalAdi").attr("data-id", @Html.Raw(HksMalModel[i].MalAdiId));
+            @:$("#gridMalAdi").val("@Html.Raw(HksMalModel[i].MalAdi).ToString()");
+
+            if (HksMalModel[i].MalCinsiId > 0)
+            {
+                @:$("#gridMalCinsi").attr("data-id", @Html.Raw(HksMalModel[i].MalCinsiId));
+                @:$("#gridMalCinsi").val("@Html.Raw(HksMalModel[i].MalCinsi)");
+            }
+
+        }
+    }
+            dataView = new Slick.Data.DataView({ inlineFilters: true });
+        grid = new Slick.Grid("#myGrid", dataView, columns, options);
+        grid.setSelectionModel(new Slick.RowSelectionModel());
+
+        var columnpicker = new Slick.Controls.ColumnPicker(columns, grid, {
+            ...options,
+        });
+
+
+        grid.onCellChange.subscribe(async function (e, args) {
+
+            var rowId = args.row;
+            if (args.cell === columns.findIndex(c => c.id === "darali") ||
+                args.cell === columns.findIndex(c => c.id === "dara") ||
+                args.cell === columns.findIndex(c => c.id === "adet")
+            ) {
+                updateRowValues(rowId);
+            }
+            if (args.cell === columns.findIndex(c => c.id === "id")) {
+                if (Number.isInteger(args.item.id)) {
+                    dataView.updateItem(args.item.id, args.item);
+                } else {
+                    // Çevrim yap ve kontrol et.
+                    var itemIdAsInteger = parseInt(args.item.id, 10);
+                    dataView.updateItem(itemIdAsInteger, args.item);
+                }
+
+
+            }
+
+
+            switch (args.column.field) {
+                case "hksmaladi":
+                    var val = await gridGetData("/Common/HksMalGetir?target=gridMalAdi&tur=0", args.item[args.column.field], "malAd");
+                    val.result ? updateMalAdCell(val.data.HksMalId, val.data.Ad) : null;
+                    break;
+                case "hksmalcinsi":
+                    var malid = document.getElementById("gridMalAdi").getAttribute("data-id");
+                    var val = await gridGetData(`/Common/HksMalCinsGetir?&target=gridMalCinsi&malId=${malid > 0 ? malid : 0}`, args.item[args.column.field], "malCins");
+                    val.result ? updateMalCinsCell(val.data.MalCinsiId, val.data.MalCinsi, val.data.UretimSekliAciklamasi) : null;
+                    break;
+            }
+        });
+        function gridGetData(reqUrl, val, target) {
+            var deger = val.trim();
+            return new Promise((resolve, reject) => {
+                if (deger.length > 0) {
+                    $.ajax({
+                        url: reqUrl,
+                        type: "GET",
+                        data: { content: deger },
+                        success: (res) => {
+                            switch (res.length) {
+                                case 0:
+                                    alert("Böyle Bir Kayıt Bulunamadı");
+                                    resolve({ result: false, data: null });
+                                    break;
+                                case 1:
+                                    resolve({ result: true, data: res[0] });
+                                    break;
+                                default:
+                                    resolve({ result: false, data: null });
+                                    loadModal(res, target);
+                                    break;
+                            }
+                        }
+                    });
+                }
+                else {
+                    resolve({ result: false, data: null });
+                }
+            });
+        }
+        grid.onKeyDown.subscribe(function (e) {
+            var activeCell = grid.getActiveCell();
+            var column = grid.getColumns()[activeCell.cell];
+
+            if (e.key === 'F12') {
+                var formatterColumns = ["hksmaladi", "hksmalcinsi"];
+                var field = column.field;
+                // İlgili buttonun id'sini belirle
+                if (formatterColumns.includes(field)) {
+
+                    var buttonId = field + "Button";
+
+                    var button = document.getElementById(buttonId);
+                    if (button) {
+                        //add button data-url attribute &malId" + data[row].hksmaladiid +"
+                        var url = button.getAttribute("data-remote-url");
+                        if (field === "hksmalcinsi") {
+                            var malId = data[activeCell.row].hksmaladiid;
+                            url = url + "&malId=" + malId;
+                        }
+                        button.setAttribute("data-remote-url", url); 
+                        button.click();
+                    }
+
+                    e.preventDefault();
+                }
+            }
+
+            // Şimdi dataView'deki işlemlerinizi gerçekleştirin.
+            if (grid.getActiveCell().row === dataView.getLength()) {
+                onAddNewRow();
+            }
+
+            // select all rows on ctrl-a
+            if (e.which != 65 || !e.ctrlKey) {
+                return false;
+            }
+            var rows = [];
+            for (var i = 0; i < dataView.getLength(); i++) {
+                rows.push(i);
+            }
+
+            grid.setSelectedRows(rows);
+            e.preventDefault();
+        });
+
+        dataView.onRowCountChanged.subscribe(function (e, args) {
+            grid.updateRowCount();
+            grid.render();
+        });
+
+        dataView.onRowsChanged.subscribe(function (e, args) {
+            grid.invalidateRows(args.rows);
+            grid.render();
+        });
+
+        grid.onClick.subscribe(function (e) {
+            var cell = grid.getCellFromEvent(e);
+            var clickedColumn = grid.getColumns()[cell.cell];
+
+            if (cell.row === dataView.getLength() && grid.getCellFromEvent(e).cell === 0) {
+                onAddNewRow();
+            }
+        });
+
+        grid.onAddNewRow.subscribe(function (e, args) {
+
+            var newDataRow = {
+                id: dataView.getLength() + 1, // Yeni bir numara oluştur
+                hksmaladi: "",
+                hksmalcinsi: "",
+                uretimsekli: "",
+                hksmaladiid: "",
+                hksmalcinsiid: "",
+            };
+            if (!isLastRowEmpty()) {
+                Slick.Utils.extend(newDataRow, args.item);
+                dataView.addItem(newDataRow);
+                dataView.refresh();
+            }
+        });
+
+
+
+        function onAddNewRow() {
+
+            var newDataRow = {
+                id: dataView.getLength() + 1, // Yeni bir numara oluştur
+                hksmaladi: "",
+                hksmalcinsi: "",
+                uretimsekli: "",
+                hksmaladiid: "",
+                hksmalcinsiid: "",
+            };
+            if (!isLastRowEmpty()) {
+                dataView.addItem(newDataRow);
+                dataView.refresh();
+            }
+        }
+        function isLastRowEmpty() {
+            var lastRow = data[data.length - 1];
+            return !lastRow.hksmaladi.trim() && !lastRow.hksmalcinsi.trim();
+        }
+
+
+        var dataArray = data;
+
+        dataView.beginUpdate();
+        dataView.setItems(dataArray);
+        dataView.endUpdate();
+
+        // if you don't want the items that are not visible (due to being filtered out
+        // or being on a different page) to stay selected, pass 'false' to the second arg
+        dataView.syncGridSelection(grid, true);
+    });
+
+    function hksmalFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='malAd' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HksMallar", "Common", new { target = "gridMalAdi", isGrid = true, tur = 0 })' ><i class='ri-search-line'></i></button>" + value + "</div>";
+    }
+    function hksmalcinsFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='malCins' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HksMalCinsler", "Common", new { target = "gridMalCinsi", isGrid = true,  })&malId" + data[row].hksmaladiid +"'><i class='ri-search-line'></i></button>" + value + "</div>";
+    }
+
+
+     function postGrid(malId) {
+         var gridData = grid.getData();
+
+         var requestDataList = [];
+
+         for (var i = 0; i < gridData.items.length; i++) {
+             var rowData = gridData.items[i];
+             if (parseInt(rowData.MalCinsiHksId) !== 0 && rowData.MalCinsiHksId !== "" && rowData.MalCinsiHksId !== null) {
+
+                 var requestData = {
+                     SiraNo: rowData.id - 1,
+                     MalId: parseInt(malId),
+                     HksMalId: parseInt(rowData.hksmalcinsiid),
+                 };
+
+                 for (const key in requestData) {
+                     if (requestData.hasOwnProperty(key) && typeof requestData[key] === 'number' && isNaN(requestData[key])) {
+                         requestData[key] = 0;
+                     }
+                 }
+
+                 requestDataList.push(requestData);
+             }
+         }
+
+         var requestPostData = JSON.stringify(requestDataList);
+
+         $.ajax({
+             url: '/TohalMals/CreateHksMalBagi',
+             type: 'POST',
+             contentType: 'application/json; charset=utf-8',
+             data: requestPostData,
+             success: function (responsedata) {
+                 ShowAlert(true, "Mal Kaydedildi");
+                 console.log('Başarıyla eklendi:', responsedata);
+             },
+             error: function (error) {
+                 console.error('Hata oluştu:', error);
+             }
+         });
+     }
+     function faturaSave() {
+         // Form verilerini serialize ediyoruz
+         var tohalMal = $("#malForm").serialize();
+         var id = $("#MalId").val();
+         var frmlUrl = "/TohalMals/Create";
+         if (id != null || id != undefined) { frmlUrl = "/TohalMals/Edit" }
+         $.ajax({
+             type: "POST",
+             url: frmlUrl,
+             data: tohalMal,
+             success: function (response) {
+                     if (id ==null) {
+                         id = response.id
+                     }
+                     postGrid(id)
+                     console.log(response);
+                 },
+                 error: function (error) {
+
+                     console.error(error);
+                 }
+             });
+     }
+
+
+
+    function updateMalAdCell(malId, ad) {
+        // Tıklanan satırın indisini al
+        var rowId = grid.getActiveCell().row;
+
+        // SlickGrid'deki veriyi güncelle
+        data[rowId].hksmaladiid = malId;
+        data[rowId].hksmaladi = ad;
+
+        // SlickGrid'deki satırı güncelle
+        grid.updateRow(rowId);
+        // $("#selectModal").modal('toggle');
+        goToNextCol();
+    }
+
+    function updateMalCinsCell(malCinsId, malCins, urtSekli) {
+        // Tıklanan satırın indisini al
+        var rowId = grid.getActiveCell().row;
+
+        // SlickGrid'deki veriyi güncelle
+        data[rowId].hksmalcinsiid = malCinsId;
+        data[rowId].hksmalcinsi = malCins;
+        data[rowId].uretimsekli = urtSekli;
+
+        // SlickGrid'deki satırı güncelle
+        grid.updateRow(rowId);
+        // $("#selectModal").modal('toggle');
+        goToNextCol();
+    }
+
+
+    function goToNextCol() {
+
+        var activeCell = grid.getActiveCell();
+        var column = grid.getColumns()[activeCell.cell];
+
+        var nextCell = null;
+        if (activeCell) {
+            nextCell = {
+                row: activeCell.row,
+                cell: activeCell.cell + 1
+            };
+        }
+
+        if (nextCell && nextCell.cell < grid.getColumns().length) {
+            grid.gotoCell(nextCell.row, nextCell.cell, true);
+        }
+    }
+    //onclick hksmalcinsiButton add data-remote-url this parameter malId = data[row].hksmaladiid
+
+</script>
+
+
+<button id="hksmaladiButton" type='button' data-btarget='malAd' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HksMallar", "Common", new { target = "gridMalAdi", isGrid = true, tur = 0 })'><i class='ri-search-line'></i></button>
+
+
+<button id="hksmalcinsiButton" type='button' data-btarget='malCins' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("HksMalCinsler", "Common", new { target = "gridMalCinsi", isGrid = true,  })'><i class='ri-search-line'></i></button>

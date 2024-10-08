@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.title = "Sipariş";
+
+    ViewBag.pagetitle = "Alış İşlemleri";
+    ViewBag.ptitle = "Sipariş";
+}
+<div class="row">
+    <div class="col-md-5">
+        <div class="row">
+            <label for="customerName" class="col-sm-3 col-form-label pb-0">
+                Müşteri Adı
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input type="text" id="customerName" name="customerName" class="form-control form-control-sm" />
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "customerName", tip = 1,isInput = true ,inputType = "name" })">
+                        Seç
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="orderNo" class="col-sm-3 col-form-label pb-0">
+                Sipariş No
+            </label>
+            <div class="col-sm-9">
+                <input type="text" id="orderNo" name="orderNo" class="form-control form-control-sm" />
+            </div>
+        </div>
+        <div class="row">
+            <label for="orderDate" class="col-sm-3 col-form-label pb-0">
+                Sipariş Tarihi
+            </label>
+            <div class="col-sm-9">
+                <input type="date" name="orderDate" id="orderDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+        </div>
+        <div class="row">
+            <label for="explanation" class="col-sm-3 col-form-label pb-0">
+                Açıklama
+            </label>
+            <div class="col-sm-9">
+                <input type="text" name="explanation" id="explanation" class="form-control form-control-sm" />
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col" data-simplebar style="max-height: 140px;">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Mal</th>
+                            <th>Miktar</th>
+                            <th>Birim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                        <tr>
+                            <td>Domates</td>
+                            <td>30</td>
+                            <td>KG</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col" data-simplebar style="max-height: 140px;">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width:1rem;">#</th>
+                            <th>Hesap Kodu</th>
+                            <th>Masraf</th>
+                            <th>Kdv %</th>
+                            <th>Kdv</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                        <tr>
+                            <td class="table-primary"></td>
+                            <td>111</td>
+                            <td>30</td>
+                            <td>18</td>
+                            <td>30</td>
+                            <td>301500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-start align-items-center">
+                <button class="btn btn-sm btn-secondary">Alış Faturaları</button>
+                <button class="btn btn-sm btn-secondary mx-2">Satış Faturaları</button>
+                <button class="btn btn-sm btn-success">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+        $("#customerName").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=customerName&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, null);
+        });
+    </script>
+}

@@ -1,0 +1,105 @@
+﻿@model VohalAramaMakbuz
+@{
+    ViewBag.title = "İşlemdeki Faturalar";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.ptitle = "İşlemdeki Faturalar Kayıt Arama";
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="fatKod" class="col-sm-3 col-form-label pb-0">
+                    Kod
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="fatKod" name="fatKod" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "fatKod", tip = 0,isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="fatAd" class="col-sm-3 col-form-label pb-0">
+                    Ad
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="fatAd" name="fatAd" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "fatAd", tip = 0,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <input type="submit" name="name" class="btn btn-primary" value="Tamam" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+        $("#fatKod").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=fatKod&tip=0&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, null);
+        });
+        $("#fatAd").on("focusout", async function (e) {
+            await getData($(this), "/Common/cariGetir?isInput=True&target=fatAd&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, null);
+        });
+    </script>
+}
+

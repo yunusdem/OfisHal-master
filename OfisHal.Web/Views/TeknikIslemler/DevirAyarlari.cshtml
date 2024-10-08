@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.title = "Devir Ayarları";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Servis İşlemleri";
+    ViewBag.ptitle = "Devir Ayarları";
+}
+<form method="post">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="border p-3">
+                <h6>Yapılacak Devirler</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="mustahsilCari" name="mustahsilCari" checked>
+                            <label class="form-check-label" for="mustahsilCari">
+                                Müstahsil Cari
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cekSenet" name="cekSenet" checked>
+                            <label class="form-check-label" for="cekSenet">
+                                Çek - Senet
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="musteriCari" name="musteriCari" checked>
+                            <label class="form-check-label" for="musteriCari">
+                                Müşteri Cari
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="kayitsizMusteri" name="kayitsizMusteri" checked>
+                            <label class="form-check-label" for="kayitsizMusteri">
+                                Kayıtsız Müşteri
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="mustahsilKapCari" name="mustahsilKapCari" checked>
+                            <label class="form-check-label" for="mustahsilKapCari">
+                                Müstahsil Kap Cari
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="kalanDokum" name="kalanDokum" checked>
+                            <label class="form-check-label" for="kalanDokum">
+                                Kalan Döküm
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="musteriKapCari" name="musteriKapCari" checked>
+                            <label class="form-check-label" for="musteriKapCari">
+                                Müşteri Kap Cari
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="magaza" name="magaza" checked>
+                            <label class="form-check-label" for="magaza">
+                                Mağaza
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="banka" name="banka" checked>
+                            <label class="form-check-label" for="banka">
+                                Banka
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fiyatListesi" name="fiyatListesi" checked>
+                            <label class="form-check-label" for="fiyatListesi">
+                                Fiyat Listesi
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="musteriRehinIade" class="col-sm-6 col-form-label pb-0">
+                        Müşteri Rehin İade Şekli
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-select form-select-sm" name="musteriRehinIade" id="musteriRehinIade">
+                            <option>Fatura Bazlı</option>
+                            <option>Müşteri Bazlı</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="devirHareketTarih" class="col-sm-6 col-form-label pb-0">
+                        Devir Hareket Tarihi
+                    </label>
+                    <div class="col-sm-6">
+                        <input type="date" name="devirHareketTarih" id="devirHareketTarih" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button class="btn btn-sm btn-success">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

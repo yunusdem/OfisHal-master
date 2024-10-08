@@ -1,0 +1,218 @@
+<script>
+    // modal açýldýðýnda müþteri id ye göre maðaza getirecek
+    $("#isyeriModalOpenBtn").click(async function () {
+        //var res = await ajaxRequest("/TohalCariKarts/IsyerleriGetirByCari", $("#CariKartId").val());
+        var res = await ajaxRequest("/TohalCariKarts/IsyerleriGetirByCari", { id: $("#CariKartId").val() });
+        res.result ? SetFormValues(res.data) : null;
+        $("#modalNavigatorDeleteBtn").css("display", "block");
+        $("#isyerleriModal").modal("show");
+    });
+    // yeni bir kayýt için form resetlenir
+    $("#modalNavigatorNewBtn").click(function () {
+        resetForm();
+    });
+    // magaza arama
+    $("#modalNavigatorSearchBtn").click(function () {
+        apiRequest("/Common/Magazalar?cariId=" + $("#CariKartId").val(), null, "modalArabtn");
+    });
+    // magaza kaydetmek
+    $("#modalNavigatorSaveBtn").click(function () {
+        submitForm();
+    });
+    // ilk kayýt
+    $("#modalNavigatorFirstBtn").click(async function () {
+        var res = await ajaxRequest("/TohalCariKarts/ilkSonKayitMagaza", { firstOrLast: true, cariKartId: $("#CariKartId").val() });
+        res.result ? SetFormValues(res.data) : null;
+    });
+    // son kayýt
+    $("#modalNavigatorLastBtn").click(async function () {
+        var res = await ajaxRequest("/TohalCariKarts/ilkSonKayitMagaza", { firstOrLast: false, cariKartId: $("#CariKartId").val() });
+        res.result ? SetFormValues(res.data) : null;
+    });
+    // önceki
+    $("#modalNavigatorPrevBtn").click(async function () {
+        if ($("#MagazaId").val() > 0) {
+            var res = await ajaxRequest("/TohalCariKarts/sonrakiOncekiKayitMagaza", { afterOrBefore: false, currentId: $("#MagazaId").val(), cariKartId: $("#CariKartId").val() });
+            res.result ? SetFormValues(res.data) : null;
+        }
+    });
+    // sonraki
+    $("#modalNavigatorNextBtn").click(async function () {
+        if ($("#MagazaId").val() > 0) {
+            var res = await ajaxRequest("/TohalCariKarts/sonrakiOncekiKayitMagaza", { afterOrBefore: true, currentId: $("#MagazaId").val(), cariKartId: $("#CariKartId").val() });
+            res.result ? SetFormValues(res.data) : null;
+        }
+
+    });
+    // sil
+    $("#modalNavigatorDeleteBtn").click(function () {
+        if ($("#MagazaId").val() > 0) {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    ajaxRequest("/TohalCariKarts/silMagaza", {
+                        currentId: $("#MagazaId").val()
+                    }).then(function (res) {
+                        if (res.data.success === true) {
+                            ShowAlert(true, res.data.message);
+                            $("#modalNavigatorFirstBtn").trigger("click");
+                        } else {
+                            ShowAlert(false, res.data.message);
+                        }
+                    }).catch(function (error) {
+                        console.error("Baðlantý hatasý:", error);
+                    });
+                }
+            });
+        }
+
+    });
+
+
+
+    $("#isyeriIl").on("focusout", async function (e) {
+        var res = await getData($(this), "/Common/ilGetir?isInput=True&target=isyeriIl", "Ad", "YerId", e, null, "isyeriIl");
+        res.result ? enableDisableIsyeriFields(true, false, false, false, $("#isyeriIlId"), res.data.YerId, null, $("#isyeriIlce")) : enableDisableIsyeriFields(false, false, false, false, $("#isyeriIlId"), null, null);
+    });
+    $("#isyeriIlce").on("focusout", async function (e) {
+        var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=isyeriIlce", "Ad", "YerId", e, $("#isyeriIl").data("id"), "isyeriIlce");
+        res.result ? enableDisableIsyeriFields(true, true, true, false, $("#isyeriIlceId"), res.data.YerId, null, $("#isyeriBelde")) : enableDisableIsyeriFields(true, true, false, false, $("#isyeriIlceId"), null, null);
+    });
+    $("#isyeriBelde").on("focusout", async function (e) {
+        var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=isyeriBelde", "Ad", "YerId", e, $("#isyeriIlce").data("id"), "isyeriBelde");
+        res.result ? enableDisableIsyeriFields(true, true, true, true, $("#isyeriBeldeId"), res.data.YerId, null) : enableDisableIsyeriFields(true, true, true, true, $("#isyeriBeldeId"), null, null);
+    });
+    function apiRequest(reqUrl, ustid, trgt) {
+        $.ajax({
+            url: reqUrl,
+            type: "GET",
+            data: { ustId: ustid, isInput: "True", target: trgt },
+            success: function (e) {
+                loadModal(e, trgt);
+            }
+        });
+    }
+    //form gönderdiðimiz zaman store procedure çalýþýp sonuç dönüor bize
+    function submitForm() {
+
+        // Gerekli inputlarýn deðerlerini al
+        var isyeriIl = $("#isyeriIl").val();
+        var isyeriIlce = $("#isyeriIlce").val();
+        var isyeriBelde = $("#isyeriBelde").val();
+
+        // Input deðerlerinin boþ olup olmadýðýný kontrol et
+        if (isyeriIl === "" || isyeriIlce === "" || isyeriBelde === "") {
+            // Eðer herhangi bir input boþsa, formu submit etme
+            alert("Lütfen Ýl, Ýlçe, Belde alanlarýný doldurun.");
+        } else {
+            // Eðer tüm inputlar doluysa, formu submit et
+            var data = $('#isyerlerform').serializeArray().reduce(function (obj, item) {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+            var newDt = { ...data, carikartId: $("#CariKartId").val() };
+            $.ajax({
+                url: "/TohalCariKarts/IsYerlerKaydet",
+                type: "POST",
+                data: newDt,
+                success: function (e) {
+                    ShowAlert(e.durum, e.metin);
+                }
+            });
+        }
+
+
+
+    }
+
+    function ajaxRequest(reqUrl, reqData) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: reqUrl,
+                type: "GET",
+                //data: { id: idprm },
+                data: reqData,
+                success: function (e) {
+                    resolve({ result: true, data: e });
+                },
+                error: function (err) {
+                    resolve({ result: false, data: null });
+                }
+            });
+        });
+    }
+    function SetFormValues(data) {
+        $("#MagazaId").val(data.MagazaId);
+        $("#isyeriKod").val(data.Kod);
+        $("#isyeriAd").val(data.Ad);
+        $("#isyeriAdres").val(data.Adres);
+
+        $("#isyeriIlId").val(data.IlId);
+        $("#isyeriIl").val(data.IlAdi);
+        $("#isyeriIl").attr("data-id", data.IlId);
+
+        $("#isyeriIlceId").val(data.IlceId);
+        $("#isyeriIlce").val(data.IlceAdi);
+        $("#isyeriIlce").attr("data-id", data.IlceId);
+
+        $("#isyeriBeldeId").val(data.BeldeId);
+        $("#isyeriBelde").val(data.BeldeAdi);
+        $("#isyeriBelde").attr("data-id", data.BeldeId);
+
+        $("#tel1").val(data.Tel1);
+        $("#tel2").val(data.Tel2);
+        $("#faks").val(data.Faks);
+        $("#gidecegiYer").val(data.GidecegiYer);
+        $("#webSiraNo").val(data.GidecegiYerWebSiraNo);
+        $("#cariSifati").val(data.CariSifati);
+        $("#plakaNo").val(data.PlakaNo);
+        $("#eIrsaliyePosta").val(data.EIrsaliyePostaKutusu);
+        //$("#eIrsaliyePosta").attr("data-id",data.EIrsaliyePostaKutusu);
+        $("#bolgeKodu").val(data.EFaturaBolgeKodu);
+        $("#enCokKullanilan").attr("checked", data.EnCokKullanilan);
+
+        if ($("#isyeriIlId").val() && $("#isyeriIl").val()) {
+            $("#isyeriIlce").attr("disabled", false);
+            $("#isyeriIlceBtn").attr("disabled", false);
+        }
+        if ($("#isyeriIlceId").val() && $("#isyeriIlce").val()) {
+            $("#isyeriBelde").attr("disabled", false);
+            $("#isyeriBeldeBtn").attr("disabled", false);
+        }
+    }
+    function resetForm() {
+        // Form içindeki tüm inputlarý ve gizli alanlarý sýfýrla
+        $("#isyerlerform :input").each(function () {
+            if ($(this).is(":checkbox")) {
+                $(this).prop('checked', false);
+            } else if ($(this).is(":radio")) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).val(null);
+            }
+        });
+
+        // Gizli alanlarý sýfýrla
+        $("#isyerlerform input[type=hidden]").val(null);
+
+        // Select alanlarýný sýfýrla
+        $("#isyerlerform select").prop('selectedIndex', 0);
+
+        // Checkbox ve radio butonlarý sýfýrla
+        $("#isyerlerform :checkbox, :radio").prop('checked', false);
+    }
+    function enableDisableIsyeriFields(ilc, ilcVal, beld, beldVal, hiddenYerElm, hiddenYerVal, focusEl) {
+        $("#isyeriIlce").prop("disabled", !ilc);
+        $("#isyeriIlceBtn").prop("disabled", !ilc);
+        ilcVal ? null : $("#isyeriIlce").val(null);
+        $("#isyeriBelde").prop("disabled", !beld);
+        $("#isyeriBeldeBtn").prop("disabled", !beld);
+        beldVal ? null : $("#isyeriBelde").val(null);
+
+
+        setTimeout(function () {
+            focusEl ? focusEl.focus() : null;
+        });
+
+        $(hiddenYerElm).val(hiddenYerVal);
+    }
+</script>

@@ -1,0 +1,156 @@
+<div class="modal fade" id="isyerleriModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Ýþyeri</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form id="isyerlerform">
+                <input type="hidden" name="MagazaId" id="MagazaId"  />
+                <div class="modal-body">
+                    @Html.Partial("~/Views/Shared/_modalDataNavigator.cshtml")
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label for="isyeriKod" class="col-sm-3 col-form-label pb-0">Kod</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="isyeriKod" name="isyeriKod" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="isyeriAd" class="col-sm-3 col-form-label pb-0">Ad</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="isyeriAd" name="isyeriAd" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="isyeriAdres" class="col-sm-3 col-form-label pb-0">Adres</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="isyeriAdres" name="isyeriAdres" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 col-form-label pb-0" for="isyeriIl">Ýl</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="hidden" id="isyeriIlId" name="isyeriIlId" />
+                                        <input type="text" id="isyeriIl" name="isyeriIl" class="form-control form-control-sm" />
+                                        <button type="button" id="isyeriIlBtn" class="btn btn-sm btn-primary" onclick="apiRequest('/Common/Iller',0, 'isyeriIl')" data-remote-url="@Url.Action("Iller", "Common", new { target = "isyeriIl", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 col-form-label pb-0" for="isyeriIlce">Ýlçe</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="hidden" id="isyeriIlceId" name="isyeriIlceId" />
+                                        <input type="text" id="isyeriIlce" name="isyeriIlce" class="form-control form-control-sm changeInputs" disabled />
+                                        <button disabled id="isyeriIlceBtn" type="button" class="btn btn-sm btn-primary" onclick="apiRequest('/Common/Iller',document.getElementById('isyeriIl').getAttribute('data-id'), 'isyeriIlce')" data-remote-url="@Url.Action("Iller", "Common", new { target = "isyeriIlce", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-3 col-form-label pb-0" for="isyeriBelde">Belde</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="hidden" id="isyeriBeldeId" name="isyeriBeldeId" />
+                                        <input type="text" id="isyeriBelde" name="isyeriBelde" class="form-control form-control-sm changeInputs" disabled />
+                                        <button disabled type="button" id="isyeriBeldeBtn" class="btn btn-sm btn-primary" onclick="apiRequest('/Common/Iller',document.getElementById('isyeriIlce').getAttribute('data-id'), 'isyeriBelde')" data-remote-url="@Url.Action("Iller", "Common", new { target = "isyeriBelde", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="tel1" class="col-sm-3 col-form-label pb-0">Tel1</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="tel1" name="tel1" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="tel2" class="col-sm-3 col-form-label pb-0">Tel2</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="tel2" name="tel2" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="faks" class="col-sm-3 col-form-label pb-0">Faks</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="faks" name="faks" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <label for="gidecegiYer" class="col-sm-4 col-form-label pb-0">Gideceði Yer</label>
+                                <div class="col-sm-8">
+                                    <select class="form-select form-select-sm" id="gidecegiYer" name="gidecegiYer">
+                                        @foreach (var item in ViewBag.gidecekyerler as Dictionary<int, string>)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="webSiraNo" class="col-sm-4 col-form-label pb-0">Web Sýra No</label>
+                                <div class="col-sm-8">
+                                    <input type="number" data-type="num" id="webSiraNo" name="webSiraNo" class="form-control form-control-sm" maxlength="3" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="cariSifati" class="col-sm-4 col-form-label pb-0">Cari Sýfatý</label>
+                                <div class="col-sm-8">
+                                    <select class="form-select form-select-sm" id="cariSifati" name="cariSifati">
+                                        @foreach (var item in ViewBag.sifatlar as Dictionary<int, string>)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="plakaNo" class="col-sm-4 col-form-label pb-0">Plaka No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="plakaNo" name="plakaNo" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="eIrsaliyePosta" class="col-sm-4 col-form-label pb-0">EIrsaliyePosta</label>
+                                <div class="col-sm-8">
+                                    <select class="form-select form-select-sm" id="eIrsaliyePosta" name="eIrsaliyePosta" data-choices asp-items="ViewBag.eIrsaliyePostalar">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="bolgeKodu" class="col-sm-4 col-form-label pb-0">Bölge Kodu</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="bolgeKodu" name="bolgeKodu" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="true" id="enCokKullanilan" name="enCokKullanilan">
+                                    <label class="form-check-label" for="enCokKullanilan">En Çok Kullanýlan Ýþyeri</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary" onclick="submitForm()">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

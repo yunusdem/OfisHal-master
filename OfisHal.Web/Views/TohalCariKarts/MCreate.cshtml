@@ -1,0 +1,650 @@
+﻿@model TohalCariKart
+
+@{
+    ViewBag.title = "Yeni Müşteri";
+
+    ViewBag.pagetitle = "Müşteri Cari";
+    ViewBag.pagesubtitle = "Müşteri";
+    ViewBag.ptitle = "Yeni Müşteri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalCariKarts/MCreate";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/Carikartlar?target=null&tip=1&isNavigator=true";
+    ViewBag.firstDataUrl = "/TohalCariKarts/ilkSonKayit?tip=1&firstOrLast=true";
+    ViewBag.beforeDataUrl = "";
+    ViewBag.afterDataUrl = "";
+    ViewBag.lastDataUrl = "/TohalCariKarts/ilkSonKayit?tip=1&firstOrLast=false";
+    ViewBag.disabledBeforeAfter = true;
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" enctype="multipart/form-data" action="@Url.Action("MCreate")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Tip" value="1" />
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="Kod" class="col-sm-3 col-form-label pb-0">Kod</label>
+                <div class="col-sm-9">
+                    <input id="Kod" name="Kod" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kod)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Ad" class="col-sm-3 col-form-label pb-0">Ad</label>
+                <div class="col-sm-9">
+                    <input name="Ad" id="Ad" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Ad)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Adres" class="col-sm-3 col-form-label pb-0">Adres</label>
+                <div class="col-sm-9">
+                    <input name="Adres" id="Adres" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Adres)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="il"> İl / İlçe</label>
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col pe-0">
+                            <div class="input-group">
+                                <input type="text" id="il" name="il" class="form-control form-control-sm changeInputs" />
+                                <button type="button" data-btarget="il" id="ilBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "il", isInput = true })">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col ps-1">
+                            <div class="input-group">
+                                <input id="ilce" name="ilce" class="form-control form-control-sm changeInputs" disabled />
+                                <button disabled data-btarget="ilce" id="ilceBtn" type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "ilce", isInput = true })">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="YerId" id="YerId" />
+                <label class="col-sm-3 col-form-label pb-0" for="belde"> Belde / Hal</label>
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col pe-0">
+                            <div class="input-group">
+                                <input type="text" id="belde" name="belde" class="form-control form-control-sm changeInputs" disabled />
+                                <button disabled data-btarget="belde" type="button" id="beldeBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "belde", isInput = true })">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col ps-1">
+                            @*<select id="hal" name="hal" class="form-select form-select-sm changeInputs"  asp-items="ViewBag.HalId">
+                            <option value=""></option>
+                        </select>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="PostaKoduId" id="PostaKoduId" />
+                <label class="col-sm-3 col-form-label pb-0" for="hidPostaKoduId">Posta Kodu</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hidPostaKoduId" name="hidPostaKoduId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="postakoduid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "hidPostaKoduId",tur = 0, isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tel1" class="col-sm-3 col-form-label pb-0">Tel 1</label>
+                <div class="col-sm-9">
+                    <input name="Tel1" id="Tel1" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Tel1)</span>
+                </div>
+            </div>
+
+            @*             <div class="row">
+            <label asp-for="Tel2" class="col-sm-3 col-form-label pb-0"></label>
+            <div class="col-sm-9">
+                <input asp-for="Tel2" class="form-control form-control-sm" />
+                <span class="text-danger">@Html.ValidationMessageFor(model => model.Tel2)</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <label asp-for="Faks" class="col-sm-3 col-form-label pb-0"></label>
+            <div class="col-sm-9">
+                <input asp-for="Faks" class="form-control form-control-sm" />
+                <span class="text-danger">@Html.ValidationMessageFor(model => model.Faks)</span>
+            </div>
+        </div> *@
+            <div class="row mb-1">
+                <label for="BankaHesapNo" class="col-sm-3 col-form-label pb-0">Banka Hesap No</label>
+                <div class="col-sm-9">
+                    <textarea name="BankaHesapNo" id="BankaHesapNo" class="form-control form-control-sm" rows="2"></textarea>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.BankaHesapNo)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="VeresiyeSiniri">Veresiye Sınırı</label>
+                <div class="col-sm-9">
+                    <input type="number" data-type="num" name="VeresiyeSiniri" id="VeresiyeSiniri" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="RiskSiniri">Risk Sınırı</label>
+                <div class="col-sm-9">
+                    <input type="number" data-type="num" name="RiskSiniri" id="RiskSiniri" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label class="col-sm-7 form-check-label" for="OranCheck">Iskonto Oranı</label>
+                        <div class="col-sm-5 d-flex align-items-center">
+                            <input class="form-check-input me-1" type="checkbox" id="OranCheck" name="OranCheck">
+                            <input type="text" data-type="num" id="Oran" name="Oran" class="form-control form-control-sm" value="0" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-3 form-check-label" for="reoranCheck">Reeskont Oranı</label>
+                    <div class="col-sm-9 d-flex align-items-center">
+                        <input class="form-check-input me-1" type="checkbox" id="reoranCheck" name="reoranCheck">
+                        <input type="text" data-type="num" id="ReeskontOrani" name="ReeskontOrani" class="form-control form-control-sm">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label class="col-sm-7 form-check-label" for="KdvOraniCheck">Kdv Oranı</label>
+                        <div class="col-sm-5 d-flex align-items-center">
+                            <input class="form-check-input me-1" type="checkbox" id="KdvOraniCheck" name="KdvOraniCheck">
+                            <input type="text" data-type="num" id="KdvOrani" name="KdvOrani" class="form-control form-control-sm" value="0" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="EFaturaBelgesi">e-Fatura Belgesi</label>
+                <div class="col-sm-9">
+                    <select class="form-select form-select-sm" name="EFaturaBelgesi" id="EFaturaBelgesi">
+                        <option></option>
+                        <option value="1">eFatura</option>
+                        <option value="2">eFaturaDefault</option>
+                        <option value="3">MigrosHal_brmfiyat</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="Vade">Vade</label>
+                <div class="col-sm-9">
+                    <input type="number" data-type="num" name="Vade" id="Vade" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="GsmNo" class="col-sm-3 col-form-label pb-0">Gsm No</label>
+                <div class="col-sm-9">
+                    <input name="GsmNo" id="GsmNo" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GsmNo)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="EPosta" class="col-sm-3 col-form-label pb-0">E Posta</label>
+                <div class="col-sm-9">
+                    <input name="EPosta" id="EPosta" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.EPosta)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="KisilikTipi">Tipi</label>
+                <div class="col-sm-9">
+                    <select class="form-select form-select-sm" name="KisilikTipi" id="KisilikTipi">
+                        <option value="1">Şahıs</option>
+                        <option value="2">Şahıs Firması</option>
+                        <option value="3">Firma</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="VergiKimlikNo" class="col-sm-3 col-form-label pb-0">T.C.Kimlik No</label>
+                <div class="col-sm-9">
+                    <input name="VergiKimlikNo" id="VergiKimlikNo" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.VergiKimlikNo)</span>
+                </div>
+            </div>
+            @*             <div class="row">
+                    <label class="col-sm-3 col-form-label pb-0" asp-for="SehirId"></label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input asp-for="SehirId" id="SehirId" name="SehirId" class="form-control form-control-sm" />
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "SehirId",tur = 1, isInput = true })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div> *@
+            <div class="row">
+                <input type="hidden" id="VergiDairesiId" name="VergiDairesiId" />
+                <label class="col-sm-3 col-form-label pb-0" for="hidVergiDairesiId">Vergi Dairesi</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hidVergiDairesiId" name="hidVergiDairesiId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="vergidairesiid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "hidVergiDairesiId",tur = 2, isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @*             <div class="row">
+                    <label class="col-sm-5 form-check-label" asp-for="HamaliyeHesaplamaSekli"></label>
+                    <div class="col-sm-7 d-flex align-items-center">
+                        <input class="form-check-input me-1" type="checkbox" id="HamaliyeHesaplamaSekliCheck" name="HamaliyeHesaplamaSekliCheck">
+                        <select class="form-select form-select-sm" asp-for="HamaliyeHesaplamaSekli" name="HamaliyeHesaplamaSekli" id="HamaliyeHesaplamaSekli" disabled>
+                            <option value=""></option>
+                            <option value="1">Kilo Bazında</option>
+                            <option value="2">Kap Bazında</option>
+                            <option value="3">Hesaplanmasın</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-5 form-check-label" asp-for="NakliyeHesaplamaSekli"></label>
+                    <div class="col-sm-7 d-flex align-items-center">
+                        <input class="form-check-input me-1" type="checkbox" id="NakliyeHesaplamaSekliCheck" name="NakliyeHesaplamaSekliCheck">
+                        <select class="form-select form-select-sm" asp-for="NakliyeHesaplamaSekli" name="NakliyeHesaplamaSekli" id="NakliyeHesaplamaSekli" disabled>
+                            <option value=""></option>
+                            <option value="1">Kilo Bazında</option>
+                            <option value="2">Kap Bazında</option>
+                            <option value="3">Hesaplanmasın</option>
+                        </select>
+                    </div>
+                </div> *@
+            <div class="row">
+                <label for="Kefil" class="col-sm-3 col-form-label pb-0">Kefil</label>
+                <div class="col-sm-9">
+                    <input name="Kefil" id="Kefil" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kefil)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="Filtre" class="col-sm-3 col-form-label pb-0">Filtre</label>
+                <div class="col-sm-9">
+                    <input name="Filtre" id="Filtre" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Filtre)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="PlakaNo" class="col-sm-3 col-form-label pb-0">Plaka No</label>
+                <div class="col-sm-9">
+                    <input name="PlakaNo" id="PlakaNo" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.PlakaNo)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="Devir" class="col-sm-3 col-form-label pb-0">Devir</label>
+                <div class="col-sm-9">
+                    <input type="text" data-type="num" name="Devir" id="Devir" class="form-control form-control-sm" value="0" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Devir)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="EIrsaliyeBelgesi">E-Irsaliye Belgesi</label>
+                <div class="col-sm-9">
+                    <select class="form-select form-select-sm" name="EIrsaliyeBelgesi" id="EIrsaliyeBelgesi">
+                        <option></option>
+                        <option value="1">eIrsaliye</option>
+                    </select>
+                </div>
+            </div>
+            @*             <div class="row">
+                    <label class="col-sm-5 col-form-label pb-0" asp-for="RehinCariKartId"></label>
+                    <div class="col-sm-7">
+                        <div class="input-group">
+                            <input asp-for="RehinCariKartId" type="text" id="RehinCariKartId" name="RehinCariKartId" class="form-control form-control-sm" />
+                            <button type="button" data-btarget="RehinCariKartId" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("RehinCariKartlar", "Common", new { target = "RehinCariKartId", tip = 1,isInput = true ,inputType = "name" })">
+                                Seç
+                            </button>
+                        </div>
+                    </div>
+                </div> *@
+            <div class="row">
+                <label class="col-sm-5 form-check-label" for="EFaturaSenaryosuCheck">E-Fatura Senaryosu</label>
+                <div class="col-sm-7 d-flex align-items-center">
+                    <input class="form-check-input me-1" type="checkbox" id="EFaturaSenaryosuCheck" name="EFaturaSenaryosuCheck">
+                    <select class="form-select form-select-sm" name="EFaturaSenaryosu" id="EFaturaSenaryosu" disabled>
+                        <option value=""></option>
+                        <option value="1">Ticari</option>
+                        <option value="2">HKS</option>
+                        <option value="3">Kamu</option>
+                        <option value="4">Temel</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row mb-1">
+                <div class="col d-flex justify-content-start">
+                    <button class="btn btn-sm btn-secondary" disabled>Gib Kullanıcılarını Al</button>
+                </div>
+                <div class="col d-flex justify-content-center">
+                    <button class="btn btn-sm btn-secondary" disabled>İşyerleri</button>
+                    <button class="btn btn-sm btn-secondary ms-1" disabled>Sıfatları</button>
+                </div>
+            </div>
+            <div class="row">
+                <label for="SatinAlaninSifati" class="col-sm-5 col-form-label pb-0">Sıfatı</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="SatinAlaninSifati" name="SatinAlaninSifati">
+                        @foreach (var item in ViewBag.sifatlar as Dictionary<int, string>)
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="GidecegiYerTipi" class="col-sm-5 col-form-label pb-0">Gideceği Yer</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="GidecegiYerTipi" name="GidecegiYerTipi">
+                        @foreach (var item in ViewBag.gidecekyerler as Dictionary<int, string>)
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="FiyatListesiId" class="col-sm-5 col-form-label pb-0">Fiyat Listesi</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="FiyatListesiId" name="FiyatListesiId"  asp-items="ViewBag.fiyatlar">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col d-flex justify-content-center">
+                    <button class="btn btn-sm btn-secondary" disabled>HKS Bilgi Al</button>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="GibEFaturaPostaKutusuId">E-Fatura Posta Kutus</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="GibEFaturaPostaKutusuId" name="GibEFaturaPostaKutusuId"  asp-items="ViewBag.efaturaPostalar">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="EIrsaliyePostaKutusuId">E-Irsaliye Posta Kutus</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="EIrsaliyePostaKutusuId" name="EIrsaliyePostaKutusuId"  asp-items="ViewBag.eIrsaliyePostalar">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            @*             <div class="row">
+                    <label asp-for="BolgeKodu" class="col-sm-5 col-form-label pb-0"></label>
+                    <div class="col-sm-7">
+                        <input asp-for="BolgeKodu" class="form-control form-control-sm" />
+                        <span class="text-danger">@Html.ValidationMessageFor(model => model.BolgeKodu)</span>
+                    </div>
+                </div> *@
+            <div class="row">
+                <label for="EFaturaFaturaKodu" class="col-sm-5 col-form-label pb-0">Fatura Kodu</label>
+                <div class="col-sm-7">
+                    <input name="EFaturaFaturaKodu" id="EFaturaFaturaKodu" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.EFaturaFaturaKodu)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="GunFarki" class="col-sm-5 col-form-label pb-0">Gün Farkı</label>
+                <div class="col-sm-7">
+                    <input type="number" data-type="num" name="GunFarki" id="GunFarki" class="form-control form-control-sm" value="0" readonly />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GunFarki)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <input type="hidden" name="SoforId" id="SoforId" />
+                <label class="col-sm-5 col-form-label pb-0" for="hidSoforId">Şoför</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="hidSoforId" name="hidSoforId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="soforid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "hidSoforId",tur = 15, isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="RusumAlinmasin" name="RusumAlinmasin" value="true">
+                        <label class="form-check-label" for="RusumAlinmasin">Rüsum Alınmasın</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="Ihracatci" name="Ihracatci" value="true">
+                        <label class="form-check-label" for="Ihracatci">İhracatçı </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="HalKomisyoncusu" name="HalKomisyoncusu" value="true">
+                        <label class="form-check-label" for="HalKomisyoncusu">Hal Komisyoncu</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="FatKesilmedenKunyeAlinamaz" name="FatKesilmedenKunyeAlinamaz" value="true">
+                        <label class="form-check-label" for="FatKesilmedenKunyeAlinamaz">Fatura Kesilmeden Künye Alınmasın</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="EFaturaBakiyeVar" name="EFaturaBakiyeVar" value="true">
+                        <label class="form-check-label" for="EFaturaBakiyeVar">e-Fatura Bakiye Var</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" style="text-align: center;" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        var uyari = @Html.Raw(Json.Encode(ViewBag.resultText));
+        if (uyari != null && uyari.message?.length > 0) {
+            ShowAlert(uyari.state, uyari.message);
+        }
+        var il = $("#il");
+        var ilce = $("#ilce");
+        var belde = $("#belde");
+      //  var hal = $("#hal").parent().parent().css("display", "none");
+        var ilBtn = $("#ilBtn");
+        var ilceBtn = $("#ilceBtn");
+        var beldeBtn = $("#beldeBtn");
+
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var ilDataId = document.getElementById("il").getAttribute("data-id");
+            var ilceDataId = document.getElementById("ilce").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "ilce": ilDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilDataId}`) : null; break;
+                    case "belde": ilceDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilceDataId}`) : null; break;
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "il": if (document.getElementById("il").getAttribute("data-id") > 0) enableDisableFields(true, false, false, false, false, document.getElementById("il").getAttribute("data-id"), ilce); break;
+                case "ilce": if (document.getElementById("ilce").getAttribute("data-id") > 0) enableDisableFields(true, true, true, false, false, document.getElementById("ilce").getAttribute("data-id"), belde); break;
+                case "belde": if (document.getElementById("belde").getAttribute("data-id") > 0) enableDisableFields(true, true, true, true, true, document.getElementById("belde").getAttribute("data-id"), null); break;
+                case "vergidairesiid": document.getElementById("hidVergiDairesiId").getAttribute("data-id") > 0 ? $("#VergiDairesiId").val(document.getElementById("hidVergiDairesiId").getAttribute("data-id")) : $("#VergiDairesiId").val(null); break;
+                case "postakoduid": document.getElementById("hidPostaKoduId").getAttribute("data-id") > 0 ? $("#PostaKoduId").val(document.getElementById("hidPostaKoduId").getAttribute("data-id")) : $("#PostaKoduId").val(null); break;
+                case "soforid": document.getElementById("hidSoforId").getAttribute("data-id") > 0 ? $("#SoforId").val(document.getElementById("hidSoforId").getAttribute("data-id")) : $("#SoforId").val(null); break;
+                case "arabtn":
+                    sessionStorage.getItem('cariKartId') > 0 ? window.location.href = `/TohalCariKarts/MEdit/${sessionStorage.getItem('cariKartId')}` : null;
+                    sessionStorage.removeItem("cariKartId");
+                    break;
+
+            }
+        });
+
+        var iskontoInput = document.getElementById("Oran");
+        document.getElementById("OranCheck").addEventListener("change", function () {
+            iskontoInput.disabled = !this.checked;
+        });
+        var kdvOranInput = document.getElementById("KdvOrani");
+        document.getElementById("KdvOraniCheck").addEventListener("change", function () {
+            kdvOranInput.disabled = !this.checked;
+        });
+        var reoranInput = document.getElementById("ReeskontOrani");
+        document.getElementById("reoranCheck").addEventListener("change", function () {
+            reoranInput.disabled = !this.checked;
+        });
+
+        // document.getElementById("HamaliyeHesaplamaSekliCheck").addEventListener("change", function () {
+        //     disableSelect("HamaliyeHesaplamaSekli", this.checked);
+        // });
+        // document.getElementById("NakliyeHesaplamaSekliCheck").addEventListener("change", function () {
+        //     disableSelect("NakliyeHesaplamaSekli", this.checked);
+        // });
+        document.getElementById("EFaturaSenaryosuCheck").addEventListener("change", function () {
+            disableSelect("EFaturaSenaryosu", this.checked);
+        });
+
+        il.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilGetir?isInput=True&target=il", "Ad", "YerId", e, null, "il");
+            res.result ? enableDisableFields(true, false, false, false, false, res.data.YerId, ilce) : enableDisableFields(false, false, false, false, false, 0, null); //il varsa ilce kutucugu aktif olacak ve değeri olmayacak diger kutucuklar pasif  //il yoksa hepsi pasif olacak
+        });
+        ilce.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=ilce", "Ad", "YerId", e, document.getElementById("il").getAttribute("data-id"), "ilce");
+            res.result ? enableDisableFields(true, true, true, false, false, res.data.YerId, belde) : enableDisableFields(true, true, false, false, false, document.getElementById("il").getAttribute("data-id"), null);// ilce varsa belde alanı aktif hal alanı pasif olacak // ilce yoksa belde ve hal pasif
+        });
+        belde.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=belde", "Ad", "YerId", e, document.getElementById("ilce").getAttribute("data-id"), "belde");
+            res.result ? enableDisableFields(true, true, true, true, true, res.data.YerId, null) : enableDisableFields(true, true, true, true, false, document.getElementById("ilce").getAttribute("data-id"), null);
+        });
+        function enableDisableFields(ilc, ilcVal, beld, beldVal, hl, yerid, focusEl) {
+            $(ilce).prop("disabled", !ilc);
+            $(ilceBtn).prop("disabled", !ilc);
+            ilcVal ? null : $(ilce).val(null);
+
+            $(belde).prop("disabled", !beld);
+            $(beldeBtn).prop("disabled", !beld);
+            beldVal ? null : $(belde).val(null);
+
+            setTimeout(function () {
+                focusEl ? focusEl.focus() : null;
+            });
+
+            yerid != null ? $("#YerId").val(yerid) : null;
+
+           // hl ? $(hal).css("display", "block") : $(hal).css("display", "none");
+        }
+        $("#hidPostaKoduId").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=hidPostaKoduId&tur=0", "Ad", "TabloMaddesiId", e, null, "postakoduid");
+            val.result ? $("#PostaKoduId").val(val.data.TabloMaddesiId) : $("#PostaKoduId").val(null);
+        });
+        $("#hidVergiDairesiId").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=hidVergiDairesiId&tur=2", "Ad", "TabloMaddesiId", e, null, "vergidairesiid");
+            val.result ? $("#VergiDairesiId").val(val.data.TabloMaddesiId) : $("#VergiDairesiId").val(null);
+        });
+        // $("#SehirId").on("focusout", async function (e) {
+        //     await getData($(this), "/Common/maddeGetir?isInput=True&target=SehirId&tur=1", "Ad", "TabloMaddesiId", e, null, null);
+        // });
+        // $("#RehinCariKartId").on("focusout", async function (e) {
+        //     await getData($(this), "/Common/RehinCariKartGetir?isInput=True&target=RehinCariKartId&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, null);
+        // });
+        $("#hidSoforId").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=hidSoforId&tur=15", "Ad", "TabloMaddesiId", e, null, "soforid");
+            val.result ? $("#SoforId").val(val.data.TabloMaddesiId) : $("#SoforId").val(null);
+        });
+        function disableSelect(el, boolVal) {
+            var elm = document.getElementById(el);
+            elm.disabled = !boolVal;
+            boolVal ? elm.value = "1" : elm.value = "";
+        }
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+    </script>
+    @Html.Partial("_ValidationScriptsPartial")
+}

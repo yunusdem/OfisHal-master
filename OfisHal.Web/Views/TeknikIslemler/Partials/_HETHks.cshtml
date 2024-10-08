@@ -1,0 +1,351 @@
+@model VohalHksTanimlar
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="DigWebKullanicisi" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Web Kullanýcýsý
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigWebKullanicisi" name="DigWebKullanicisi" class="form-control form-control-sm" value="@Model.DigWebKullanicisi">
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigWebSifresi" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Web Þifresi
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigWebSifresi" name="DigWebSifresi" class="form-control form-control-sm" value="@Model.DigWebSifresi">
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigHksBildirimSekli" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            Hks Bildirim Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigHksBildirimSekli" id="DigHksBildirimSekli">
+                <option value="0" @(Model.DigHksBildirimSekli == 0 ? "selected" : "")>Web Servisi</option>
+                <option value="1" @(Model.DigHksBildirimSekli == 1 ? "selected" : "")>Portal</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigHksSifresi" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            Web Servis Þifresi
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigHksSifresi" name="DigHksSifresi" class="form-control form-control-sm" value="@Model.DigHksSifresi">
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigHksCalismaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            Web Servis Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigHksCalismaSekli" id="DigHksCalismaSekli">
+                <option value="0" @(Model.DigHksCalismaSekli == 0 ? "selected" : "")>Arka Planda</option>
+                <option value="1" @(Model.DigHksCalismaSekli == 1 ? "selected" : "")>Ön Planda</option>
+                <option value="2" @(Model.DigHksCalismaSekli == 2 ? "selected" : "")>Arka Planda Mesajlý</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="HksBildirimBelediyeAdi" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            Hks Bildirim Yapýlacak Belediye
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="HksBildirimBelediyeAdi" id="HksBildirimBelediyeAdi">
+                <option value="Ankara" @(Model.HksBildirimBelediyeAdi == "Ankara" ? "selected" : "")>Ankara</option>
+                <option value="Corum" @(Model.HksBildirimBelediyeAdi == "Corum" ? "selected" : "")>Corum</option>
+                <option value="Balikesir" @(Model.HksBildirimBelediyeAdi == "Balikesir" ? "selected" : "")>Balikesir</option>
+                <option value="Konya" @(Model.HksBildirimBelediyeAdi == "Konya" ? "selected" : "")>Konya</option>
+                <option value="Antalya" @(Model.HksBildirimBelediyeAdi == "Antalya" ? "selected" : "")>Antalya</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKunyeyiOtomatikGonder">
+            <span>7-</span>
+            Künyeyi Otomatik Gönder
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKunyeyiOtomatikGonder" name="DigKunyeyiOtomatikGonder" value="true" @(Model.DigKunyeyiOtomatikGonder == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKunyeTakibiVar">
+            <span>8-</span>
+            Künyeyi Takibi Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKunyeTakibiVar" name="DigKunyeTakibiVar" value="true" @(Model.DigKunyeTakibiVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigMarkaninKunyeTakibiVar">
+            <span>9-</span>
+            Markanýn Künye Takibi Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigMarkaninKunyeTakibiVar" name="DigMarkaninKunyeTakibiVar" value="true" @(Model.DigMarkaninKunyeTakibiVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKunyeBarkoduYazdir">
+            <span>10-</span>
+            Künye Barkodu Yazdýr
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKunyeBarkoduYazdir" name="DigKunyeBarkoduYazdir" value="true" @(Model.DigKunyeBarkoduYazdir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKunyeGecerlilikTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>11-</span>
+            Künye Geçerlikik Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="hksGecerlilikTarihCheck" name="hksGecerlilikTarihCheck" value="true" @(Model.DigKunyeGecerlilikTarihi != null ? "checked" : "")>
+            <input type="date" name="DigKunyeGecerlilikTarihi" id="DigKunyeGecerlilikTarihi" class="form-control form-control-sm" @(Model.DigKunyeGecerlilikTarihi == null ? "disabled" : "") value="@(Model.DigKunyeGecerlilikTarihi.HasValue ? Model.DigKunyeGecerlilikTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigSifati" class="col-sm-6 col-form-label pb-0">
+            <span>12-</span>
+            Sýfatý
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" value="@Model.DigSifati" name="DigSifati" id="DigSifati">
+                @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                {
+                    <option value="@Convert.ToInt32(sifat)" @(Convert.ToByte(sifat) == Model.DigSifati ? "selected" : "")>
+                        @EnumHelperFunc.GetDisplayName((Sifat)sifat)
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DokBildirimTuru" class="col-sm-6 col-form-label pb-0">
+            <span>13-</span>
+            Döküm Bildirim Türü
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DokBildirimTuru" id="DokBildirimTuru">
+                <option value="0" @(Model.DokBildirimTuru == 0 ? "selected" : "")>Satýn Alým</option>
+                <option value="1" @(Model.DokBildirimTuru == 1 ? "selected" : "")>Üreticiden Sevk Alým</option>
+                <option value="2" @(Model.DokBildirimTuru == 2 ? "selected" : "")>Satýþ</option>
+                <option value="3" @(Model.DokBildirimTuru == 3 ? "selected" : "")>Sevk Etme</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="SatBildirimTuru" class="col-sm-6 col-form-label pb-0">
+            <span>14-</span>
+            Satýþ Bildirim Türü
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="SatBildirimTuru" id="SatBildirimTuru">
+                <option value="0" @(Model.SatBildirimTuru == 0 ? "selected" : "")>Satýn Alým</option>
+                <option value="1" @(Model.SatBildirimTuru == 1 ? "selected" : "")>Üreticiden Sevk Alým</option>
+                <option value="2" @(Model.SatBildirimTuru == 2 ? "selected" : "")>Satýþ</option>
+                <option value="3" @(Model.SatBildirimTuru == 3 ? "selected" : "")>Sevk Etme</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigGidecegiYerTipi" class="col-sm-6 col-form-label pb-0">
+            <span>15-</span>
+            Gideceði Yer
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigGidecegiYerTipi" id="DigGidecegiYerTipi">
+                <option value="0" @(Model.DigGidecegiYerTipi == 0 ? "selected" : "")>Þube</option>
+                <option value="1" @(Model.DigGidecegiYerTipi == 1 ? "selected" : "")>Tasnifleme Ve Ambalajlama</option>
+                <option value="2" @(Model.DigGidecegiYerTipi == 2 ? "selected" : "")>Hal Ýçi Deposu</option>
+                <option value="3" @(Model.DigGidecegiYerTipi == 3 ? "selected" : "")>Hal Dýþý Deposu</option>
+                <option value="4" @(Model.DigGidecegiYerTipi == 4 ? "selected" : "")>Hal Ýçi Ýþyeri</option>
+                <option value="5" @(Model.DigGidecegiYerTipi == 5 ? "selected" : "")>Hal Dýþý Ýþyeri</option>
+                <option value="6" @(Model.DigGidecegiYerTipi == 6 ? "selected" : "")>Sýnai Ýþletme</option>
+                <option value="7" @(Model.DigGidecegiYerTipi == 7 ? "selected" : "")>Daðýtým Merkezi</option>
+                <option value="8" @(Model.DigGidecegiYerTipi == 8 ? "selected" : "")>Bireysel Tüketim</option>
+                <option value="9" @(Model.DigGidecegiYerTipi == 9 ? "selected" : "")>Perakende Satýþ Yeri</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hksIl" class="col-sm-6 col-form-label pb-0">
+            <span>16-</span>
+            *Gideceði Yer Ýl
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" id="IlId" name="IlId" value="@Model.IlId" />
+                <input type="text" id="hksIl" name="hksIl" class="form-control form-control-sm" data-id="@Model.IlId" value="@Model.IlAdi" />
+                <button type="button" id="ilBtn" data-btarget="il" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "hksIl", isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hksIlce" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>?
+            *Gideceði Yer Ýlçe
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" id="IlceId" name="IlceId" value="@Model.IlceId" />
+                <input type="text" id="hksIlce" name="hksIlce" class="form-control form-control-sm" data-id="@Model.IlceId" value="@Model.IlceAdi" disabled />
+                <button type="button" id="ilceBtn" data-btarget="ilce" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "hksIlce", isInput = true })" disabled>
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hksBelde" class="col-sm-6 col-form-label pb-0">
+            <span>18-</span>
+            *Gideceði Yer Belde
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" id="BeldeId" name="BeldeId" value="@Model.BeldeId" />
+                <input type="text" id="hksBelde" name="hksBelde" class="form-control form-control-sm" data-id="@Model.BeldeId" value="@Model.BeldeAdi" disabled />
+                <button type="button" id="beldeBtn" data-btarget="belde" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "hksBelde", isInput = true })" disabled>
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigSatinAlaninSifati" class="col-sm-6 col-form-label pb-0">
+            <span>19-</span>
+            Satýn Alanýn Sýfatý
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigSatinAlaninSifati" id="DigSatinAlaninSifati">
+                <option value="0" @(Model.DigSatinAlaninSifati == 0 ? "selected" : "")>Depo/Tasnif Ve Ambalaj</option>
+                <option value="1" @(Model.DigSatinAlaninSifati == 1 ? "selected" : "")>Hastane</option>
+                <option value="2" @(Model.DigSatinAlaninSifati == 2 ? "selected" : "")>Ýhracat</option>
+                <option value="3" @(Model.DigSatinAlaninSifati == 3 ? "selected" : "")>Ýthalat</option>
+                <option value="4" @(Model.DigSatinAlaninSifati == 4 ? "selected" : "")>Komisyoncu</option>
+                <option value="5" @(Model.DigSatinAlaninSifati == 5 ? "selected" : "")>Lokanta</option>
+                <option value="6" @(Model.DigSatinAlaninSifati == 6 ? "selected" : "")>Manav</option>
+                <option value="7" @(Model.DigSatinAlaninSifati == 7 ? "selected" : "")>Market</option>
+                <option value="8" @(Model.DigSatinAlaninSifati == 8 ? "selected" : "")>Otel</option>
+                <option value="9" @(Model.DigSatinAlaninSifati == 9 ? "selected" : "")>Pazarcý</option>
+                <option value="10" @(Model.DigSatinAlaninSifati == 10 ? "selected" : "")>Sanayici</option>
+                <option value="11" @(Model.DigSatinAlaninSifati == 11 ? "selected" : "")>Tüccar (Hal Dýþý)</option>
+                <option value="12" @(Model.DigSatinAlaninSifati == 12 ? "selected" : "")>Tüccar (Hal Ýçi)</option>
+                <option value="13" @(Model.DigSatinAlaninSifati == 13 ? "selected" : "")>Üretici</option>
+                <option value="14" @(Model.DigSatinAlaninSifati == 14 ? "selected" : "")>Üretici Örgütü</option>
+                <option value="15" @(Model.DigSatinAlaninSifati == 15 ? "selected" : "")>Yemek Fabrikasý</option>
+                <option value="16" @(Model.DigSatinAlaninSifati == 16 ? "selected" : "")>Yurt</option>
+                <option value="17" @(Model.DigSatinAlaninSifati == 17 ? "selected" : "")>Ýmalatçý</option>
+                <option value="18" @(Model.DigSatinAlaninSifati == 18 ? "selected" : "")>E-Market</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="HksKunyeBakiyesiDusmeSekli" class="col-sm-6 col-form-label pb-0">
+            <span>20-</span>
+            Künye Bakiyesi Düþme Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="HksKunyeBakiyesiDusmeSekli" id="HksKunyeBakiyesiDusmeSekli">
+                <option value="0" @(Model.HksKunyeBakiyesiDusmeSekli == 0 ? "selected" : "")>Stok Künyesinin Satýþ Künyesi Alýnýnca</option>
+                <option value="1" @(Model.HksKunyeBakiyesiDusmeSekli == 1 ? "selected" : "")>Stok Künyesi Faturada Kullanýlýnca</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksVarsayilanDegerAtansin">
+            <span>21-</span>
+            Boþ Alanlara Varsayýlan Deðerler Atansýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksVarsayilanDegerAtansin" name="HksVarsayilanDegerAtansin" value="true" @(Model.HksVarsayilanDegerAtansin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksSatirCogalabilir">
+            <span>22-</span>
+            Künye Daðýtýlmasýnda Fatura Satýrý Çoðalabilir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksSatirCogalabilir" name="HksSatirCogalabilir" value="true" @(Model.HksSatirCogalabilir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksSatirDetayiVar">
+            <span>23-</span>
+            Künye Daðýtýlmasýnda Künye Detayý Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksSatirDetayiVar" name="HksSatirDetayiVar" value="true" @(Model.HksSatirDetayiVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksKiloKunyesiOncelikli">
+            <span>24-</span>
+            Künye Daðýtýlmasýnda Kilo Öncelikli
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksKiloKunyesiOncelikli" name="HksKiloKunyesiOncelikli" value="true" @(Model.HksKiloKunyesiOncelikli == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksKiloKapKarisik">
+            <span>25-</span>
+            Künye Daðýtýlmasýnda Kilo-Kap Karýþýk
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksKiloKapKarisik" name="HksKiloKapKarisik" value="true" @(Model.HksKiloKapKarisik == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksDigerKunyeleriKullan">
+            <span>26-</span>
+            Künye Daðýtýlmasýnda Ayný Cins Künyeler Kullanýlabilir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksDigerKunyeleriKullan" name="HksDigerKunyeleriKullan" value="true" @(Model.HksDigerKunyeleriKullan == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="HksVarsayilanPlakaNo" class="col-sm-6 col-form-label pb-0">
+            <span>27-</span>
+            Varsayýlan Plaka No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="HksVarsayilanPlakaNo" name="HksVarsayilanPlakaNo" class="form-control form-control-sm" value="@Model.HksVarsayilanPlakaNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="HksStokCalismaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>28-</span>
+            Stok Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="HksStokCalismaSekli" id="HksStokCalismaSekli">
+                <option value="0" @(Model.HksStokCalismaSekli == 0 ? "selected" : "")>En Yakýn Miktardan</option>
+                <option value="1" @(Model.HksStokCalismaSekli == 1 ? "selected" : "")>Eski Tarihli Künyeleri Önce Kullan</option>
+                <option value="2" @(Model.HksStokCalismaSekli == 2 ? "selected" : "")>Yeni Alýnan Künyeleri Önce Kullan</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HksKunyeSecAcilsin">
+            <span>29-</span>
+            Künye Seçim Ekraný Otomatik Açýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HksKunyeSecAcilsin" name="HksKunyeSecAcilsin" value="true" @(Model.HksKunyeSecAcilsin == true ? "checked" : "")>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.title = "İstanbul Hal Müdürlüğü Formu";
+
+    ViewBag.pagetitle = "Resmi Formlar";
+    ViewBag.ptitle = "İstanbul Hal Müdürlüğü Formu";
+}
+<div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <label for="date" class="col-sm-4 col-form-label pb-0">
+                Tarih
+            </label>
+            <div class="col-sm-8">
+                <input type="date" name="date" id="date" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="useOtherName" name="useOtherName">
+                    <label class="form-check-label" for="useOtherName">
+                        Diğer Ad Kullanılsın
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="useHksName" name="useHksName">
+                    <label class="form-check-label" for="useHksName">
+                        Hks Mal Adı Kullanılsın
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-sm btn-success">Tamam</button>
+            </div>
+        </div>
+    </div>
+</div>

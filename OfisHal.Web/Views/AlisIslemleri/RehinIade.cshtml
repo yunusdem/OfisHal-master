@@ -1,0 +1,237 @@
+﻿@{
+    ViewBag.title = "Rehin İade";
+
+    ViewBag.pagetitle = "Alış İşlemleri";
+    ViewBag.ptitle = "Rehin İade";
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- jQuery CDN -->
+    @* <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> *@
+
+    <style>
+        #rehinIadeGrid {
+            overflow: unset !important;
+        }
+    </style>
+}
+<form method="post">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="row">
+                        <label for="date" class="col-sm-3 col-form-label pb-0">
+                            Tarih
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="date" name="date" id="date" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="row">
+                        <label for="description" class="col-sm-2 col-form-label pb-0">
+                            Açıklama
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="description" id="description" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <a class="btn btn-sm btn-secondary" target="_blank" href="@Url.Action("Edit", "TohalKapHarekets")">Düzeltme</a>
+                </div>
+            </div>
+            @* REHIN IADE GRID *@
+            <div class="row my-1">
+                <input type="hidden" name="gridRehinIadeMusteri" id="gridRehinIadeMusteri" />
+                <div class="col">
+                    <div id="rehinIadeGrid" class="slick-container" style="height:250px;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <span class="fw-bold" id="cariAdInput"></span>
+                    <div class="d-flex align-items-center my-1">
+                        <span class="fw-bold">Cari Bakiye:</span>
+                        <input type="text" class="form-control form-control-sm mx-2" data-type="num" name="cariBakiyeInput" id="cariBakiyeInput" value="0" disabled readonly style="width:82px;" />
+                        <span class="fw-bold" id="cariTurInput"></span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="w-100">
+                            <span class="fw-bold">Rehindeki Kap Tutarı:</span>
+                        </div>
+                        <input type="text" class="form-control form-control-sm w-50 mx-2" data-type="num" id="rehindekiKapTutarInput" value="0" disabled readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <label for="targetAccount" class="col-sm-6 col-form-label">İşleneceği Hesap</label>
+                        <div class="col-sm-6">
+                            <select class="form-select form-select-sm" id="targetAccount" name="targetAccount">
+                                <option value="0">Kasa</option>
+                                <option value="1">Müstahsil</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <label for="toplamKap" class="col-sm-6 col-form-label pb-0">
+                            Kap Toplamı
+                        </label>
+                        <div class="col-sm-6">
+                            <input type="text" data-type="num" name="toplamKap" id="toplamKap" value="0" class="form-control form-control-sm" disabled />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="toplamTutar" class="col-sm-6 col-form-label pb-0">
+                            Toplam Tutar
+                        </label>
+                        <div class="col-sm-6">
+                            <input type="text" data-type="num" name="toplamTutar" id="toplamTutar" value="0" class="form-control form-control-sm" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3 d-flex justify-content-between">
+                <div class="col">
+                    <span class="bg-info-subtle">F6) SATIRLARI TEMIZLE</span>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <a href="/SatisIslemleri/RehinIade" type="button" class="btn btn-primary me-2">Yeni</a>
+                    <button type="button" class="btn btn-success" id="gridpostbutton">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/SatisIslemleri/Partials/_rehinIadeGrid.cshtml")
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "faturano":
+                        var currentRow = rehiniadedata[rehiniadegrid.activeRow];
+                        //eğer müşteri seçili yoksa başka yere istek atacak
+                        if (currentRow?.mustahsilid > 0)
+                            container.load(btn.data("remote-url") + `?tip=0&cariKartId=${currentRow.mustahsilid}`);
+                        else
+                            container.load("/Common/RehinFisiBekleyenler?tip=0");
+                        break;
+
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var hiddenMust = document.getElementById("gridRehinIadeMusteri");
+            switch (target) {
+                case "mustahsil": RehinIadeupdateMustCell(hiddenMust.getAttribute("data-code"), hiddenMust.getAttribute("data-name"), hiddenMust.getAttribute("data-id")); break;
+                case "faturano":
+                    if (sessionStorage.getItem('rehinIadeFatId') > 0) {
+                        GetRehinFisler(sessionStorage.getItem('rehinIadeFatId'));
+                    }
+                    break;
+            }
+        });
+       
+        $(document).ready(function () {
+            document.getElementById('gridpostbutton').addEventListener('click', postGrid);
+        });
+
+        function bakiyeSoyle(cariId, cariAd) {
+            $.ajax({
+                url: "/AlisIslemleri/BakiyeSoyleAsync",
+                type: "GET",
+                data: { id: cariId },
+                cache: false,
+                success: (res) => {
+                    $("#cariAdInput").text(cariAd);
+                    if (res.Bakiye != "" && res.Bakiye != null) {
+                        var posOrNeg = parseInt(res.Bakiye) > 0 ? true : false;
+                        if (!posOrNeg && parseInt(res.Bakiye) != 0)
+                            res.Bakiye = res.Bakiye.slice(1);
+                        $("#cariBakiyeInput").val(res.Bakiye);
+                        formatNumberInput(document.getElementById("cariBakiyeInput"));
+                        posOrNeg ? $("#cariTurInput").text("TL Borçlu") : $("#cariTurInput").text("TL Alacaklı");
+                    }
+                    if (res.RehindekiKapTutar != "" && res.RehindekiKapTutar != null) {
+                        $("#rehindekiKapTutarInput").val(res.RehindekiKapTutar);
+                    }
+                }
+            });
+        }
+
+        function GetRehinFisler(id) {
+            $.ajax({
+                url: "/AlisIslemleri/VohalRehinFisiBekleyenGetir",
+                type: "GET",
+                data: { faturaId: id },
+                cache: false,
+                success: (res) => {
+                    //gelen satırlar grdie doldurulacak
+                    fillGridRows(res);
+                    sessionStorage.removeItem("rehinIadeFatId");
+                }
+            });
+        }
+    </script>
+
+}

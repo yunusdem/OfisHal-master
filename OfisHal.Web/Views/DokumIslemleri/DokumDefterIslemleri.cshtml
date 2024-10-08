@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.title = "Döküm Defter İşlemleri";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.pagesubtitle = "Döküm Defteri";
+    ViewBag.ptitle = "Döküm Defter İşlemleri";
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="dokumNo" class="col-sm-3 col-form-label pb-0">
+                    Döküm No
+                </label>
+                <div class="col-sm-9">
+                    <select class="form-select form-select-sm" id="dokumNo" name="dokumNo" data-choices asp-items="ViewBag.dokums">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-12">
+            <button class="btn btn-primary">Tamam</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,347 @@
+@model VohalFatura
+    @{ 
+        var muhatapEFPath = "/Common/GibPostaKutular?target=GibMuhatapPostaKutusu&vkn=" + Model.VergiKimlikNo + "&dokTip=0";
+        var muhatapEIPath = "/Common/GibPostaKutular?target=GibMuhatapIrsaliyeKutusu&vkn=" + Model.VergiKimlikNo + "&dokTip=1";
+    }
+
+<div class="modal fade" id="faturaDetayModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel">Detay</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="FaturaId" id="FaturaId" value="@Model.FaturaId" />
+                <input type="hidden" name="CariKartId" id="CariKartId" value="@Model.CariKartId" />
+                <input type="hidden" name="Tip" id="Tip" value="@Model.Tip" />
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="row">
+                            <label for="Zaman" class="col-sm-4 col-form-label pb-0">Fatura Tarihi</label>
+                            <div class="col-sm-8 d-flex justify-content-center align-items-center">
+                                <input type="date" name="Zaman" id="Zaman" class="form-control form-control-sm me-2" value="@Model.Zaman.ToString("yyyy-MM-dd")" />
+                                <input type="time" name="Zaman" class="form-control form-control-sm" value="@Model.Zaman.ToString("HH:mm")" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="IrsaliyeZamani" class="col-sm-4 col-form-label pb-0">Ýrsaliye Tarihi</label>
+                            <div class="col-sm-8 d-flex justify-content-center align-items-center">
+                                <input type="date" name="IrsaliyeZamani" id="IrsaliyeZamani" class="form-control form-control-sm me-2" value="@Model.IrsaliyeZamani.ToString("yyyy-MM-dd")" />
+                                <input type="time" name="IrsaliyeZamani" class="form-control form-control-sm" value="@Model.IrsaliyeZamani.ToString("HH:mm")" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="FiyatReferansFaturaNo" class="col-sm-6 col-form-label pb-0">Fiyat Referans Fatura</label>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <input type="hidden" name="FiyatReferansFaturaId" id="FiyatReferansFaturaId" value="@Model.FiyatReferansFaturaId" />
+                                    <input id="FiyatReferansFaturaNo" name="FiyatReferansFaturaNo" class="form-control form-control-sm" value="@Model.FiyatReferansFaturaNo" />
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/FiyatRefFaturalar?target=FiyatReferansFaturaNo&tip=${@Model.Tip}&cariKartId=${@Model.CariKartId}&faturaId=${@Model.FaturaId}&isInput=True`,'reffatura')">
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="row">
+                            <label for="EPosta" class="col-sm-4 col-form-label pb-0">E-posta</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="EPosta" id="EPosta" class="form-control form-control-sm" value="@Model.EPosta" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="FisNo" class="col-sm-4 col-form-label pb-0">Satýþ Fiþ No</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="FisNo" id="FisNo" class="form-control form-control-sm" value="@Model.FisNo" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="SiparisNo" class="col-sm-4 col-form-label pb-0">Sipariþ No</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="hidden" id="SiparisId" name="SiparisId" value="@Model.SiparisId" />
+                                    <input id="SiparisNo" name="SiparisNo" class="form-control form-control-sm" value="@Model.SiparisNo" />
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Siparisler?target=SiparisNo&isInput=True`,'siparisno')">
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="row">
+                            <label for="HalAdi" class="col-sm-4 col-form-label pb-0">Hal Adý</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="hidden" name="HalId" id="HalId" value="@Model.HalId" />
+                                    <input id="HalAdi" name="HalAdi" class="form-control form-control-sm" value="@Model.HalAdi" />
+                                    <button type="button" class="btn btn-sm btn-primary" data-label="Seç" onclick="apiRequest(`/Common/Haller?target=HalAdi`,'haladi')">
+                                        Seç
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="hksWebSira" class="col-sm-5 col-form-label pb-0">Hks Web Sýra</label>
+                            <div class="col-sm-7">
+                                <input type="text" maxlength="3" data-type="numNotDec" name="hksWebSira" id="hksWebSira" class="form-control form-control-sm" value="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row px-2 mt-1">
+                    <div class="col-lg-4">
+                        <div class="border border-2 p-1">
+                            <span class="fs-6 fw-light">E-Fatura</span>
+                            <div class="row">
+                                <label for="EFaturaEttn" class="col-sm-4 col-form-label pb-0">ETTN</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="EFaturaEttn" id="EFaturaEttn" class="form-control form-control-sm" value="@Model.EFaturaEttn" />
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <label class="col-sm-5 form-check-label" for="EFaturaSenaryosuCheck">E-Fatura Senaryosu</label>
+                                <div class="col-sm-7 d-flex align-items-center">
+                                    <select class="form-select form-select-sm" name="EFaturaSenaryosuBox" id="EFaturaSenaryosuBox">
+                                        <option value=""></option>
+                                        <option value="0" @(Model.EFaturaSenaryosu == 0 ? "selected" : "")>Ticari</option>
+                                        <option value="1" @(Model.EFaturaSenaryosu == 1 ? "selected" : "")>HKS</option>
+                                        <option value="2" @(Model.EFaturaSenaryosu == 2 ? "selected" : "")>Kamu</option>
+                                        <option value="3" @(Model.EFaturaSenaryosu == 3 ? "selected" : "")>Temel</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GibFirmamizPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Firmamýz Posta Kutusu</label>
+                                <div class="col-sm-6">
+                                    <input type="hidden" name="GibFirmamizPostaKutusuId" id="GibFirmamizPostaKutusuId" value="@Model.GibFirmamizPostaKutusuId" />
+                                    <div class="input-group">
+                                        <input id="GibFirmamizPostaKutusu" name="GibFirmamizPostaKutusu" class="form-control form-control-sm" value="@Model.GibFirmamizPostaKutusu" />
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/GibFirmaPostaKutular?target=GibFirmamizPostaKutusu&dokTip=0&pkTip=0&kayitSekli=1&tip=1`,'firmapostakutusu')">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GibMuhatapPostaKutusu" class="col-sm-6 col-form-label pb-0">GÝB Muhatap Posta Kutusu</label>
+                                <div class="col-sm-6">
+                                    <input type="hidden" name="GibMuhatapPostaKutusuId" id="GibMuhatapPostaKutusuId" value="@Model.GibMuhatapPostaKutusuId" />
+                                    <div class="input-group">
+                                        <input id="GibMuhatapPostaKutusu" name="GibMuhatapPostaKutusu" class="form-control form-control-sm" value="@Model.GibMuhatapPostaKutusu">
+                                        <button type="button" class="btn btn-sm btn-primary" id="GibMuhatapPostaKutusuBut" onclick="apiRequest('@muhatapEFPath','muhatappostakutusu')">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="EFaturaBolgeKodu" class="col-sm-6 col-form-label pb-0">Bölge Kodu</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="EFaturaBolgeKodu" id="EFaturaBolgeKodu" class="form-control form-control-sm" value="@Model.EFaturaBolgeKodu" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="EFaturaSiparisNo" class="col-sm-6 col-form-label pb-0">E-Fatura Sipariþ No</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="EFaturaSiparisNo" id="EFaturaSiparisNo" class="form-control form-control-sm" value="@Model.EFaturaSiparisNo" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="EFaturaSiparisTarihi" class="col-sm-6 col-form-label pb-0">Sipariþ Tarihi</label>
+                                <div class="col-sm-4">
+                                    <input type="date" name="EFaturaSiparisTarihi" id="EFaturaSiparisTarihi" class="form-control form-control-sm me-2" value="@(Model.EFaturaSiparisTarihi.HasValue == true ? Model.EFaturaSiparisTarihi?.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="border border-2 p-1">
+                            <span class="fs-6 fw-light">E-Ýrsaliye</span>
+                            <div class="row">
+                                <label for="EIrsaliyeEttn" class="col-sm-4 col-form-label pb-0">ETTN</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="EIrsaliyeEttn" id="EIrsaliyeEttn" class="form-control form-control-sm" value="@Model.EIrsaliyeEttn" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GibFirmamizIrsaliyeKutusu" class="col-sm-7 col-form-label pb-0">GÝB Firmamýz irsaliye Posta Kutusu</label>
+                                <div class="col-sm-5">
+                                    <input type="hidden" name="GibFirmamizIrsaliyeKutusuId" id="GibFirmamizIrsaliyeKutusuId" value="@Model.GibFirmamizIrsaliyeKutusuId" />
+                                    <div class="input-group">
+                                        <input id="GibFirmamizIrsaliyeKutusu" name="GibFirmamizIrsaliyeKutusu" class="form-control form-control-sm" value="@Model.GibFirmamizIrsaliyeKutusu" />
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/GibFirmaPostaKutular?target=GibFirmamizIrsaliyeKutusu&dokTip=1&pkTip=0&kayitSekli=1&tip=1`,'firmairspostakutusu')">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GibMuhatapIrsaliyeKutusu" class="col-sm-7 col-form-label pb-0">GÝB Muhatap irsaliye Posta Kutusu</label>
+                                <div class="col-sm-5">
+                                    <input type="hidden" name="GibMuhatapIrsaliyeKutusuId" id="GibMuhatapIrsaliyeKutusuId" value="@Model.GibMuhatapIrsaliyeKutusuId" />
+                                    <div class="input-group">
+                                        <input id="GibMuhatapIrsaliyeKutusu" name="GibMuhatapIrsaliyeKutusu" class="form-control form-control-sm" value="@Model.GibMuhatapIrsaliyeKutusu" />
+                                        <button type="button" class="btn btn-sm btn-primary" id="GibMuhatapIrsaliyeKutusuBut" onclick="apiRequest('@muhatapEIPath','muhatapirspostakutusu')">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="SoforAdi" class="col-sm-7 col-form-label pb-0">Þoför Adý</label>
+                                <div class="col-sm-5">
+                                    <input type="hidden" name="SoforId" id="SoforId" value="@Model.SoforId" />
+                                    <div class="input-group">
+                                        <input id="SoforAdi" name="SoforAdi" class="form-control form-control-sm" value="@Model.SoforAdi" />
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Maddeler?target=SoforAdi&tur=15&isInput=True`,'soforadi')">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col d-flex justify-content-between">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="iadeFaturasi" name="iadeFaturasi" value="true" @(Model.IadeFaturasi == true ? "checked" : "")>
+                                    <label class="form-check-label" for="iadeFaturasi">
+                                        Ýade Faturasý
+                                    </label>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-secondary" id="GibKullanicilariBut">GÝB Kullanýcýlarýný Al</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row px-2 mt-1">
+                    <div class="col-lg-6">
+                        <div class="border border-2 p-1">
+                            <span class="fs-6 fw-light">Ýhracat</span>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <label for="IhracatParaBirimi" class="col-sm-4 col-form-label pb-0 pe-0">Para Birimi</label>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="IhracatParaBirimiId" id="IhracatParaBirimiId" value="@Model.IhracatParaBirimiId" />
+                                            <div class="input-group">
+                                                <input id="IhracatParaBirimi" name="IhracatParaBirimi" class="form-control form-control-sm" value="@Model.IhracatParaBirimi" />
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Maddeler?target=IhracatParaBirimi&tur=14&isInput=True`,'parabirimi')">
+                                                    Seç
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="IhracatKuru" class="col-sm-4 col-form-label pb-0">Kur</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="IhracatKuru" id="IhracatKuru" class="form-control form-control-sm" value="@(Model.IhracatParaBirimiId.HasValue ? Model.IhracatKuru.ToString() : "0,000000")" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="NavlunMaliyeti" class="col-sm-4 col-form-label pb-0">Navlun</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" data-type="num" name="NavlunMaliyeti" id="NavlunMaliyeti" class="form-control form-control-sm" value="@(Model.IhracatParaBirimiId.HasValue ? Model.NavlunMaliyeti.ToString() : "0")" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="SigortaMaliyeti" class="col-sm-4 col-form-label pb-0">Sigorta</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" data-type="num" name="SigortaMaliyeti" id="SigortaMaliyeti" class="form-control form-control-sm" value="@(Model.IhracatParaBirimiId.HasValue ? Model.SigortaMaliyeti.ToString() : "0")" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <label for="TeslimatSekli" class="col-sm-4 col-form-label pb-0">Teslimat Þekli</label>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="TeslimatSekliId" id="TeslimatSekliId" value="@Model.TeslimatSekliId" />
+                                            <div class="input-group">
+                                                <input id="TeslimatSekli" name="TeslimatSekli" class="form-control form-control-sm" value="@Model.TeslimatSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Maddeler?target=TeslimatSekli&tur=11&isInput=True`,'teslimatsekli')" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                                    Seç
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="UlasimSekli" class="col-sm-4 col-form-label pb-0">Ulaþým Þekli</label>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="UlasimSekliId" id="UlasimSekliId" value="@Model.UlasimSekliId" />
+                                            <div class="input-group">
+                                                <input id="UlasimSekli" name="UlasimSekli" class="form-control form-control-sm" value="@Model.UlasimSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Maddeler?target=UlasimSekli&tur=12&isInput=True`,'ulasimsekli')" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                                    Seç
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="OdemeSekli" class="col-sm-4 col-form-label pb-0">Ödeme Þekli</label>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="OdemeSekliId" id="OdemeSekliId" value="@Model.OdemeSekliId" />
+                                            <div class="input-group">
+                                                <input id="OdemeSekli" name="OdemeSekli" class="form-control form-control-sm" value="@Model.OdemeSekli" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "") />
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/Maddeler?target=OdemeSekli&tur=13&isInput=True`,'odemesekli')" @(Model.IhracatParaBirimiId.HasValue == false ? "disabled" : "")>
+                                                    Seç
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                @*<button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+       document.getElementById("GibKullanicilariBut").addEventListener("click", function() {
+        var tcVknValue = $("#VergiKimlikNo").val();
+           
+       $.ajax({
+           type: "GET",
+           url: "/TohalCariKarts/GibKullaniciAl",
+           data: { tcVkn: tcVknValue},
+           success: function (result) {
+
+               $('#GibEFaturaPostaKutusuId').empty();
+               $('#EIrsaliyePostaKutusuId').empty();
+
+               // Yeni seçenekleri ekleyin
+               if (result.efaturaPostalar != null) {
+                   $.each(result.efaturaPostalar, function (index, item) {
+                       $('#GibMuhatapPostaKutusu').append('<option value="' + item.Value + '">' + item.Text + '</option>');
+
+                   });
+               }
+               // Yeni seçenekleri ekleyin
+               if (result.eIrsaliyePostalar != null) {
+                   $.each(result.eIrsaliyePostalar, function (index, item) {
+                       $('#GibMuhatapIrsaliyeKutusuId').append('<option value="' + item.Value + '">' + item.Text + '</option>');
+
+                   });
+               }
+               ShowAlert(true, "Ýþlem Baþarýlý");
+           },
+           error: function (error) {
+
+               ShowAlert(false, "Kayýt Bulunamadý " + error);
+           }
+           });
+       });
+</script>

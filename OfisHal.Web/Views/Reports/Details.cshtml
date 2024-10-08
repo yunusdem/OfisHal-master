@@ -1,0 +1,160 @@
+﻿@model ReportParametersViewModel
+@{
+    var tabs = Model.Tabs;
+}
+
+<div class="row">
+    <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
+        @foreach (var tab in tabs)
+        {
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(tab.Type == ParameterTabType.Others ? "active" : string.Empty)" data-bs-toggle="pill" data-bs-target="#pills-@(tab.Type)" type="button" role="tab" aria-controls="pills-@(tab.Type)" aria-selected="true">
+                    @Html.DisplayFor(m => tab.Type)
+                </button>
+            </li>
+        }
+    </ul>
+    <form action="@Url.Action("ExportReport", new { id = ViewContext.RouteData.GetRequiredString("id") })" method="post" target="_blank" novalidate>
+        <div class="tab-content" id="pills-tabContent">
+            @foreach (var tab in tabs)
+            {
+                <div class="tab-pane fade @(tab.Type == ParameterTabType.Others ? "show active" : string.Empty)" id="pills-@(tab.Type)" role="tabpanel" aria-labelledby="pills-@(tab.Type)-tab" tabindex="0">
+                    <div class="row mb-2">
+                        <div class="col-md-5">
+                            @foreach (var p in tab.Parameters.OrderBy(x => x.GroupSortOrder))
+                            {
+                                <div class="row">
+                                    @Html.EditorFor(m => p)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 mb-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pdf" id="pdf" value="true" checked />
+                                <label class="form-check-label" for="pdf">Ekran</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pdf" id="xlsx" value="false" />
+                                <label class="form-check-label" for="xlsx">Excel</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button class="btn btn-primary" type="submit">Tamam</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+        /*
+        $("#ilkUrunAd").on("focusout", async function (e) {
+            await getData($(this), "/Common/MalGetir?isInput=True&target=ilkUrunAd&codeOrName=false&inputType=name", "ad", "malId", e, null, null);
+        });
+        $("#sonUrunAd").on("focusout", async function (e) {
+            await getData($(this), "/Common/MalGetir?isInput=True&target=sonUrunAd&codeOrName=false&inputType=name", "ad", "malId", e, null, null);
+        });
+        $("#ilkUrunKod").on("focusout", async function (e) {
+            await getData($(this), "/Common/MalGetir?isInput=True&target=ilkUrunKod&codeOrName=true&inputType=code", "kod", "malId", e, null, null);
+        });
+        $("#sonUrunKod").on("focusout", async function (e) {
+            await getData($(this), "/Common/MalGetir?isInput=True&target=sonUrunKod&codeOrName=true&inputType=code", "kod", "malId", e, null, null);
+        });
+
+        function showHideDiv(oddVal, rangeVal, targetElement, elValue) {
+            oddVal.addEventListener("change", (e) => {
+                if (e.target.checked) {
+                    for (var i = 0; i < targetElement.length; i++) {
+                        targetElement[i].style.display = "none";
+                    }
+                    elValue.value = null;
+                }
+            });
+            rangeVal.addEventListener("change", (e) => {
+                if (e.target.checked) {
+                    for (var i = 0; i < targetElement.length; i++) {
+                        targetElement[i].style.display = "block";
+                    }
+                    elValue.value = null;
+                }
+            });
+        }
+
+        var oddValUrun = document.getElementById("oddValuesUrun");
+        var rangeValUrun = document.getElementById("rangeValuesUrun");
+        var sonUrunAd = document.getElementById("sonUrunAd");
+        var sonUrunSelect = document.getElementsByClassName("sonUrunSelect");
+        rangeValUrun.checked = true;
+        showHideDiv(oddValUrun, rangeValUrun, sonUrunSelect, sonUrunAd);
+
+        var oddValBrand = document.getElementById("oddValuesUrunKod");
+        var rangeValBrand = document.getElementById("rangeValuesUrunKod");
+        var sonUrunKod = document.getElementById("sonUrunKod");
+        var sonUrunKodSelect = document.getElementsByClassName("sonUrunKodSelect");
+        rangeValBrand.checked = true;
+        showHideDiv(oddValBrand, rangeValBrand, sonUrunKodSelect, sonUrunKod);
+        */
+        // $("#submitFrm").on("submit", function (e) {
+        //     e.preventDefault();
+        //     console.log($("#includeCommission").prop("checked"));
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/AlisIslemleriRapor/TicariKarlilikUrun",
+        //         data: { param: $("#includeCommission").prop("checked") },
+        //         success: function (res) {
+        //             var yeniPencere = window.open('', '_blank');
+        //             yeniPencere.document.write(res);
+        //             console.log(res);
+        //         }
+        //     });
+        // });
+    </script>
+}

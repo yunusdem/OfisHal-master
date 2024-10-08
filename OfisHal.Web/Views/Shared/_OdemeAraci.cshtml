@@ -1,0 +1,102 @@
+﻿@model IList<VohalAramaOdemeAraci>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="table table-hover table-sm mt-0" id="oaraciTablo" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ad</th>
+                <th scope="col">Vade Tarihi</th>
+                <th scope="col">Meblag</th>
+                <th scope="col">Veren</th>
+                <th scope="col">Durumu</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        @if (Request.QueryString["isInput"] == "True")
+                        {
+                            <input type="radio" name="oaraclari" data-id="@item.OdemeAraciId" class="form-check-input ms-1" data-name="@item.OdemeAraciNo" data-banka="@item.BankaAdi" data-hesap="@item.HesapAdi" data-vadetarihi="@item.VadeTarihi" data-meblag="@item.Meblag"/>
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-id="@item.OdemeAraciId" class="form-check-input ms-1" data-name="@item.OdemeAraciNo" />
+                        }
+                    </th>
+                    <td>@item.BankaAdi</td>
+                    <td>@item.VadeTarihi.ToShortDateString()</td>
+                    <td>@item.Meblag</td>
+                    <td>@item.Veren</td>
+                    <td>@item.Durum</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isinput" type="hidden" value="@Request.QueryString["isInput"]" />
+</div>
+
+<script>
+    var table = null;
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+       table = CreateDatatable('#oaraciTablo');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        target.empty();
+        target.removeAttr("data-id");
+        if (isInput) {
+            var item = $("#oaraciTablo").find("input:checked");
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+            target.attr("data-name", item.data("name"));
+            target.attr("data-banka", item.data("banka"));
+            target.attr("data-hesap", item.data("hesap"));
+            target.attr("data-vadetarihi", item.data("vadetarihi"));
+            target.attr("data-meblag", item.data("meblag"));
+        } else {
+            $("#oaraciTablo").find("input:checked").each(function (i, e) {
+                var item = $(e);
+                target.append(new Option(item.data("name"), item.data("id"), null, true));
+            });
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

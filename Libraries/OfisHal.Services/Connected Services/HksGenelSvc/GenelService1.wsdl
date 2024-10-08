@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:i0="http://www.gtb.gov.tr//WebServices" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="https://gtb.gov.tr/hks/WebServices" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" targetNamespace="https://gtb.gov.tr/hks/WebServices" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://www.gtb.gov.tr//WebServices" location="http://hks.hal.gov.tr/WebServices/GenelService.svc?wsdl" />
+  <wsdl:types />
+  <wsdl:binding name="BasicHttpBinding_IGenelService" type="i0:IGenelService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GenelServisIller">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisIller" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_IllerIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_IllerCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisIlceler">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisIlceler" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_IlcelerIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_IlcelerCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisBeldeler">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisBeldeler" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_BeldelerIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_BeldelerCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisUlkeler">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisUlkeler" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_UlkelerIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_UlkelerCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisHalIciIsyeri">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisHalIciIsyeri" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_HalIciIsyeriIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_HalIciIsyeriCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisIsletmeTurleri">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisIsletmeTurleri" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_IsletmeTurleriIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_IsletmeTurleriCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisDepolar">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisDepolar" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_DepolarIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_DepolarCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenelServisSubeler">
+      <soap:operation soapAction="http://www.gtb.gov.tr//WebServices/IGenelService/GenelServisSubeler" style="document" />
+      <wsdl:input name="BaseRequestMessageOf_SubelerIstek">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="BaseResponseMessageOf_SubelerCevap">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+</wsdl:definitions>

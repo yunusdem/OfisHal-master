@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.title = "Eta Fatura Transferi (Txt)";
+
+    ViewBag.pagetitle = "Resmi Formlar";
+    ViewBag.ptitle = "Eta Fatura Transferi (Txt)";
+}
+<div class="row">
+    <div class="col-md-5">
+        <div class="row">
+            <label for="startDate" class="col-sm-3 col-form-label pb-0">
+                İlk Tarih
+            </label>
+            <div class="col-sm-9">
+                <input type="date" name="startDate" id="startDate" class="form-control form-control-sm start-date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+        </div>
+        <div class="row">
+            <label for="endDate" class="col-sm-3 col-form-label pb-0">
+                Son Tarih
+            </label>
+            <div class="col-sm-9">
+                <input type="date" name="endDate" id="endDate" class="form-control form-control-sm end-date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+        </div>
+        <div class="row">
+            <label for="invoiceNo" class="col-sm-3 col-form-label pb-0">
+                Fatura Seri No
+            </label>
+            <div class="col-sm-9">
+                <input type="text" name="invoiceNo" id="invoiceNo" class="form-control form-control-sm end-date"  />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="includeEInvoice" name="includeEInvoice" checked>
+                    <label class="form-check-label" for="includeEInvoice">
+                        E-Faturalar Dahil
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-sm btn-success">Tamam</button>
+                <button class="btn btn-sm btn-danger">Vazgeç</button>
+            </div>
+        </div>
+    </div>
+</div>

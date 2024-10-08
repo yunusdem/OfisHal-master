@@ -1,0 +1,34 @@
+﻿<main aria-labelledby="title">
+    <h2 id="title">@ViewData["Title"].</h2>
+
+    <p class="text-success">@ViewData["StatusMessage"]</p>
+    <div>
+        <h4>Hesap ayarlarınızı değiştirin</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>Parola:</dt>
+            <dd>
+                <a class="btn btn-primary" href="@Url.Action("ChangePassword")">Parolamı Değiştir</a>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt>Kaydedilen grid ayarlarını temizle:</dt>
+            <dd>
+                <button id="btnClearLocalStorage" class="btn btn-primary">Temizle</button>
+            </dd>
+        </dl>
+       
+
+    </div>
+</main>
+    @section scripts
+    {
+        <script>
+            $(document).ready(function () {
+                $("#btnClearLocalStorage").click(function () {
+                    localStorage.clear();
+                    ShowAlert(true, "Kaydedilen grid ayarları temizlendi");
+                });
+            });
+        </script>
+    }

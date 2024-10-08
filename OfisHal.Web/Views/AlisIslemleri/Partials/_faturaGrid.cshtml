@@ -1,0 +1,931 @@
+﻿@model VohalFatura
+@{
+    var FaturaModel = (List<VohalFaturaSatiriUrt>)ViewData["faturaModel"];
+    var markaId = 0;
+    var data = Model;
+    //data.MarkaId null veya 0 değil ise markaId'ye ata
+    if (data.MarkaId != null && data.MarkaId != 0)
+    {
+        markaId = (int)data.MarkaId;
+    }
+    var acilisYetki = (int?)ViewData["acilisyetki"] ?? 0;
+}
+<script>
+
+    var kdvToplam = 0;
+    var dataView;
+    var grid;
+    var data = [];
+    var columns = [
+        { id: "id", name: "ID", width: 10, field: "id", cssClass: "cell-title", selectable: false, editable: false},
+        { id: "mal", name: "Mal", field: "mal", editor: Slick.Editors.Text, formatter: buttonFormatter },
+        { id: "stokkunye", name: "Stok Künyesi", field: "stokkunye", editable: false },
+        { id: "not", name: "Not", width: 10, field: "not", editor: Slick.Editors.Text },
+        { id: "kap", name: "Kap", width: 10, field: "kap", editor: Slick.Editors.Text, formatter: kapFormatter },
+        { id: "adet", name: "Adet", field: "adet", cssClass: "column-sayi", editor: Slick.Editors.Integer },
+        { id: "darali", name: "Daralı", field: "darali", cssClass: "column-sayi", editable: false, editor: Slick.Editors.Float },
+        { id: "dara", name: "Dara", field: "dara", cssClass: "column-sayi", editor: Slick.Editors.Float },
+        { id: "safi", name: "Safi", field: "safi", cssClass: "column-sayi", editor: Slick.Editors.Float },
+        { id: "malkapfiyat", name: "Mal Kap Fiyatı", field: "malkapfiyat", cssClass: "column-sayi", editor: Slick.Editors.Float },
+        { id: "malfiyati", name: "Mal Fiyatı", field: "malfiyati", cssClass: "column-sayi", editor: Slick.Editors.Float},
+        { id: "tutar", name: "Tutar", field: "tutar", cssClass: "column-sayi", selectable: false, editable: false},
+        { id: "roran", name: "R. Oran", width: 10, field: "roran", cssClass: "column-sayi", editor: Slick.Editors.Text },
+        { id: "rusum", name: "Rüsum", width: 10, field: "rusum", cssClass: "column-sayi", selectable: false, editable: false},
+        { id: "kdv", name: "Kdv", width: 10, field: "kdv", cssClass: "column-sayi", editor: Slick.Editors.Text },
+        { id: "kdvtev", name: "Kdv Tevkifat Tanımı", width: 10, field: "kdvtev", cssClass: "column-sayi", editor: Slick.Editors.Text },
+    ];
+
+    var options = {
+        columnPicker: {
+            columnTitle: "Sütunlar",
+            hideForceFitButton: false,
+            hideSyncResizeButton: false,
+            forceFitTitle: "Genişliğe sığdırmaya zorla",
+            syncResizeTitle: "Senkron yeniden boyutlandırma",
+        },
+        editable: true,
+        enableAddRow: true,
+        enableCellNavigation: true,
+        asyncEditorLoading: false,
+        rowHeight: 40,
+        forceFitColumns: true,
+        createFooterRow: true,
+        showFooterRow: true,
+        footerRowHeight: 28
+    };
+
+    function UpdateAllTotals() {
+        var columnIdx = grid.getColumns().length;
+        while (columnIdx--) {
+            UpdateTotal(columnIdx, grid);
+        }
+    }
+
+
+    function UpdateTotal(cell, grid) {
+        var columnId = grid.getColumns()[cell].id;
+
+        // Sadece istenen sütunlara odaklan
+        if (["id", "adet", "safi", "dara", "darali", "malfiyati", "tutar","rusum"].includes(columnId)) {
+            var total = 0;
+            var i = data.length;
+            while (i--) {
+                if (columnId == "tutar" || columnId == "rusum" || columnId == "malfiyati") {
+                    total += parseFloat(data[i][columnId]);
+                }
+                else {
+                    total += parseInt(data[i][columnId], 10) || 0;
+                }
+            }
+            var columnElement = grid.getFooterRowColumn(columnId);
+            total = isNaN(total) ? 0 : total;
+            columnElement.textContent = `${total}`;
+
+            // tutar toplamını hesapla ve fatTop id li inputa yaz
+            if (columnId === "tutar") {
+                var rusumToplam = 0;
+                for (var i = 0; i < data.length; i++) {
+                    rusumToplam += parseFloat(data[i].rusum);
+                }
+                var masraf = parseFloat($("#totalmasraf").val().replace(",", "."));
+
+                var kdvliIadesizKap = parseFloat($("#KdvliIadesizKap").val());
+                kdvliIadesizKap = isNaN(kdvliIadesizKap) ? 0 : kdvliIadesizKap;
+                rusumtoplami = isNaN(rusumToplam) ? 0 : rusumToplam;
+                masraf = isNaN(masraf) ? 0 : masraf;
+                var fatioranS = $("#IskontoOrani").val();
+                var fatiskontoS = $("#Iskonto").val();
+
+                $("#Rusum").attr('value', rusumtoplami.toString().replace('.', ','));
+
+                fatiskontoS = fatiskontoS.replace(/\./g, "");
+                fatiskontoS = fatiskontoS.replace(",", ".");
+                var fatioskonto = parseFloat(fatiskontoS);
+                fatioranS = fatioranS.replace(/\./g, "");
+                fatioranS = fatioranS.replace(",", ".");
+                var fatioran = parseFloat(fatioranS);
+              
+                fatioran = isNaN(fatioran) ? 0 : fatioran;
+                fatioskonto = isNaN(fatioskonto) ? 0 : fatioskonto;
+                var totalWFIAmount = total + kdvToplam + rusumtoplami + kdvliIadesizKap - masraf;
+                var totalWIskonto = 0;
+                if (IsType == 0) {
+                    totalWIskonto = totalWFIAmount / 100 * fatioran;
+                }
+                else {
+                    totalWIskonto = fatioskonto;
+                    fatioran = totalWIskonto / totalWFIAmount * 100;
+                } 
+                
+
+                var totalAmount = total + kdvToplam + rusumtoplami + kdvliIadesizKap - masraf - totalWIskonto;
+                var formattedAmount = totalAmount.toFixed(2);
+                var preformattedAmount = (totalAmount + masraf + totalWIskonto).toFixed(2);
+                var WFIformattedAmount = totalWFIAmount.toFixed(2);// Fatura toplamını iki ondalık basamağa yuvarla
+
+                totalWIskonto = totalWIskonto.toFixed(2);
+                fatioran = fatioran.toFixed(2);
+                $("#IskontoOrani").val(fatioran.replace('.', ','));
+                $("#iskontooran").val(fatioran);
+                $("#Iskonto").val(totalWIskonto.replace('.', ','));
+                $("#totaliskontoVal").val(totalWIskonto);
+                $("#WFIfatTop").attr('value', WFIformattedAmount.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                $("#fatTop").html(preformattedAmount.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+                $("#sonTop").html(formattedAmount.replace('.', ',')); // Ondalık ayraç olarak virgül kullan
+
+            }
+
+        }
+        else {
+            var columnElement = grid.getFooterRowColumn(columnId);
+            columnElement.textContent = "-";
+        }
+    }
+
+    function toggleFilterRow() {
+        grid.setTopPanelVisibility(!grid.getOptions().showTopPanel);
+    }
+
+    const savedColumnStates = loadColumnSettings();
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    @if (FaturaModel.Count == 0)
+    {
+        @:var d = (data[0] = {});
+        @:d["id"] = 1;
+        @:d["satirId"] = "";
+        @:d["guid"] = "@Html.Raw(Guid.Empty)";
+        @:d["malId"] = "";
+        @:d["mal"] = "";
+        @:d["stokkunye"] = "";
+        @:d["stokkunyeId"] = "";
+        @:d["not"] = "";
+        @:d["kapId"] = "";
+        @:d["kap"] = "";
+        @:d["adet"] = "";
+        @:d["darali"] = "";
+        @:d["dara"] = "";
+        @:d["safi"] = ""; // Safi = miktar
+        @:d["malkapfiyat"] = "";
+        @:d["malfiyati"] = "";
+        @:d["tutar"] = "";
+        @:d["roran"] = @ViewData["tanimRusumOrani"];1
+        @:d["rusum"] = "";
+        @:d["kdv"] = @ViewData["tanimKdvOrani"];
+        @:d["kdvtev"] = "";
+    }
+    else
+    {
+        for (var i = 0; i < FaturaModel.Count; i++)
+        {
+            @:var d = (data[@i] = {});
+            @:d["id"] = @i+1;
+            @:d["satirId"] = @Html.Raw(FaturaModel[i].FaturaSatiriId);
+            @:d["guid"] = "@Html.Raw(FaturaModel[i].Guid)";
+            @:d["malId"] = @Html.Raw(FaturaModel[i].MalId);
+            @:d["mal"] = "@Html.Raw(FaturaModel[i].MalAdi)";
+            @:d["stokkunye"] = "@Html.Raw(FaturaModel[i].StokKunyesi)";
+            @:d["stokkunyeId"] = "@Html.Raw(FaturaModel[i].StokKunyeId)";
+            @:d["not"] = "@Html.Raw(FaturaModel[i].Aciklama)";
+            @:d["kapId"] = "@Html.Raw(FaturaModel[i].KapId)";
+            @:d["kap"] = "@Html.Raw(FaturaModel[i].KapKodu)";
+            @:d["adet"] = @Html.Raw(FaturaModel[i].KapMiktari);
+            @:d["darali"] = parseFloat('@Html.Raw(FaturaModel[i].Darali)'.replace(',', '.'));
+            @:d["dara"] = parseFloat('@Html.Raw(FaturaModel[i].Dara)'.replace(',', '.'));
+
+            @:var miktar = parseFloat('@Html.Raw(FaturaModel[i].Darali)'.replace(',', '.')) -  parseFloat('@Html.Raw(FaturaModel[i].Dara)'.replace(',', '.'));
+            @:kdvToplam += parseFloat('@Html.Raw(FaturaModel[i].Tutar)'.replace(',', '.')) * parseFloat('@Html.Raw(FaturaModel[i].KdvOrani)'.replace(',', '.')) / 100;
+            @:d["safi"] = miktar; // Safi = miktar
+
+            @:d["malkapfiyat"] = parseFloat('@Html.Raw(FaturaModel[i].MalKapFiyati)'.replace(',', '.'));
+            @:d["malfiyati"] = parseFloat('@Html.Raw(FaturaModel[i].MalFiyati)'.replace(',', '.'));
+            @:d["tutar"] = parseFloat('@Html.Raw(FaturaModel[i].Tutar)'.replace(',', '.'));
+            @:d["roran"] = @FaturaModel[i].RusumOrani == 0 ? @ViewData["tanimRusumOrani"] : @Html.Raw(FaturaModel[i].RusumOrani);
+            @:d["rusum"] = parseFloat('@Html.Raw(FaturaModel[i].Rusum)'.replace(',', '.'));
+            @:d["kdv"] = @FaturaModel[i].KdvOrani == 0 ? @ViewData["tanimKdvOrani"] : @Html.Raw(FaturaModel[i].KdvOrani);
+            @:d["kdvtev"] = "@Html.Raw(FaturaModel[i].KdvTevkifatTanimiAciklamasi)";
+        }
+    }
+
+        $("#kdvCan").val(parseFloat(kdvToplam).toFixed(2));
+        dataView = new Slick.Data.DataView({ inlineFilters: true });
+        grid = new Slick.Grid("#myGrid", dataView, columns, options);
+
+        calculateKdvValues();
+        UpdateAllTotals();
+        grid.setSelectionModel(new Slick.RowSelectionModel());
+
+        var columnpicker = new Slick.Controls.ColumnPicker(columns, grid, {
+            ...options,
+        });
+
+        // Sütun seçim ayarları değiştikçe localStorage'a kaydet
+        columnpicker.onColumnsChanged.subscribe(function (e, args) {
+            var storedColumns = grid.getColumns();
+            saveColumnSettings(storedColumns);
+        });
+        grid.onColumnsResized.subscribe(function (e, args) {
+            var storedColumns = grid.getColumns();
+            saveColumnSettings(storedColumns);
+        });
+        if (savedColumnStates) {
+            grid.setColumns(savedColumnStates);
+        }
+        grid.onContextMenu.subscribe(function (e) {
+            e.preventDefault();
+            var cell = grid.getCellFromEvent(e);
+            const contextMenuElm = document.querySelector('#contextMenu');
+            contextMenuElm.dataset.row = cell.row;
+            contextMenuElm.style.top = `${e.pageY}px`;
+            contextMenuElm.style.left = `${e.pageX}px`;
+            contextMenuElm.style.display = 'block';
+
+            document.body.addEventListener('click', () => {
+                contextMenuElm.style.display = 'none';
+            });
+        });
+
+        grid.onCellChange.subscribe(async function (e, args) {
+
+            var rowId = args.row;
+            if (args.cell === grid.columnsById["dara"] ||
+                args.cell === grid.columnsById["darali"]
+            ) {
+                data[rowId].dara = data[rowId].dara || 0;
+                data[rowId].darali = data[rowId].darali || 0;
+                data[rowId].malfiyati = data[rowId].malfiyati || 0;
+                //Eğer dara daralıdan küçük ise durdur ve uyarı ver sütunun içeriğini sil
+                if (parseFloat(data[rowId].dara) > parseFloat(data[rowId].darali)) {
+                    ShowAlert(false, "Dara, Daralıdan büyük olamaz");
+                    data[rowId].dara = "";
+                    grid.updateRow(rowId);
+                    goToPrevColumn();
+                    return;
+                }
+                updateRowValues(rowId, "t2");
+
+            }
+            if (args.cell === grid.columnsById["safi"]) {
+                data[rowId].safi = data[rowId].safi || 0;
+                updateRowValues(rowId, "t1");
+
+            }
+            if (args.cell === grid.columnsById["roran"]) {
+                data[rowId].roran = data[rowId].roran || 0;
+                updateRowValues(rowId, "t3");
+
+            }
+            if (args.cell === grid.columnsById["malfiyati"]) {
+                data[rowId].malfiyati = data[rowId].malfiyati || 0;
+                updateRowValues(rowId, "t4");
+
+            }
+            if (args.cell === grid.columnsById["kdv"]) {
+                data[rowId].kdv = data[rowId].kdv || 0;
+
+
+            }
+            if (args.cell === grid.columnsById["adet"] ||
+                args.cell === grid.columnsById["malkapfiyat"]
+            ) {
+                data[rowId].adet = data[rowId].adet || 0;
+                data[rowId].malkapfiyat = data[rowId].malkapfiyat || 0;
+
+                if (data[rowId].safi == null || data[rowId].safi == 0) {
+                    updateRowValues(rowId, "t1");
+                }
+            }
+
+            if (args.cell === grid.columnsById["id"]) {
+                if (Number.isInteger(args.item.id)) {
+                    dataView.updateItem(args.item.id, args.item);
+                } else {
+                    // Çevrim yap ve kontrol et.
+                    var itemIdAsInteger = parseInt(args.item.id, 10);
+                    dataView.updateItem(itemIdAsInteger, args.item);
+                }
+
+
+            }
+
+            calculateKdvValues();
+            UpdateAllTotals();
+            switch (args.column.field) {
+                case "mal":
+                    var val = await gridGetData("/Common/MalGetir?isInput=True&target=gridMal&codeOrName=false&inputType=name", args.item[args.column.field], "mal");
+                    val.result ? updateMalCell(val.data.MalId, val.data.Ad) : null;
+                    break;
+                case "kap":
+                    var val = await gridGetData("/Common/KapGetir?isInput=True&target=gridKap&codeOrName=false&inputType=name", args.item[args.column.field], "kap");
+                    val.result ? updateKapCell(val.data.KapId, val.data.Ad) : null;
+                    break;
+            }
+        });
+
+
+
+        function gridGetData(reqUrl, val, target) {
+            var deger = val.trim();
+            return new Promise((resolve, reject) => {
+                if (deger.length > 0) {
+                    $.ajax({
+                        url: reqUrl,
+                        type: "GET",
+                        data: { content: deger },
+                        success: (res) => {
+                            switch (res.length) {
+                                case 0:
+                                    ShowAlert(false, "Kayıt Bulunamadı");
+                                    goToPrevColumn(true);
+                                    resolve({ result: false, data: null });
+                                    break;
+                                case 1:
+                                    resolve({ result: true, data: res[0] });
+                                    break;
+                                default:
+                                    resolve({ result: false, data: null });
+                                    goToPrevColumn(true);
+                                    loadModal(res, target);
+                                    break;
+                            }
+                        }
+                    });
+                }
+                else {
+                    resolve({ result: false, data: null });
+                }
+            });
+        }
+        grid.onKeyDown.subscribe(function (e) {
+            var activeCell = grid.getActiveCell();
+            if (activeCell != null) {
+                var column = grid.getColumns()[activeCell.cell];
+                if (column.cssClass == "column-sayi") {
+                    //harf girişini engelle
+                    if (
+                        (e.key.length === 1 && e.key.match(/[^0-9.]/)) || // rakam veya nokta değilse engelle
+                        (e.key === "." && $(e.target).val().includes(".")) // nokta varsa ve yeni nokta giriliyorsa engelle
+                    ) {
+                        e.preventDefault();
+                    }
+
+
+                }
+            }
+            if (e.key === 'F12') {
+                var formatterColumns = ["mal", "kap"];
+                var field = column.field;
+                // İlgili buttonun id'sini belirle
+                if (formatterColumns.includes(field)) {
+
+                    var buttonId = field + "Button";
+                    var button = document.getElementById(buttonId);
+                    if (button) {
+                        button.click();
+                    }
+
+                    e.preventDefault();
+                }
+            }
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+
+                DeleteConfirm().then(p => {
+                    if (p.isConfirmed) {
+                        // DataView'dan satırı kaldır
+                        dataView.deleteItem(activeCell.row + 1);
+
+                        // İlgili satırı grid üzerinden kaldır
+                        grid.invalidateRow(activeCell.row + 1);
+                        grid.render();
+
+                        // Eğer gerekiyorsa, veriyi güncelle
+                        dataView.refresh();
+                    }
+                });
+            }
+
+            if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) {
+                e.preventDefault();
+
+                onAddNewRow()
+            }
+
+            if (e.which === 13) { // Enter tuşu
+
+                if (grid.getActiveCell().row === dataView.getLength()) {
+                    onAddNewRow();
+                }
+            }
+
+
+            // select all rows on ctrl-a
+            if (e.which != 65 || !e.ctrlKey) {
+                return false;
+            }
+            var rows = [];
+            for (var i = 0; i < dataView.getLength(); i++) {
+                rows.push(i);
+            }
+
+            grid.setSelectedRows(rows);
+            e.preventDefault();
+        });
+
+        dataView.onRowCountChanged.subscribe(function (e, args) {
+            grid.updateRowCount();
+            grid.render();
+        });
+
+        dataView.onRowsChanged.subscribe(function (e, args) {
+            grid.invalidateRows(args.rows);
+            grid.render();
+        });
+
+        grid.onClick.subscribe(function (e) {
+            var cell = grid.getCellFromEvent(e);
+            var clickedColumn = grid.getColumns()[cell.cell];
+
+            if (cell.row === dataView.getLength() && grid.getCellFromEvent(e).cell === 0) {
+                onAddNewRow();
+            }
+        });
+
+        grid.onAddNewRow.subscribe(function (e, args) {
+
+            var newDataRow = {
+                id: dataView.getLength() + 1, // Yeni bir numara oluştur
+                satirId: "",
+                guid: "@Html.Raw(Guid.Empty)",
+                malId: "",
+                mal: "",
+                stokkunye: "",
+                stokkunyeId: "",
+                not: "",
+                kapId: "",
+                kap: "",
+                adet: "",
+                darali: "",
+                dara: "",
+                safi: "",
+                malkapfiyat: "",
+                malfiyati: "",
+                tutar: "",
+                roran: "",
+                rusum: "",
+                kdv: "",
+                kdvtev: ""
+            };
+            if (!isLastRowEmpty()) {
+                Slick.Utils.extend(newDataRow, args.item);
+                dataView.addItem(newDataRow);
+                dataView.refresh();
+            }
+        });
+
+
+
+        function onAddNewRow() {
+
+            var newDataRow = {
+                id: dataView.getLength() + 1, // Yeni bir numara oluştur
+                satirId: "",
+                guid: "@Html.Raw(Guid.Empty)",
+                malId: "",
+                mal: "",
+                not: "",
+                stokkunye: "",
+                stokkunyeId: "",
+                kapId: "",
+                kap: "",
+                adet: "",
+                darali: "",
+                dara: "",
+                safi: "",
+                malkapfiyat: "",
+                malfiyati: "",
+                tutar: "",
+                roran: "",
+                rusum: "",
+                kdv: "",
+                kdvtev: ""
+            };
+            if (!isLastRowEmpty()) {
+                dataView.addItem(newDataRow);
+                dataView.refresh();
+            }
+        }
+        function isLastRowEmpty() {
+            var lastRow = data[data.length - 1];
+            return !lastRow.mal.trim();
+        }
+
+
+        var dataArray = data;
+
+        dataView.beginUpdate();
+        dataView.setItems(dataArray);
+        dataView.endUpdate();
+
+        // if you don't want the items that are not visible (due to being filtered out
+        // or being on a different page) to stay selected, pass 'false' to the second arg
+        dataView.syncGridSelection(grid, true);
+        //Set last row's Mal field selected and editable on page load
+        grid.gotoCell(dataView.getLength() - 1, 1, true);
+        //document.getElementById("CariKod").focus();
+    });
+
+    // MAL
+    function buttonFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='mal' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("MalKodlar", "Common", new { target = "gridMal",isInput = true ,inputType = "name" })'><i class='ri-search-line'></i></button>" + value + "</div>";
+        // return "<div><button type='button' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' onclick='loadAllMallar(" + row + ")'><i class=' ri-search-line '></i></button>" + value + "</div>";
+    }
+
+
+    // Kap
+    function kapFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='kap' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("KapKodlar", "Common",new { target = "gridKap", isInput = true, inputType = "name" })'><i class='ri-search-line'></i></button>" + value + "</div>";
+        // return "<div><button type='button' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' onclick='loadKap(" + row + ")'><i class=' ri-search-line '></i></button>" + value + "</div>";
+    }
+
+
+    function updateRowValues(rowId, type) {
+        //var miktar = parseInt(data[rowId].darali, 10) - parseInt(data[rowId].dara, 10);
+        //var adet = parseInt(data[rowId].adet, 10);
+
+        if (type == "t1") {
+            data[rowId].dara = data[rowId].dara || 0;
+            data[rowId].safi = data[rowId].safi || 0;
+            data[rowId].darali = parseFloat(data[rowId].safi) + parseFloat(data[rowId].dara);
+            data[rowId].darali = isNaN(data[rowId].darali) ? 0 : data[rowId].darali;
+            if (data[rowId].safi == null || data[rowId].safi == 0) {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].adet)).toFixed(2);
+                data[rowId].tutar = isNaN(data[rowId].tutar) ? 0 : data[rowId].tutar;
+
+            }
+            else {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].safi)).toFixed(2);
+                data[rowId].tutar = isNaN(data[rowId].tutar) ? 0 : data[rowId].tutar;
+            }
+
+            if (data[rowId].roran != "") {
+                data[rowId].rusum = (parseFloat(data[rowId].tutar) * parseFloat(data[rowId].roran) / 100).toFixed(2);
+                data[rowId].rusum = isNaN(data[rowId].rusum) ? 0 : data[rowId].rusum;
+            }
+        }
+        else if (type == "t2") {
+            data[rowId].dara = data[rowId].dara || 0;
+            data[rowId].darali = data[rowId].darali || 0;
+            data[rowId].safi = (parseFloat(data[rowId].darali) - parseFloat(data[rowId].dara)).toFixed(2);
+            data[rowId].safi = isNaN(data[rowId].safi) ? 0 : data[rowId].safi;
+            data[rowId].tutar = isNaN(data[rowId].tutar) ? 0 : data[rowId].tutar;
+            if (data[rowId].safi !== 0) {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].safi)).toFixed(2);
+            }
+            else {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].adet)).toFixed(2);
+            }
+            if (data[rowId].roran != "") {
+                data[rowId].rusum = (parseFloat(data[rowId].tutar) * parseFloat(data[rowId].roran) / 100).toFixed(2);
+                data[rowId].rusum = isNaN(data[rowId].rusum) ? 0 : data[rowId].rusum;
+            }
+        }
+        else if (type == "t4") {
+            data[rowId].safi = isNaN(data[rowId].safi) ? 0 : data[rowId].safi;
+            data[rowId].tutar = isNaN(data[rowId].tutar) ? 0 : data[rowId].tutar;
+            if (data[rowId].safi !== 0) {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].safi)).toFixed(2);
+            }
+            else {
+                data[rowId].tutar = (parseFloat(data[rowId].malfiyati) * parseFloat(data[rowId].adet)).toFixed(2);
+            }
+            if (data[rowId].roran != "") {
+                data[rowId].rusum = (parseFloat(data[rowId].tutar) * parseFloat(data[rowId].roran) / 100).toFixed(2);
+                data[rowId].rusum = isNaN(data[rowId].rusum) ? 0 : data[rowId].rusum;
+            }
+        }
+        else{
+            data[rowId].rusum = (parseFloat(data[rowId].tutar) * parseFloat(data[rowId].roran) / 100).toFixed(2);
+            data[rowId].rusum = isNaN(data[rowId].rusum) ? 0 : data[rowId].rusum;
+        }
+
+            // Grid'i güncelle
+            grid.updateRow(rowId);
+
+    }
+
+    function calculateKdvValues() {
+        kdvToplam = 0;
+        for (var i = 0; i < data.length; i++) {
+            kdvToplam += parseFloat((data[i].tutar * data[i].kdv / 100).toFixed(2));
+        }
+        $("#kdvCan").val(isNaN(kdvToplam) ? 0 : kdvToplam.toFixed(2));
+    }
+
+    // localStorage üzerinde sütun seçim ayarlarını kaydet
+    function saveColumnSettings(columnStates) {
+        var columnsToSave = columnStates.map(column => {
+            var formattedColumn = {
+                ...column,
+                formatter: column.formatter ? column.formatter.toString() : null
+            };
+
+            //// Eğer editor bir fonksiyon ise, onu ad olarak kaydet
+            //if (typeof column.editor === 'function') {
+            //    formattedColumn.editor = 'function';
+            //} else if (typeof column.editor === 'object') {
+            //    // Eğer editor bir nesne ise, tüm özelliklerini kaydet
+            //    formattedColumn.editor = { ...column.editor };
+            //} else {
+            //    formattedColumn.editor = null;
+            //}
+            if (column.editor != undefined && column.editor != null) {
+                formattedColumn.editor = column.editor.name;
+            }
+
+            return formattedColumn;
+        });
+
+        localStorage.setItem('columnSettingsAlis', JSON.stringify(columnsToSave));
+    }
+
+    // localStorage'dan sütun seçim ayarlarını al
+    function loadColumnSettings() {
+        const savedColumnStates = localStorage.getItem('columnSettingsAlis');
+        if (savedColumnStates) {
+            const columns = JSON.parse(savedColumnStates);
+            return columns.map(column => {
+                var restoredColumn = {
+                    ...column,
+                    formatter: column.formatter ? new Function('return ' + column.formatter)() : null
+                };
+
+                // Eğer editor 'function' olarak kaydedilmişse, geri yüklenirken bir fonksiyon olarak atandı
+                //if (column.editor === 'function') {
+                //    restoredColumn.editor = Slick.Editors.Text;
+                //} else {
+                //    restoredColumn.editor = null;
+                //}
+
+                if (column.editor === "TextEditor")
+                    {
+                    restoredColumn.editor = Slick.Editors.Text;
+                }
+                else if (column.editor === "IntegerEditor") {
+                    restoredColumn.editor = Slick.Editors.Integer;
+                }
+                else if (column.editor === "_FloatEditor") {
+                    restoredColumn.editor = Slick.Editors.Float;
+                }
+                else {
+                    restoredColumn.editor = null;
+                }
+
+                return restoredColumn;
+            });
+        }
+        return null;
+    }
+
+
+
+    function postGridElements(isNew, kesildimi,kunye) {
+        var gridData = grid.getData();
+
+        var requestDataList = [];
+
+        for (var i = 0; i < gridData.items.length; i++) {
+            var rowData = gridData.items[i];
+
+            if (parseInt(rowData.malId) !== 0 && rowData.malId !== "" && rowData.malId !== null) {
+
+                //markaId 0 veya null ise hiddenMarkaId'den al
+
+                if (@markaId == 0) {
+                    markaId = parseInt($("#hiddenMarkaId").val());
+                }
+                else {
+                    markaId = @markaId
+                }
+
+                var satir = rowData == null ? 0 : rowData.id - 1;
+                var requestData = {
+                    SatirNo: satir,
+                    SatirId: parseInt(rowData.satirId),
+                    Aciklama: rowData.not,
+                    MalId: parseInt(rowData.malId),
+                    KapId: parseInt(rowData.kapId),
+                    KapMiktari: parseFloat(rowData.adet),
+                    MarkaId: markaId,
+                    StokKunyeId: parseInt(rowData.stokkunyeId),
+                    Darali: parseFloat(rowData.darali),
+                    Dara: parseFloat(rowData.dara),
+                    MalMiktari: parseFloat(rowData.safi),
+                    Fiyat: parseFloat(rowData.malfiyati),
+                    Tutar: parseFloat(rowData.tutar),
+                    RusumOrani: parseFloat(rowData.roran),
+                    Rusum: parseFloat(rowData.rusum),
+                    KdvOrani: parseFloat(rowData.kdv),
+                    MalKapFiyati: parseFloat(rowData.malkapfiyat),
+                    KdvTevkifatTanimiId: parseInt(rowData.kdvtev),
+                    SatirGuid: rowData.guid,
+                };
+
+                for (const key in requestData) {
+                    if (requestData.hasOwnProperty(key) && typeof requestData[key] === 'number' && isNaN(requestData[key])) {
+                        requestData[key] = 0;
+                    }
+                }
+
+                requestDataList.push(requestData);
+            }
+        }
+
+        var requestPostData = JSON.stringify(requestDataList);
+
+        $.ajax({
+            url: '/AlisIslemleri/CreateFaturaSatir',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: requestPostData,
+            success: function (responsedata) {
+                postGridElementsMasraf(isNew, kesildimi, kunye);
+
+                //ShowAlert(true, "Başarıyla Eklendi");
+                //console.log('Başarıyla eklendi:', responsedata);
+            },
+            error: function (error) {
+                ShowAlert(false, "Hata Oluştu - Satırları kontrol edin" + error);
+                //console.error('Hata oluştu:', error);
+            }
+        });
+    }
+    function faturaSave(isNew, kesildimi, kunye) {
+        var iskonto = $("#totaliskontoVal").val();
+        var ioran = $("#iskontooran").val();
+        iskonto = isNaN(iskonto) ? 0 : iskonto;
+        ioran = isNaN(ioran) ? 0 : ioran;
+        // Form verilerini serialize ediyoruz
+        var formData = $("#faturaForm").serialize();
+        formData += "&totaliskontoVal=" + iskonto;
+        formData += "&ioran=" + ioran;
+        var ikesildi = $("#IKesildi").val();
+        if (kesildimi) {
+            formData += "&irsaliyeBut=" + ikesildi;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/AlisIslemleri/SaveFatura",
+            data: formData,
+            success: function (response) {
+                //ShowAlert(true, "Fatura Kaydedildi");
+                if (isNew) {
+                    //onclick="window.location.href='/TohalFaturas/Index?yeni=True'"
+                    window.location.href = '/AlisIslemleri/Index?yeni=True';
+                }
+                else {
+                    if (kesildimi) {
+                       if (@acilisYetki == 1) {
+                            var faturaElementi = document.getElementById('faturakes');
+                            faturaElementi.click();
+                        }
+                    }
+                    if(kunye){
+                        kunyeAl()
+                    }
+                    else {
+                        if (window.location.href.includes("?yeni=True")) {
+                            window.location = window.location.href.split("?")[0]+"?faturaId="+response.faturaId;
+                        }
+                        else {
+                            location.reload();
+                        }
+                    }
+
+                }
+            },
+            error: function (error) {
+                ShowAlert(false, "Fatura Hata " + error);
+                //console.error(error);
+            }
+        });
+    }
+
+    function kunyeAl() {
+        $.ajax({
+         type: "GET",
+         url: "/AlisIslemleri/AlisFaturasiKunyeAL",
+         data: { belgeNo: '@Model.FaturaNo', faturaId: '@Model.FaturaId' },
+            success: function (response) {
+                if (response.success != false) {
+                    for (var i = 0; i < response.message.length; i++) {
+                        var currentRow = response.message[i];
+                        var rowIndex = i + 1;
+
+                        if (currentRow.Mesaj !== null && currentRow.Mesaj !== undefined && currentRow.Mesaj !== "") {
+                            ErrorAlert(rowIndex + ". satir - kod: " + currentRow.HataKodu + " - mesaj: " + currentRow.Mesaj);
+
+                        } else {
+                            SuccessAlert(rowIndex + ". satir - mesaj: 'İşlem başarılı'");
+                        }
+                    }
+                    if (window.location.href.includes("?yeni=True")) {
+                        window.location = window.location.href.split("?")[0] + "?faturaId=" + response.faturaId;
+                    }
+                    else {
+                        location.reload();
+                    }
+                }
+
+         },
+         error: function (error) {
+             ShowAlert(false, "Künye Hata " + error.message);
+             //console.error(error);
+         }
+     });
+
+    }
+
+
+
+</script>
+<!--Mal-->
+<script>
+
+
+    function updateMalCell(malId, ad) {
+        // Tıklanan satırın indisini al
+        var rowId = grid.getActiveCell().row;
+
+        // SlickGrid'deki veriyi güncelle
+        data[rowId].malId = malId;
+        data[rowId].mal = ad;
+
+        // SlickGrid'deki satırı güncelle
+        grid.updateRow(rowId);
+
+    }
+
+
+
+
+
+    function updateKapCell(kapId, kod) {
+        // Tıklanan satırın indisini al
+        var rowId = grid.getActiveCell().row;
+
+        // SlickGrid'deki veriyi güncelle
+        data[rowId].kapId = kapId;
+        data[rowId].kap = kod;
+
+        // SlickGrid'deki satırı güncelle
+        grid.updateRow(rowId);
+
+    }
+
+
+
+
+
+    function goToNextCol() {
+
+        var activeCell = grid.getActiveCell();
+        var column = grid.getColumns()[activeCell.cell];
+
+        var nextCell = null;
+        if (activeCell) {
+            nextCell = {
+                row: activeCell.row,
+                cell: activeCell.cell + 1
+            };
+        }
+
+        if (nextCell && nextCell.cell < grid.getColumns().length) {
+            grid.gotoCell(nextCell.row, nextCell.cell, true);
+        }
+    }
+
+    function goToPrevColumn(remove) {
+        var activeCell = grid.getActiveCell();
+
+        // Eğer aktif bir hücre varsa
+        if (activeCell) {
+            // Aktif hücrenin sütununu al
+            var currentColumn = activeCell.cell;
+
+            // Eğer sütun 0'dan büyükse, bir önceki sütuna git
+            if (currentColumn > 0) {
+                grid.gotoCell(activeCell.row, currentColumn - 1, true);
+                var prevColumnField = grid.getColumns()[currentColumn - 1].field;
+                data[activeCell.row][prevColumnField] = '';
+                grid.updateRow(activeCell.row);
+            }
+        }
+    }
+</script>
+
+<!-- MAL Button -->
+<button id="malButton" type='button' data-btarget='mal' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("MalKodlar", "Common", new { target = "gridMal",isInput = true ,inputType = "name" })' style='display:none;'><i class='ri-search-line'></i> MAL Button</button>
+<!-- KAP Button -->
+<button id="kapButton" type='button' data-btarget='kap' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("KapKodlar", "Common",new { target = "gridKap", isInput = true, inputType = "code" })' style='display:none;'><i class='ri-search-line'></i> KAP Button</button>

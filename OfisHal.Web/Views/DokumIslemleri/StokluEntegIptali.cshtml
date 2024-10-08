@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.title = "Stoklu Entegrasyon İptali";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.pagesubtitle = "Entegrasyon";
+    ViewBag.ptitle = "Stoklu Entegrasyon İptali";
+}<style>
+     .choices__inner {
+         min-height: 0;
+         font-size: .750rem;
+     }
+
+     .choices__list--single {
+         padding: 0;
+     }
+</style>
+<form method="post" action="@Url.Action("StokluEntegIptali")">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="tarih" class="col-sm-3 col-form-label pb-0">
+                    Tarih
+                </label>
+                <div class="col-sm-9">
+                    <input type="date" name="tarih" id="tarih" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="markaId" id="markaId" />
+                <label for="brand" class="col-sm-3 col-form-label pb-0">
+                    Marka
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="brand" name="brand" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="brand" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Markalar", "Common", new { target = "brand", kapandi = false })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="malId" id="malId" />
+                <label for="malKod" class="col-sm-3 col-form-label pb-0">
+                    Mal Kodu
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="malKod" name="malKod" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="mal" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("MalKodlar", "Common", new { target = "malKod",isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-7">
+            <input type="submit" name="name" class="btn btn-primary" value="İptal Et" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "mal": document.getElementById("malKod").getAttribute("data-id") > 0 ? $("#malId").val(document.getElementById("malKod").getAttribute("data-id")) : $("#malId").val(null); break;
+                case "brand": document.getElementById("brand").getAttribute("data-id") > 0 ? $("#markaId").val(document.getElementById("brand").getAttribute("data-id")) : $("#markaId").val(null); break;
+            }
+        });
+        $("#malKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/MalGetir?isInput=True&target=malKod&codeOrName=true&inputType=name", "Kod", "MalId", e, null, "mal");
+            val.result ? $("#malId").val(val.data.MalId) : $("#malId").val(null);
+        });
+        $("#brand").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/MarkaGetir?target=brand&kapandi=false", "Marka", "MarkaId", e, null, "brand");
+            val.result ? $("#markaId").val(val.data.MarkaId) : $("#markaId").val(null);
+        });
+    </script>
+}

@@ -1,0 +1,59 @@
+@model VohalAlisTanimlari
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="AlsDigerMalKdvOrani" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Mal Alýþ KDV Oraný %
+        </label>
+        <div class="col-sm-6">
+            <input type="number" name="AlsDigerMalKdvOrani" id="AlsDigerMalKdvOrani" class="form-control form-control-sm" min="0" max="99" value="@Model.AlsDigerMalKdvOrani" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="AlsFaturaSiraNo">
+            <span>2-</span>
+            Alýþ Faturasý Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="AlsFaturaSiraNo" name="AlsFaturaSiraNo" class="form-control form-control-sm" value="@Model.AlsFaturaSiraNo">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="alisRusumOraniCheck">
+            <span>3-</span>
+            Rüsüm Oraný %
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="alisRusumOraniCheck" name="alisRusumOraniCheck" value="true" @(Model.AlsRusumOrani != null ? "checked" : "")>
+            <input type="text" data-type="num" id="AlsRusumOrani" name="AlsRusumOrani" class="form-control form-control-sm" @(Model.AlsRusumOrani == null ? "disabled" : "") value="@(Model.AlsRusumOrani != null ? Model.AlsRusumOrani : "0")">
+        </div>
+    </div>
+    <div class="row">
+        <label for="AlsSiparisCalismaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            Sipariþ Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="AlsSiparisCalismaSekli" id="AlsSiparisCalismaSekli">
+                <option value="0" @(Model.AlsSiparisCalismaSekli == 0 ? "selected" : "")>Fatura Bazýnda</option>
+                <option value="1" @(Model.AlsSiparisCalismaSekli == 1 ? "selected" : "")>Fatura Satýr Bazýnda</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="alisMalBakiyeHesaplamaSekliCheck">
+            <span>5-</span>
+            Mal Bakiye Hesaplama Þekli
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="alisMalBakiyeHesaplamaSekliCheck" name="alisMalBakiyeHesaplamaSekliCheck" value="true" @(Model.AlsMalBakiyeHesaplamaSekli != null ? "checked" : "")>
+            <select class="form-select form-select-sm" name="AlsMalBakiyeHesaplamaSekli" id="AlsMalBakiyeHesaplamaSekli" @(Model.AlsMalBakiyeHesaplamaSekli == null ? "disabled" : "")>
+                @if (Model.AlsMalBakiyeHesaplamaSekli != null)
+                {
+                    <option value="0" @(Model.AlsMalBakiyeHesaplamaSekli == 0 ? "selected" : "")>Alýþ Faturasý Bazýnda</option>
+                    <option value="1" @(Model.AlsMalBakiyeHesaplamaSekli == 1 ? "selected" : "")>Marka Bazýnda</option>
+                }
+            </select>
+        </div>
+    </div>
+</div>

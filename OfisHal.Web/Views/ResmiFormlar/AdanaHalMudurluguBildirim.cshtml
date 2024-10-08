@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.title = "Adana Hal Müdürlüğü Bildirimi";
+
+    ViewBag.pagetitle = "Resmi Formlar";
+    ViewBag.pagesubtitle = "Adana Hal Müdürlüğü";
+    ViewBag.ptitle = "Adana Hal Müdürlüğü Bildirimi";
+}
+<div class="row">
+    <div class="col-md-5">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <label for="startDate" class="col-sm-4 col-form-label pb-0">
+                        İlk Tarih
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="startDate" id="startDate" class="form-control form-control-sm start-date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <label for="endDate" class="col-sm-4 col-form-label pb-0">
+                        Son Tarih
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="endDate" id="endDate" class="form-control form-control-sm end-date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                    </div>
+                </div>
+ 
+            </div>
+        </div>
+        <div class="row">
+            <label for="fileName" class="col-sm-3 col-form-label pb-0">
+                Dosya Adı
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input type="text" name="fileName" id="fileName" class="form-control form-control-sm" />
+                    <input type="file" hidden="true"  id="fileInput"/>
+                    <button class="btn btn-sm btn-secondary" id="fileBtn">Seç</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-sm btn-success">Aktar</button>
+                <button class="btn btn-sm btn-danger">Vazgeç</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var fileInput = document.getElementById("fileInput");
+        document.getElementById("fileBtn").addEventListener("click", () => {
+            fileInput.click();
+        });
+    </script>
+}

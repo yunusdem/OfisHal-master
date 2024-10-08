@@ -1,0 +1,556 @@
+﻿@{
+    var FaturaRehinModel = (List<VohalRehinFisi>)ViewData["faturaRehinModel"];
+   
+}
+<script>
+    var rehindataView;
+    var rehingrid;
+    var rehindata = [];
+    var rehincolumns = [
+        { id: "id", name: "ID", width: 10, field: "id", cssClass: "cell-title", editor: Slick.Editors.Text },
+        { id: "rehinkod", name: "Kod", field: "rehinkod", editor: Slick.Editors.Text, formatter: rehinmusteriFormatter },
+        { id: "rehingonderen", name: "Gönderen", field: "rehingonderen", width: 100, editor: Slick.Editors.Text, formatter: rehinmusteriFormatter },
+        { id: "rehinkap", name: "Kap", width: 10, field: "rehinkap", editor: Slick.Editors.Text, formatter: rehinkapFormatter },
+        { id: "rehinadet", name: "Adet", field: "rehinadet", cssClass: "column-sayi", editor: Slick.Editors.Text },
+        { id: "rehinfiyati", name: "Fiyat", field: "rehinfiyati", cssClass: "column-sayi", editor: Slick.Editors.Text },
+        { id: "rehintutar", name: "Tutar", field: "rehintutar", cssClass: "column-sayi", },
+    ];
+
+    var rehinoptions = {
+        columnPicker: {
+            columnTitle: "Sütunlar",
+            hideForceFitButton: false,
+            hideSyncResizeButton: false,
+            forceFitTitle: "Genişliğe sığdırmaya zorla",
+            syncResizeTitle: "Senkron yeniden boyutlandırma",
+        },
+        editable: true,
+        enableAddRow: true,
+        enableCellNavigation: true,
+        asyncEditorLoading: false,
+        rowHeight: 40,
+        forceFitColumns: true,
+        createFooterRow: true,
+    };
+
+
+    function toggleFilterRow() {
+        rehingrid.setTopPanelVisibility(!rehingrid.getOptions().showTopPanel);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const savedColumnStatesRehin = loadColumnSettingsRehin();
+
+    @if (FaturaRehinModel.Count == 0)
+    {
+        @:var d = (rehindata[0] = {});
+        @:d["id"] = 1;
+        @:d["guid"] = "@Html.Raw(Guid.Empty)";
+        @:d["rehinkod"] = "";
+        @:d["rehingonderen"] = "";
+        @:d["rehinmarkaId"] = "";
+        @:d["rehinkap"] = "";
+        @:d["rehinkapId"] = "";
+        @:d["rehiniadelikap"] = "";
+        @:d["rehinadet"] = "";
+        @:d["rehinfiyati"] = "";
+        @:d["rehintutar"] = "";
+        @:d["degistimi"] = "";
+
+    }
+    else
+    {
+        for (var i = 0; i < FaturaRehinModel.Count; i++)
+        {
+            @:var d = (rehindata[@i] = {});
+            @:d["id"] = @i+1;
+            @:d["guid"] = "@Html.Raw(FaturaRehinModel[i].Guid)";
+            @:d["rehinkod"] = "@Html.Raw(FaturaRehinModel[i].Marka)";
+            @:d["rehingonderen"] = "@Html.Raw(FaturaRehinModel[i].GonderenAdi)";
+            @:d["rehinmarkaId"] = "@Html.Raw(FaturaRehinModel[i].MarkaId)";
+            @:d["rehinkap"] = "@Html.Raw(FaturaRehinModel[i].KapKodu)";
+            @:d["rehinkapId"] = "@Html.Raw(FaturaRehinModel[i].KapId)";
+            @:d["rehiniadelikap"] = "@Html.Raw(FaturaRehinModel[i].Iadeli)";
+            @:d["rehinadet"] = "@Html.Raw(FaturaRehinModel[i].KapMiktari)";
+            @:d["rehinfiyati"] = "@Html.Raw(FaturaRehinModel[i].Fiyat)";
+            @:d["rehintutar"] = "@Html.Raw(FaturaRehinModel[i].Tutar)";
+            @:d["degistimi"] = "@Html.Raw(FaturaRehinModel[i].ElleDegistirildi)";
+        }
+    }
+        rehindataView = new Slick.Data.DataView({ inlineFilters: true });
+        rehingrid = new Slick.Grid("#rehinGrid", rehindataView, rehincolumns, rehinoptions);
+        rehingrid.setSelectionModel(new Slick.RowSelectionModel());
+        
+        var rehincolumnpicker = new Slick.Controls.ColumnPicker(rehincolumns, rehingrid, {
+            ...rehinoptions,
+        });
+        rehinCalculateSonuc()
+        // Sütun seçim ayarları değiştikçe localStorage'a kaydet
+        rehincolumnpicker.onColumnsChanged.subscribe(function (e, args) {
+            var storedColumns = rehingrid.getColumns();
+            saveColumnSettingsRehin(storedColumns);
+        });
+        rehingrid.onColumnsResized.subscribe(function (e, args) {
+            var storedColumns = rehingrid.getColumns();
+            saveColumnSettingsRehin(storedColumns);
+        });
+        if (savedColumnStatesRehin) {
+            rehingrid.setColumns(savedColumnStatesRehin);
+        }
+
+
+        rehingrid.onCellChange.subscribe(async function (e, args) {
+
+
+            var rowId = args.row;
+            if (args.cell === rehincolumns.findIndex(c => c.id === "rehinadet") ||
+                args.cell === rehincolumns.findIndex(c => c.id === "rehinfiyati")
+            ) {
+                rehinUpdateRowValues(rowId);
+
+            }
+
+            rehindata[rowId].degistimi = "true";
+
+            rehindataView.updateItem(args.item.id, args.item);
+            switch (args.column.field) {
+                case "rehinkod":
+                    var val = await gridGetData("/Common/cariGetir?isGrid=True&target=gridRehinGonderen&tip=0&codeOrName=true&inputType=name", args.item[args.column.field], "rehindGonderen");
+                    val.result ? RehinupdateMusteriCell(val.data.Ad, val.data.Kod, val.data.MarkaId) : null;
+                    break;
+                case "rehingonderen":
+                    var val = await gridGetData("/Common/cariGetir?isGrid=True&target=gridRehinGonderen&tip=0&codeOrName=false&inputType=name", args.item[args.column.field], "rehindGonderen");
+                    val.result ? RehinupdateMusteriCell(val.data.Ad, val.data.Kod, val.data.MarkaId) : null;
+                    break;
+                case "rehinkap":
+                    var val = await gridGetData("/Common/KapGetir?isInput=True&target=gridRehinKap&codeOrName=true&inputType=code", args.item[args.column.field], "rehinKap");
+                    val.result ? RehinupdateKapCell(val.data.Kod, val.data.KapId, val.data.Iadeli, val.data.BirimFiyati) : null;
+                    break;
+            }
+            rehinCalculateSonuc();
+        });
+
+        rehingrid.onKeyDown.subscribe(function (e) {
+            var activeCell = rehingrid.getActiveCell();
+            var column = rehingrid.getColumns()[activeCell.cell];
+            if (e.which === 13 && column.field === "rehintutar") { // Enter tuşu
+
+                var nextCell = null;
+                if (activeCell) {
+                    nextCell = {
+                        row: activeCell.row + 1,
+                        cell: 0
+                    };
+                }
+
+                rehinonAddNewRow();
+                rehingrid.gotoCell(nextCell.row, nextCell.cell, true);
+
+            }
+
+            // select all rows on ctrl-a
+            if (e.which != 65 || !e.ctrlKey) {
+                return false;
+            }
+            var rows = [];
+            for (var i = 0; i < rehindataView.getLength(); i++) {
+                rows.push(i);
+            }
+
+            rehingrid.setSelectedRows(rows);
+            e.preventDefault();
+        });
+
+        rehindataView.onRowCountChanged.subscribe(function (e, args) {
+            rehingrid.updateRowCount();
+            rehingrid.render();
+            rehinCalculateSonuc()
+        });
+
+        rehindataView.onRowsChanged.subscribe(function (e, args) {
+            rehingrid.invalidateRows(args.rows);
+            rehingrid.render();
+        });
+
+        rehingrid.onClick.subscribe(function (e) {
+            var cell = rehingrid.getCellFromEvent(e);
+            var clickedColumn = rehingrid.getColumns()[cell.cell];
+            onCellClick();
+            // Sütunun id özelliğini kontrol et
+            if (cell.row === rehindataView.getLength() && rehingrid.getCellFromEvent(e).cell === 0) {
+                rehinonAddNewRow();
+            }
+        });
+
+        rehingrid.onAddNewRow.subscribe(function (e, args) {
+
+            var newDataRow = {
+                id: rehindataView.getLength() + 1, // Yeni bir numara oluştur
+                guid: "@Html.Raw(Guid.Empty)",
+                rehinkod: "",
+                rehingonderen: "",
+                rehinmarkaId: "",
+                rehinkap: "",
+                rehinkapId: "",
+                rehiniadelikap: "",
+                rehinadet: "",
+                rehinfiyati: "",
+                rehintutar: "",
+                degistimi: "",
+            };
+            if (!rehinisLastRowEmpty()) {
+                Slick.Utils.extend(newDataRow, args.item);
+                rehindataView.addItem(newDataRow);
+                rehindataView.refresh();
+            }
+        });
+
+        // Satır veya sütun tıklandığında çalışacak işlev
+        function onCellClick(e, args) {
+            // Tıklanan satırın indeksi
+            var row = args.row;
+
+            // Tıklanan sütunun indeksi
+            var column = args.cell;
+
+            // Tıklanan satırdaki degistimi alanını true yap
+            rehindata[row].degistimi = "true";
+
+            //Satırdaki id fieldının classını "gridChangedColor" olarak ata
+            var cell = rehingrid.getCellNode(row, 0);
+            cell.classList.add("gridChangedColor");
+
+
+
+            // İşlemleri burada devam ettirebilirsin
+            // Örneğin, başka bir işlevi çağırabilir veya istediğin kodu ekleyebilirsin
+        }
+
+
+
+        function rehinonAddNewRow() {
+            var newDataRow = {
+                id: rehindataView.getLength() + 1, // Yeni bir numara oluştur
+                guid: "@Html.Raw(Guid.Empty)",
+                rehinkod: "",
+                rehingonderen: "",
+                rehinmarkaId: "",
+                rehinkap: "",
+                rehinkapId: "",
+                rehiniadelikap: "",
+                rehinadet: "",
+                rehinfiyati: "",
+                rehintutar: "",
+                degistimi: "",
+
+            };
+            if (!rehinisLastRowEmpty()) {
+                rehindataView.addItem(newDataRow);
+                rehindataView.refresh();
+            }
+        }
+        function rehinisLastRowEmpty() {
+            var lastRow = rehindata[rehindata.length - 1];
+            return !lastRow.rehinmarkaId.trim() && !lastRow.rehingonderen.trim();
+        }
+        var rehindataArray = rehindata;
+
+        rehindataView.beginUpdate();
+        rehindataView.setItems(rehindataArray);
+        rehindataView.endUpdate();
+
+        // if you don't want the items that are not visible (due to being filtered out
+        // or being on a different page) to stay selected, pass 'false' to the second arg
+        rehindataView.syncGridSelection(rehingrid, true);
+    });
+
+    // Musteri
+    function rehinmusteriFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='rehindGonderen' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("ProducerNames", "Common", new { target = "gridRehinGonderen", tip = 0,isGrid = true ,inputType = "name" })'><i class='ri-search-line'></i></button>" + value + "</div>";
+    }
+
+    // Kap
+    function rehinkapFormatter(row, cell, value, columnDef, dataContext) {
+        return "<div><button type='button' data-btarget='rehinKap' class='btn btn-xs btn-outline-primary btn-icon waves-effect waves-light' data-bs-toggle='modal' data-bs-target='#modal' data-label='Seç' data-remote-url='@Url.Action("KapKodlar", "Common",new { target = "gridRehinKap", isInput = true, inputType = "code" })'><i class='ri-search-line'></i></button>" + value + "</div>";
+    }
+
+    function rehinUpdateRowValues(rowId) {
+        var rehinfiyati = parseInt(rehindata[rowId].rehinfiyati, 10);
+        var rehinadet = parseInt(rehindata[rowId].rehinadet, 10);
+        var rehintutar = rehinfiyati * rehinadet;
+
+
+
+        if (!isNaN(rehinfiyati) && !isNaN(rehinadet) && rehinadet !== 0) {
+
+            // Veriyi güncelle
+            rehindata[rowId].rehintutar = rehintutar.toString();
+
+            // Grid'i güncelle
+            rehingrid.updateRow(rowId);
+
+        }
+
+    }
+
+    // localStorage üzerinde sütun seçim ayarlarını kaydet
+    function saveColumnSettingsRehin(columnStates) {
+        var columnsToSave = columnStates.map(column => {
+            var formattedColumn = {
+                ...column,
+                formatter: column.formatter ? column.formatter.toString() : null
+            };
+
+            //// Eğer editor bir fonksiyon ise, onu ad olarak kaydet
+            //if (typeof column.editor === 'function') {
+            //    formattedColumn.editor = 'function';
+            //} else if (typeof column.editor === 'object') {
+            //    // Eğer editor bir nesne ise, tüm özelliklerini kaydet
+            //    formattedColumn.editor = { ...column.editor };
+            //} else {
+            //    formattedColumn.editor = null;
+            //}
+
+            if (column.editor != undefined && column.editor != null) {
+                formattedColumn.editor = column.editor.name;
+            }
+
+            return formattedColumn;
+        });
+
+        localStorage.setItem('columnSettingsRehin', JSON.stringify(columnsToSave));
+    }
+
+    // localStorage'dan sütun seçim ayarlarını al
+    function loadColumnSettingsRehin() {
+        const savedColumnStates = localStorage.getItem('columnSettingsRehin');
+        if (savedColumnStates) {
+            const columns = JSON.parse(savedColumnStates);
+            return columns.map(column => {
+                var restoredColumn = {
+                    ...column,
+                    formatter: column.formatter ? new Function('return ' + column.formatter)() : null
+                };
+
+                //// Eğer editor 'function' olarak kaydedilmişse, geri yüklenirken bir fonksiyon olarak atandı
+                //if (column.editor === 'function') {
+                //    restoredColumn.editor = Slick.Editors.Text;
+                //} else {
+                //    restoredColumn.editor = null;
+                //}
+
+                if (column.editor === "TextEditor") {
+                    restoredColumn.editor = Slick.Editors.Text;
+                }
+                else if (column.editor === "IntegerEditor") {
+                    restoredColumn.editor = Slick.Editors.Integer;
+                }
+                else if (column.editor === "_FloatEditor") {
+                    restoredColumn.editor = Slick.Editors.Float;
+                }
+                else {
+                    restoredColumn.editor = null;
+                }
+
+                return restoredColumn;
+            });
+        }
+        return null;
+    }
+
+    function postGridElements(isNew, kesildimi,kunye) {
+        var gridData = rehingrid.getData();
+
+        var requestDataList = [];
+
+        for (var i = 0; i < gridData.items.length; i++) {
+            var rowData = gridData.items[i];
+            if (parseInt(rowData.markaId) !== 0 && rowData.markaId !== "" && rowData.markaId !== null) {
+
+                var requestData = {
+                    SatirId: rowData.id - 1,
+                    SatirNo: rowData.id - 1,
+                    MarkaId: parseInt(rowData.rehinmarkaId),
+                    KapId: parseInt(rowData.rehinkapId),
+                    KapMiktari: parseFloat(rowData.rehinadet),
+                    Fiyat: parseFloat(rowData.rehinfiyati),
+                    Tutar: parseFloat(rowData.rehintutar),
+                    ElleDegistirildi: rowData.degistimi,
+                    SatirGuid: rowData.guid,
+                };
+
+                for (const key in requestData) {
+                    if (requestData.hasOwnProperty(key) && typeof requestData[key] === 'number' && isNaN(requestData[key])) {
+                        requestData[key] = 0;
+                    }
+                }
+
+                requestDataList.push(requestData);
+            }
+        }
+
+        var requestPostData = JSON.stringify(requestDataList);
+
+        $.ajax({
+            url: '/TohalFaturas/CreateRehinFisiSatir',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: requestPostData,
+            success: function (responsedata) {
+                postGrid(isNew, kesildimi, kunye);
+            },
+            error: function (error) {
+                ShowAlert(false, "Hata Oluştu " + error);
+                //console.error('Hata oluştu:', error);
+            }
+        });
+    }
+
+
+
+
+</script>
+
+<!--Musteri-->
+<script>
+
+    function RehinupdateMusteriCell(ad, kod, markaId) {
+        if (ad !== null && ad !== "" && kod !== null && kod !== "" && markaId !== null && markaId !== "") {
+            // Tıklanan satırın indisini al
+            var rowId = rehingrid.getActiveCell().row;
+
+            // SlickGrid'deki veriyi güncelle
+            rehindata[rowId].rehinkod = kod;
+            rehindata[rowId].rehingonderen = ad;
+            rehindata[rowId].rehinmarkaId = markaId;
+
+            // SlickGrid'deki satırı güncelle
+            rehingrid.updateRow(rowId);
+        }
+    }
+
+    function RehinupdateKapCell(kod, kapId, iadelikap, birimfiyati) {
+        if (kod !== null && kod !== "" && kapId !== null && kapId !== "") {
+            // Tıklanan satırın indisini al
+            var rowId = rehingrid.getActiveCell().row;
+
+            // SlickGrid'deki veriyi güncelle
+            rehindata[rowId].rehinkap = kod;
+            rehindata[rowId].rehinkapId = kapId;
+            rehindata[rowId].rehiniadelikap = iadelikap;
+            rehindata[rowId].rehinfiyati = birimfiyati;
+
+            // SlickGrid'deki satırı güncelle
+            rehingrid.updateRow(rowId);
+        }
+    }
+
+    // Yeni bir satır eklemek için fonksiyon
+    function addNewRowToRehinGrid(kod, markaId, kapId, ad, iadelikap, gonderen, adet, malkapfiyat) {
+
+        if (rehindataView.getItems().filter(row => row.degistimi === "true").length === 0) {
+            if (kapId != null) { 
+                // Eğer rehinGrid'de aynı kapId ve markaId değerlerine sahip bir satır bulunmuyorsa
+                if (!rehinGridHasMatchingRow(kapId, markaId)) {
+                    // Yeni bir satır oluştur
+
+                    var lastRow = rehindata[rehindata.length - 1];
+                    var resultRow = !lastRow.rehinkap.trim() && !lastRow.rehingonderen.trim();
+
+                    if (resultRow) {
+                        rehindataView.deleteItem(rehindataView.items.length);
+                    }
+
+                    var rehintutar = parseFloat(adet) * parseFloat(malkapfiyat);
+                    var newDataRow = {
+                        id: rehindataView.getLength() + 1,
+                        rehinkod: kod,
+                        rehingonderen: gonderen,
+                        rehinmarkaId: markaId,
+                        rehinkap: ad,
+                        rehinkapId: kapId,
+                        rehiniadelikap: iadelikap,
+                        rehinadet: adet,
+                        rehinfiyati: malkapfiyat,
+                        rehintutar: isNaN(rehintutar) ? 0 : rehintutar,
+                        degistimi: "false",
+                    };
+
+                    // Yeni satırı ekleyin
+                    rehindataView.addItem(newDataRow);
+                    rehindataView.refresh();
+                }
+            }
+        }
+        rehinCalculateSonuc()
+    }
+
+    function rehinCalculateSonuc(){
+        //iadesiz kapların tutarlarının toplamını KdvliIadesizKap idli inputa yazdır
+        var iadesizKapTutar = 0;
+        var iadeliKapTutar = 0;
+        for (var i = 0; i < rehindataView.getLength(); i++) {
+            if (rehindata[i].rehiniadelikap === false || rehindata[i].rehiniadelikap === "False") {
+                iadesizKapTutar += parseFloat(rehindata[i].rehintutar);
+            }
+        }
+        document.getElementById("KdvliIadesizKap").value = iadesizKapTutar;
+
+        for (var i = 0; i < rehindataView.getLength(); i++) {
+            if (rehindata[i].rehiniadelikap === true || rehindata[i].rehiniadelikap === "True") {
+                 iadeliKapTutar += parseFloat(rehindata[i].rehintutar);
+             }
+        }
+        document.getElementById("rehin").value = iadeliKapTutar;
+
+        UpdateAllTotals();
+    }
+
+    // Yeni bir satırın eklenip eklenmediğini kontrol eden yardımcı fonksiyon
+    function rehinGridHasMatchingRow(kapId, markaId) {
+        for (var i = 0; i < rehindataView.getLength(); i++) {
+            var rowData = rehindataView.getItemByIdx(i);
+            if (rowData.rehinkapId === kapId && rowData.rehinmarkaId === markaId) {
+                return true; // Eşleşen bir satır bulundu
+            }
+        }
+        return false; // Eşleşen bir satır bulunamadı
+    }
+
+    function updateRehinGridOnFaturaChange(rowId, adet, malkapfiyat,markaId,kapId,gonderen) {
+
+        //Eğer rehinGrid'de hiçbir satırın degistimi alanı true değilse
+        if (rehindataView.getItems().filter(row => row.degistimi === "true").length === 0) {
+
+
+
+
+            // RehinGrid'de aynı markaId ve kapId'ye sahip satırları bul
+            var matchingRows = rehindataView.getItems().filter(row => row.rehinmarkaId === markaId && row.rehinkapId === kapId);
+
+            // Eğer eşleşen satırlar varsa
+            if (matchingRows.length > 0) {
+                // Adet ve malkapfiyat'ı güncelle
+                matchingRows[0].rehinadet = adet;
+                matchingRows[0].rehingonderen = gonderen;
+                var parsedAdet = parseFloat(adet) || 0;
+                var parsedMalkapfiyat = parseFloat(malkapfiyat) || 0;
+
+                // Rehin fiyatını ve tutarını güncelle
+                matchingRows[0].rehinfiyati = parsedMalkapfiyat;
+                matchingRows[0].rehintutar = parsedAdet * parsedMalkapfiyat;
+
+                // RehinGrid'i güncelle
+                rehindataView.updateItem(matchingRows[0].id, matchingRows[0]);
+
+            }
+        }
+        rehinCalculateSonuc()
+    }
+
+
+
+
+
+</script>

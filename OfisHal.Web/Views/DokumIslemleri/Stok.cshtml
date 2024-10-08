@@ -1,0 +1,684 @@
+﻿@model VohalMakbuz
+@{
+    ViewBag.title = "Stok";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.ptitle = "Stok";
+
+    ViewBag.addUrl = "/DokumIslemleri/Stok";
+    ViewBag.saveUrl = "/";
+    ViewBag.searchUrl = "/Common/Dokumler";
+    ViewBag.firstDataUrl = "/DokumIslemleri/ilkSonKayit?firstOrLast=true&redirectAction=Stok";
+    ViewBag.beforeDataUrl = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + Model.MakbuzId+ "&redirectAction=Stok";
+    ViewBag.afterDataUrl = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=true&currentId=" + Model.MakbuzId + "&redirectAction=Stok";
+    ViewBag.lastDataUrl = "/DokumIslemleri/ilkSonKayit?firstOrLast=false&redirectAction=Stok";
+    ViewBag.disabledBeforeAfter = false;
+
+    var data = Model;
+    var FaturaModel = (List<VohalStokHareketi>)ViewData["faturaModel"];
+    if (Model.Sifati == null || Model.Sifati == 0)
+    {
+        Model.Sifati = (byte)ViewData["tanimSifati"];
+    }
+    if (Model.BildirimTuru == null || Model.BildirimTuru == 0)
+    {
+        Model.BildirimTuru = (byte)ViewData["tanimBildirimTuru"];
+    }
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+}
+
+<div class="row mb-1">
+    <div class="col-lg-5 btn-group btn-group-sm d-flex justify-content-start align-items-center">
+        @*Yeni Kayıt*@
+        <button type="button" id="gridPostButtonNew"  class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='/DokumIslemleri/Stok?yeni=True'">
+            <i class="ri-file-add-line fs-6"></i>
+            <span>Yeni</span>
+        </button>
+        @*Kaydet*@
+        <button type="button" id="gridPostButton" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-save-line fs-6"></i>
+            <span>Kaydet</span>
+        </button>
+        @*Kayıt Ara*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" data-btarget="arabtn" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Dokumler","Common")">
+            <i class="ri-search-line fs-6"></i>
+            <span>Ara</span>
+        </button>
+        @*İlk Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='/DokumIslemleri/ilkSonKayit?firstOrLast=true&redirectAction=Stok'">
+            <i class="ri-skip-back-line fs-6"></i>
+            <span>İlk</span>
+        </button>
+        @*Önceki Kayıt*@
+        <div>
+            <form method="post" action="/DokumIslemleri/Stok">
+                <button type="submit" name="direction" class="btn btn-primary d-flex flex-column align-items-center me-1 rounded-0" style="padding: 4px 10px; font-size:12px;">
+                    <i class="ri-rewind-line fs-6"></i>
+                    <span>Önceki</span>
+                </button>
+                <input type="hidden" name="faturaId" value="@ViewData["prevModelId"]" />
+            </form>
+        </div>
+
+        @*Sonraki Kayıt*@
+        <form method="post" action="/DokumIslemleri/Stok">
+            <button type="submit" name="direction" class="btn btn-primary d-flex flex-column align-items-center me-1 rounded-0" style="padding: 4px 10px; font-size:12px;">
+                <i class="ri-speed-line fs-6"></i>
+                <span>Sonraki</span>
+                <input type="hidden" name="faturaId" value="@ViewData["nextModelId"]" />
+            </button>
+        </form>
+        @*Son Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='/DokumIslemleri/ilkSonKayit?firstOrLast=falseredirectAction=Stok'">
+            <i class="ri-skip-forward-line fs-6"></i>
+            <span>Son</span>
+        </button>
+        @*Sil*@
+        <button type="button" id="recordDeleteBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-delete-bin-line fs-6"></i>
+            <span>Sil</span>
+        </button>
+        @*Yazdır*@
+        <button type="button" id="recordDeleteBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-printer-line fs-6"></i>
+            <span>Yazdır</span>
+        </button>
+        @*Rapor*@
+        <div class="dropdown">
+            <button href="#" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1 rounded-0 rounded-end" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:12px;">
+                <i class="ri-file-list-2-line fs-6"></i>
+                Rapor
+            </button>
+
+            <div class="dropdown-menu">
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/mustahsilfaturasi/?IslemId=@Model.MakbuzId" target="_blank">Müstahsil Makbuzu</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#1" target="_blank">Stok Durumu</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/dokumdefteri/?IslemId=@Model.MakbuzId" target="_blank">Döküm Defteri</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/hal%20teslim%20belgesi/?IslemId=@Model.MakbuzId" target="_blank">Hal Teslim Belgesi</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#2" target="_blank">Döküm Kontrol</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/dokumdeftermusteri" target="_blank">Döküm Defteri (Müşteri Bazlı)</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/dokumstoklistenavlun" target="_blank">Stok Liste Navlun</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#2" target="_blank">Hatalı Künye İstekleri</a>
+            </div>
+        </div>
+    </div>
+</div>
+<form id="faturaForm" action="/" method="post">
+    @Html.HiddenFor(model => model.MakbuzId, new { id = "hiddenMakbuzId" })
+    @Html.HiddenFor(model => model.CariKartId, new { id = "hiddenCariKartId" })
+    @Html.Hidden("YerId", Model.BeldeId, new { id = "HiddenBeldeId" })
+    @Html.HiddenFor(model => model.FaturaZamani, new { id = "hiddenFaturaZamani" })
+    @Html.HiddenFor(model => model.FaturaTarihi, new { id = "hiddenFaturaTarihi" })
+    @Html.HiddenFor(model => model.FaturaNo, new { id = "hiddenFaturaNo" })
+    @Html.HiddenFor(model => model.IrsaliyeNo, new { id = "hiddenIrsaliyeNo" })
+    @Html.HiddenFor(model => model.MarkaId, new { id = "hiddenMarkaId" })
+    @Html.HiddenFor(model => model.OrtaklikOrani)
+    @Html.Hidden("VergiKimlikNo", Model.VergiKimlikNo)
+    @Html.Hidden("GsmNo", Model.GsmNo)
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="CariKodu">Müstahsil Kod</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="CariKodu" name="CariKodu" value="@Model.CariKodu" data-id="@Model.CariKartId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="code" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "CariKodu", tip = 0,isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="CariKart_Ad">Gönderen Müstahsil</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="CariAdi" name="CariAdi" value="@Model.CariAdi" data-id="@Model.CariKartId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="name" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "CariAdi", tip = 0,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="StokGirisTarihi">Geldiği Tarih</label>
+                <div class="col-sm-7">
+                    <input type="date" id="StokGirisTarihi" name="StokGirisTarihi" value="@Model.StokGirisTarihi.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="Marka">Marka</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="Marka" name="Marka" value="@Model.Marka" class="form-control form-control-sm" readonly />
+                        <button type="button" class="btn btn-sm btn-primary" disabled>
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="CariyeIslemeSekli">Cariye İşleme Şekli</label>
+                <div class="col-sm-7">
+                    <select type="text" id="CariyeIslemeSekli" name="CariyeIslemeSekli" value="@Model.CariyeIslemeSekli" class="form-select form-select-sm" disabled>
+                        <option value="" selected>Fatura Alacak (Müstahsil)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3">
+            <div class="row" style="display:none;">
+                <label class="col-sm-5 col-form-label pb-0" for="UlkeId">Ülke</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="UlkeId" name="UlkeId" value="@Model.UlkeAdi" data-id="@Model.UlkeId" class="form-control form-control-sm changeInputs" />
+                        <button type="button" data-btarget="UlkeId" id="ulkeBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "ulke", tur = 4, isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="il">İl</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="il" name="IlId" value="@Model.IlAdi" data-id="@Model.IlId" class="form-control form-control-sm changeInputs" />
+                        <button type="button" data-btarget="il" id="ilBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "il", isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="ilce">İlçe</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input id="ilce" name="IlceId" value="@Model.IlceAdi" data-id="@Model.IlceId" class="form-control form-control-sm changeInputs" disabled />
+                        <button disabled data-btarget="ilce" id="ilceBtn" type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "ilce", isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="belde">Belde</label>
+                <div class="col-sm-7">
+                    <div class="input-group">
+                        <input type="text" id="belde" name="BeldeId" value="@Model.BeldeAdi" data-id="@Model.BeldeId" class="form-control form-control-sm changeInputs" disabled />
+                        <button disabled data-btarget="belde" type="button" id="beldeBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "belde", isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="BildirimTuru">Bildirim Türü</label>
+                <div class="col-sm-7">
+                    <select type="text" id="BildirimTuru" name="BildirimTuru" value="@((Model.BildirimTuru ?? 17).ToString())" class="form-select form-select-sm">
+                        <option value="17" @(17 == (byte)(Model.BildirimTuru ?? 17) ? "selected" : "")>Üreticiden Sevk Alım</option>
+                        <option value="18" @(18 == (byte)(Model.BildirimTuru ?? 17) ? "selected" : "")>Satın Alım</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3">
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="DokumNo">Döküm No</label>
+                <div class="col-sm-6">
+                    <input id="DokumNo" name="DokumNo" value="@Model.DokumNo" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="IrsaliyeNo">İrsaliye No</label>
+                <div class="col-sm-6">
+                    <input id="IrsaliyeNo" name="IrsaliyeNo" value="@Model.IrsaliyeNo" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="Plaka">Kamyon Plaka No</label>
+                <div class="col-sm-6">
+                    <input id="Plaka" name="Plaka" value="@Model.Plaka" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="TeslimatYeriId">Teslimat Yeri</label>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        @Html.DropDownList("TeslimatYeriId", ViewBag.TeslimatYer as SelectList, new { @class = "form-select form-select-sm" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="Sifati">Sıfat</label>
+                <div class="col-sm-6">
+                    <select type="text" id="Sifati" name="Sifati" value="@Model.Sifati" class="form-select form-select-sm">
+                        @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                        {
+                            <option value="@Convert.ToInt32(sifat)" @(Convert.ToByte(sifat) == Model.Sifati ? "selected" : "")>
+                                @EnumHelperFunc.GetDisplayName((Sifat)sifat)
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2">
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="Navlun">Navlun</label>
+                <div class="col-sm-6">
+                    <input type="text" data-type="num" id="Navlun" name="Navlun" value="@Model.Navlun.ToString()" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-6 col-form-label pb-0" for="IadesizKapTutari">İadesiz Kap</label>
+                <div class="col-sm-6">
+                    <input type="text" data-type="num" id="IadesizKapTutari" name="IadesizKapTutari" value="@Model.IadesizKapTutari.ToString()" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-1 col-form-label pb-0" for="Aciklama">Not</label>
+        <div class="col-sm-11">
+            <textarea class="form-control form-control-sm" rows="1" name="Aciklama" id="Aciklama" value="@Model.Aciklama">@Model.Aciklama</textarea>
+        </div>
+    </div>
+</form>
+<div class="row mb-1">
+    <div class="col-12">
+        <table width="100%">
+            <tr>
+                <td valign="top" width="50%">
+                    <input type="hidden" id="gridMal" name="gridMal" />
+                    <input type="hidden" id="gridKap" name="gridKap" />
+                    <div id="myGrid" class="slick-container" style="height:200px;"></div>
+                    <div id="pager" style="width: 100%; height: 20px"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row mt-1">
+    <div class="col-md-4">
+        <button id="kunyeAlButton" type="button" class="btn btn-sm btn-primary">Künye Al</button>
+        <button type="button" class="btn btn-sm btn-primary" style="display:none;">Barkod Bas</button>
+        <button type="button" class="btn btn-sm btn-primary" style="display:none;">Kaydet</button>
+    </div>
+</div>
+<ul id="contextMenu" style="display:none;position:absolute">
+    <div class="context-header">Stok Tipi:</div>
+    <li data="Kilo">- Kilo</li>
+    <li data="Kap">- Kap</li>
+</ul>
+
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="kunyeDurumModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Künye Durumu</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row my-1">
+                    <div class="col" data-simplebar style="max-height: 230px;">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Marka</th>
+                                    <th>Mal Kodu</th>
+                                    <th>Mal Adı</th>
+                                    <th>Künye</th>
+                                    <th>Fiyat</th>
+                                    <th>Tarih</th>
+                                    <th>Üretici</th>
+                                    <th>K. Bakiye</th>
+                                    <th>M. Bakiye</th>
+                                    <th>Tip</th>
+                                    <th>Plaka No</th>
+                                    <th>Sıfatı</th>
+                                    <th>Bildirim Miktarı</th>
+                                    <th>Teslimat Yeri</th>
+                                    <th>HKS Mal Adı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <select type="text" id="Sifati" name="Sifati" class="form-select form-select-sm" disabled>
+                        <option>Marka</option>
+                    </select>
+                </div>
+                <input type="text" name="name" disabled class="form-control form-control-sm w-25" />
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="checkBrand" name="checkBrand">
+                    <label class="form-check-label" for="checkBrand">
+                        Markayı Kontrol Etme
+                    </label>
+                </div>
+                <button type="button" class="btn btn-secondary">
+                    Excele Aktar
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-success">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/DokumIslemleri/Partials/_faturaGrid.cshtml")
+    <script>
+        var uyari = @Html.Raw(Json.Encode(ViewBag.resultText));
+        if (uyari != null && uyari.message?.length > 0) {
+            ShowAlert(uyari.state, uyari.message);
+        }
+        var il = $("#il");
+        var ilce = $("#ilce");
+        var belde = $("#belde");
+        var hal = $("#hal").parent().parent().css("display", "none");
+        var ilBtn = $("#ilBtn");
+        var ilceBtn = $("#ilceBtn");
+        var beldeBtn = $("#beldeBtn");
+
+        $(ilce).val() ? $(ilce).prop("disabled", false) : null;
+        $(ilce).val() ? $(ilceBtn).prop("disabled", false) : null;
+
+        $(belde).val() ? $(belde).prop("disabled", false) : null;
+        $(belde).val() ? $(beldeBtn).prop("disabled", false) : null;
+
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var ilDataId = document.getElementById("il").getAttribute("data-id");
+            var ilceDataId = document.getElementById("ilce").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "ilce": ilDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilDataId}`) : null; break;
+                    case "belde": ilceDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilceDataId}`) : null; break;
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var malId = document.getElementById("gridMal").getAttribute("data-id");
+            var kapId = document.getElementById("gridKap").getAttribute("data-id");
+
+            var malKod = document.getElementById("gridMal").getAttribute("data-code");
+            var kapKod = document.getElementById("gridKap").getAttribute("data-code");
+            switch (target) {
+                case "il": if (document.getElementById("il").getAttribute("data-id") > 0) enableDisableFields(true, false, false, false, false, document.getElementById("il").getAttribute("data-id"), ilce); break;
+                case "ilce": if (document.getElementById("ilce").getAttribute("data-id") > 0) enableDisableFields(true, true, true, false, false, document.getElementById("ilce").getAttribute("data-id"), belde); break;
+                case "belde": if (document.getElementById("belde").getAttribute("data-id") > 0) $("#HiddenBeldeId").val(document.getElementById("belde").getAttribute("data-id")); break;
+                case "code": autoFill("CariKodu"); break;
+                case "name": autoFill("CariAdi"); break;
+                case "mal": updateMalCell(malId, $("#gridMal").val(), malKod); goToNextCol(); break;
+                case "kap": updateKapCell(kapId, $("#gridKap").val(), kapKod); goToNextCol(); break;
+                case "arabtn":
+                    //sessionStorage.getItem('makbuzId') > 0 ? window.location.href = `/DokumIslemleri/Stok/${sessionStorage.getItem('makbuzId')}` : null;
+                    if (sessionStorage.getItem('makbuzId') > 0) {
+                        window.location.href = `/DokumIslemleri/Stok?faturaId=${sessionStorage.getItem('makbuzId')}`;
+                    } else {
+                        // Eğer 'makbuzId' 0 veya negatifse buraya düşer, şu an için null yapmışsınız, isteğe bağlı olarak başka bir işlem ekleyebilirsiniz.
+                        // Örneğin: console.log("Makbuz ID 0 veya negatif.");
+                    }
+                    sessionStorage.removeItem("makbuzId");
+                    break;
+            }
+        });
+        $("#ulke").on("focusout", async function (e) {
+            await getData($(this), "/Common/maddeGetir?isInput=True&target=ulke&tur=4", "Ad", "TabloMaddesiId", e, null, null);
+        });
+        il.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilGetir?isInput=True&target=il", "Ad", "YerId", e, null, "il");
+            res.result ? enableDisableFields(true, false, false, false, false, res.data.YerId, ilce) : enableDisableFields(false, false, false, false, false, 0, null);//il varsa ilce kutucugu aktif olacak ve değeri olmayacak diger kutucuklar pasif, //il yoksa hepsi pasif olacak
+        });
+        ilce.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=ilce", "Ad", "YerId", e, document.getElementById("il").getAttribute("data-id"), "ilce");
+            res.result ? enableDisableFields(true, true, true, false, false, res.data.YerId, belde) : enableDisableFields(true, true, false, false, false, document.getElementById("il").getAttribute("data-id"), null);// ilce varsa belde alanı aktif hal alanı pasif olacak : // ilce yoksa belde ve hal pasif
+        });
+        belde.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=belde", "Ad", "YerId", e, document.getElementById("ilce").getAttribute("data-id"), "belde");
+            res.result ? enableDisableFields(true, true, true, true, true, res.data.YerId,null) : enableDisableFields(true, true, true, true, false, document.getElementById("ilce").getAttribute("data-id"), null);
+        });
+
+        $("#CariKodu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=CariKodu&tip=0&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "code");
+            _ = val.result ? autoFill("CariKodu") : null;
+        });
+        $("#CariAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=CariAdi&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "name");
+            _ = val.result ? autoFill("CariAdi") : null;
+        });
+        function autoFill(idValElement) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            if (parseInt(idVal) > 0) {
+                $.ajax({
+                    url: "/Common/getCariByIdCustom",
+                    type: "GET",
+                    data: { id: parseInt(idVal) },
+                    cache: false,
+                    success: (res) => {
+                        var yer = { il: res.val.IlAdi, ilId: res.val.IlId, ilce: res.val.IlceAdi, ilceId: res.val.IlceId, belde: res.val.BeldeAdi, beldeId: res.val.BeldeId };
+                        fillData(res.val.CariKartId, res.val.Kod, res.val.Ad, res.val.MarkaId, res.val.GsmNo, res.val.VergiKimlikNo, yer);
+                    }
+                });
+            }
+        }
+        function fillData(cariId, kod, ad, markaid, gsm, kimlikNo, yerObjet) {
+            $("#CariKodu").val(kod);
+            $("#CariAdi").val(ad);
+            $("#hiddenCariKartId").attr("value", cariId);
+            $("#CariKodu").attr("data-id", cariId);
+            $("#CariAdi").attr("data-id", cariId);
+            $("#hiddenMarkaId").attr("value", markaid);
+            $("#Marka").val(kod);
+            $("#GsmNo").attr('value', gsm);
+            $("#VergiKimlikNo").attr('value', kimlikNo);
+            il.attr({ "value": yerObjet.il, "data-id": yerObjet.ilId });
+            ilce.attr({ "value": yerObjet.ilce, "data-id": yerObjet.ilceId });
+            belde.attr({ "value": yerObjet.belde, "data-id": yerObjet.beldeId });
+            var hiddenYer = yerObjet.beldeId || (yerObjet.ilceId > 0 ? yerObjet.ilceId : yerObjet.ilId);
+            $("#HiddenBeldeId").attr("value", hiddenYer);
+            checkDisableYer();
+
+            if (cariId > 0) setTimeout(() => $("#CariAdi").closest('.row').next('.row').find('input').focus(), 150);
+        }
+
+        //function updateCode() {
+        //    var idVal = document.getElementById("gonderenMustahsil").getAttribute("data-id");
+        //    idVal ? getById("/Common/getCariById", idVal, $("#mustahsilKod"), "Kod") : $("#hiddenCariKartId").val(null);
+        //}
+        //function updateName() {
+        //    var idVal = document.getElementById("mustahsilKod").getAttribute("data-id");
+        //    idVal ? getById("/Common/getCariById", idVal, $("#gonderenMustahsil"), "Ad") : $("#hiddenCariKartId").val(null);
+        //}
+        //function getById(url, idval, elm, nameOrCode) {
+        //    $.ajax({
+        //        url: url,
+        //        type: "GET",
+        //        data: { id: idval },
+        //        cache: false,
+        //        success: (res) => {
+        //            $(elm).val(res[nameOrCode]);
+        //            $(elm).attr("data-id", res.cariKartId);
+        //            $("#marka").attr("data-id", res.CariKartId);
+        //            $("#marka").val(res.Kod);
+        //            $("#hiddenCariKartId").val(res.CariKartId);
+        //            $("#hiddenMarkaId").val(res.MarkaId)
+        //        }
+        //    });
+        //}
+
+        //$("#cariKartKod").on("focusout", async function (e) {
+        //    var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartKod&tip=0&codeOrName=true&inputType=code", "kod", "cariKartId", e, null, "code");
+        //    val.result ? updateName() : null;
+        //});
+        //$("#cariKartAd").on("focusout", async function (e) {
+        //    var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartAd&tip=0&codeOrName=false&inputType=name", "ad", "cariKartId", e, null, "name");
+        //    val.result ? updateCode() : null;
+        //});
+        function enableDisableFields(ilc, ilcVal, beld, beldVal, hl, yerid, focusEl) {
+            $(ilce).prop("disabled", !ilc);
+            $(ilceBtn).prop("disabled", !ilc);
+            ilcVal ? null : $(ilce).val(null);
+
+            $(belde).prop("disabled", !beld);
+            $(beldeBtn).prop("disabled", !beld);
+            beldVal ? null : $(belde).val(null);
+
+            hl ? $(hal).css("display", "block") : $(hal).css("display", "none");
+            setTimeout(function () {
+                focusEl ? focusEl.focus() : null;
+            },300);
+            yerid != null ? $("#hiddenYerId").val(yerid) : null;
+        }
+
+
+
+        $(document).ready(function () {
+            document.getElementById('gridPostButton').addEventListener('click', function () {
+                postGridElements(false,false,false);
+            });
+        });
+
+        $(document).ready(function () {
+            document.getElementById('gridPostButtonNew').addEventListener('click', function () {
+                postGridElements(true,false,false);
+            });
+        });
+        let ctrlPressed = false;
+        document.addEventListener('keydown', function (event) {
+            // Ctrl tuşu basıldı mı kontrol et
+            if (event.key === 'Control') {
+                ctrlPressed = true;
+            }
+            // Hem Ctrl hem de F6 tuşuna basılırsa
+            if (ctrlPressed && event.key === 'F6') {
+                event.preventDefault(); // Tarayıcıda varsayılan davranışı engelle
+                $('#kunyeDurumModal').modal('show');
+                // Buraya istediğiniz kodu ekleyebilirsiniz
+            }
+        });
+
+        document.addEventListener('keyup', function (event) {
+            // Ctrl tuşu serbest bırakıldı mı kontrol et
+            if (event.key === 'Control') {
+                ctrlPressed = false;
+            }
+        });
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    DeleteConfirm("ilgili fatura ve defter kayıtları da iptal edilecek onaylıyor musunuz?").then(s => {
+                        if (s.isConfirmed) {
+                            var id = $('#hiddenMakbuzId').val();
+                            window.location.href = `/DokumIslemleri/Delete?makbuzId=${id}&kullaniciId=${0}`
+
+                        }
+                    });
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+        function checkDisableYer() {
+            $(il).val() ? $(ilce).prop("disabled", false) : null;
+            $(il).val() ? $(ilceBtn).prop("disabled", false) : null;
+
+            $(ilce).val() ? $(belde).prop("disabled", false) : null;
+            $(ilce).val() ? $(beldeBtn).prop("disabled", false) : null;
+        }
+
+        $(document).ready(function () {
+
+            $("#kunyeAlButton").click(function () {
+
+                const plakaNo = $("#Plaka").val();
+                const vergiKimlikNo = $("#VergiKimlikNo").val();
+                const gsmNo = $("#GsmNo").val();
+                if (plakaNo === "" || vergiKimlikNo === "" || gsmNo === "") {
+                    const uyarıMetni = plakaNo === "" ? 'Plaka No alanı boş olamaz!' : vergiKimlikNo === "" ? 'Cari Vergi Kimlik No alanı boş olamaz!' : 'Cari Gsm No alanı boş olamaz!';
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Uyarı',
+                        text: uyarıMetni,
+                    });
+                    return;
+                }
+                postGridElements(false, false, true);
+
+            });
+
+            document.getElementById('faturaForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+}

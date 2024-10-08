@@ -1,0 +1,333 @@
+﻿@model VohalMakbuz
+@{
+    ViewBag.addUrl = "";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/Makbuzlar?kesildi=" + Model.Kesildi;
+    ViewBag.firstDataUrl = "/DokumIslemleri/ilkSonKayit?firstOrLast=true&redirectAction=Makbuz";
+    ViewBag.beforeDataUrl = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + Model.MakbuzId + "&redirectAction=Makbuz";
+    ViewBag.afterDataUrl = "/DokumIslemleri/sonrakiOncekiKayit?afterOrBefore=true&currentId=" + Model.MakbuzId + "&redirectAction=Makbuz";
+    ViewBag.lastDataUrl = "/DokumIslemleri/ilkSonKayit?firstOrLast=false&redirectAction=Makbuz";
+    ViewBag.disabledBeforeAfter = false;
+    ViewBag.raporYazdirVar = false;
+    if (ViewData["prevModelId"] == null) { ViewData["prevModelId"] = Model.MakbuzId; }
+    if (ViewData["nextModelId"] == null) { ViewData["nextModelId"] = Model.MakbuzId; }
+    var makbuzUrlIlk = "'/DokumIslemleri/ilkSonKayit?firstOrLast=false&redirectAction=Makbuz";
+    var makbuzUrlSon = "'/DokumIslemleri/ilkSonKayit?firstOrLast=true&redirectAction=Makbuz";
+    var makbuzUrlOnceki = "'/DokumIslemleri/Makbuz/?faturaId=" + ViewData["prevModelId"] + "'";
+    var makbuzUrlSonraki = "'/DokumIslemleri/Makbuz/?faturaId=" + ViewData["nextModelId"] + "'";
+    if (Model.Kesildi == true)
+    {
+        makbuzUrlIlk += "&condition=0'";
+        makbuzUrlSon += "&condition=0'";
+    }
+    if ((Model.Kesildi == false || Model.Kesildi == null) && Model.BekleyenHareketSayisi == 0)
+    {
+        makbuzUrlIlk += "&condition=1'";
+        makbuzUrlSon += "&condition=1'";
+    }
+    if ((Model.Kesildi == false || Model.Kesildi == null) && Model.BekleyenHareketSayisi > 0)
+    {
+        makbuzUrlIlk += "&condition=2'";
+        makbuzUrlSon += "&condition=2'";
+    }
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- jQuery CDN -->
+    @* <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> *@
+
+    <style>
+        #rehinIadeGrid {
+            overflow: unset !important;
+        }
+    </style>
+}
+<div class="row mb-1">
+    <div class="col-lg-5 btn-group btn-group-sm d-flex justify-content-start align-items-center">
+        @*Kaydet*@
+        <button type="button" id="gridPostButton" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-save-line fs-6"></i>
+            <span>Kaydet</span>
+        </button>
+        @*Kayıt Ara*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" data-btarget="arabtn" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Dokumler","Common")">
+            <i class="ri-search-line fs-6"></i>
+            <span>Ara</span>
+        </button>
+        @*İlk Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href=@makbuzUrlIlk">
+            <i class="ri-skip-back-line fs-6"></i>
+            <span>İlk</span>
+        </button>
+        @*Önceki Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href=@makbuzUrlOnceki">
+            <i class="ri-rewind-line fs-6"></i>
+            <span>Önceki</span>
+        </button>
+
+        @*Sonraki Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href=@makbuzUrlSonraki">
+            <i class="ri-speed-line fs-6"></i>
+            <span>Sonraki</span>
+        </button>
+        @*Son Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href=@makbuzUrlSon">
+            <i class="ri-skip-forward-line fs-6"></i>
+            <span>Son</span>
+        </button>
+        @*Yazdır*@
+        <button type="button" id="recordDeleteBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-printer-line fs-6"></i>
+            <span>Yazdır</span>
+        </button>
+        @*Rapor*@
+        <div class="dropdown">
+            <button href="#" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1 rounded-0 rounded-end" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:12px;">
+                <i class="ri-file-list-2-line fs-6"></i>
+                Rapor
+            </button>
+
+            <div class="dropdown-menu">
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/mustahsilfaturasi/?IslemId=@Model.MakbuzId" target="_blank">Müstahsil Makbuzu</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#1" target="_blank">Stok Durumu</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/dokumdefteri/?IslemId=@Model.MakbuzId" target="_blank">Döküm Defteri</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/hal%20teslim%20belgesi/?IslemId=@Model.MakbuzId" target="_blank">Hal Teslim Belgesi</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#2" target="_blank">Döküm Kontrol</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/dokumdeftermusteri" target="_blank">Döküm Defteri (Müşteri Bazlı)</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/dokumstoklistenavlun" target="_blank">Stok Liste Navlun</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="#2" target="_blank">Hatalı Künye İstekleri</a>
+            </div>
+        </div>
+    </div>
+</div>
+<form method="post" id="makbuzForm">
+    <div id="formContent">
+        @Html.Partial("Partials/_MakbuzForm", Model)
+    </div>
+
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-1">Dökümü Devret</button>
+            <button type="submit" class="btn btn-success">Güncelle</button>
+        </div>
+    </div>
+    @Html.Partial("~/Views/DokumIslemleri/Partials/_MakbuzDetay.cshtml")
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/DokumIslemleri/Partials/_makbuzGrid.cshtml")
+    @Html.Partial("~/Views/DokumIslemleri/Partials/_evrakMasraflarGrid.cshtml")
+    <script>
+        $("#newData").prop("disabled", true);
+        document.querySelectorAll(".calcInput").forEach(x => x.addEventListener("change", function () { DigerHesaplamalar(); }));
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "mal":
+                        $("#gridMal").attr({ "data-id": null, "value": null });
+                        break;
+                    case "hesap":
+                        $("#gridHesap").attr({ "data-id": null, "value": null });
+                        break;
+                    case "arabtn":
+                        sessionStorage.getItem('makbuzId') > 0 ? window.location.href = `/DokumIslemleri/Makbuz/${sessionStorage.getItem('makbuzId')}` : null;
+                        sessionStorage.removeItem("makbuzId");
+                        break;
+                    case "stokdetay": break;
+                }
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var hiddenMal = document.getElementById("gridMal");
+            var hiddenHesap = document.getElementById("gridHesap");
+            var hesaporan = document.getElementById("gridHesap").getAttribute("data-kdvoran");
+            switch (target) {
+                case "mal": updateMalCell(hiddenMal.getAttribute("data-id"), hiddenMal.getAttribute("value")); break;
+                case "hesap": updateHesapCell(hiddenHesap.getAttribute("data-id"), hiddenHesap.getAttribute("value"), hesaporan); break;
+                case "firmapostakutusu": document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id") > 0 ? $("#GibFirmamizPostaKutusuId").val(document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id")) : $("#GibFirmamizPostaKutusuId").val(null); break;
+                case "muhatappostakutusu": document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id") > 0 ? $("#GibMuhatapPostaKutusuId").val(document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id")) : $("#GibMuhatapPostaKutusuId").val(null); break;
+                case "arabtn":
+                    //sessionStorage.getItem('makbuzId') > 0 ? window.location.href = `/DokumIslemleri/Stok/${sessionStorage.getItem('makbuzId')}` : null;
+                    if (sessionStorage.getItem('makbuzId') > 0) {
+                        window.location.href = `/DokumIslemleri/Makbuz?faturaId=${sessionStorage.getItem('makbuzId')}`;
+                    } else {
+                        // Eğer 'makbuzId' 0 veya negatifse buraya düşer, şu an için null yapmışsınız, isteğe bağlı olarak başka bir işlem ekleyebilirsiniz.
+                        // Örneğin: console.log("Makbuz ID 0 veya negatif.");
+                    }
+                    sessionStorage.removeItem("makbuzId");
+                    break;
+            }
+        });
+        $("#GibFirmamizPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibFirmamizPostaKutusu&vkn=111&dokTip=0&pkTip=0&kayitSekli=1&tip=1", "PostaKutusu", "GibKullaniciId", e, null, "firmapostakutusu");
+            val.result ? $("#GibFirmamizPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibFirmamizPostaKutusuId").val(null);
+        });
+        $("#GibMuhatapPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibMuhatapPostaKutusu&vkn= &dokTip=0", "PostaKutusu", "GibKullaniciId", e, null, "muhatappostakutusu");
+            val.result ? $("#GibMuhatapPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibMuhatapPostaKutusuId").val(null);
+        });
+        setTimeout(() => DigerHesaplamalar(), 500);
+        function DigerHesaplamalar() {
+            const toplamTutar = dataView.items.reduce((acc, val) => parseFloat(acc) + parseFloat(val.tutar), 0);
+            const toplamToplam = evrakdataView.items.reduce((acc, val) => parseFloat(acc) + parseFloat(val.toplam), 0);
+            const malKdv = dataView.items.reduce((acc, item) => {
+                const kdvTutarı = (parseFloat(item.tutar) * parseFloat(item.kdv)) / 100;
+                return acc + kdvTutarı;
+            }, 0);
+            var rusumOrani = GetInputVal($("#RusumOrani").val());
+            var navKdvOrani = GetInputVal($("#NavlunKdvOrani").val());
+            var nav = GetInputVal($("#Navlun").val());
+            var bagkurOrani = GetInputVal($("#BagkurOrani").val());
+            var stopajOrani = GetInputVal($("#StopajOrani").val());
+            var borsaOrani = GetInputVal($("#BorsaOrani").val());
+            var komisyonOrani = GetInputVal($("#KomisyonOrani").val());
+            var komisyonKdvOrani = GetInputVal($("#KomisyonKdvOrani").val());
+            $("#Rusum").val(SetInputVal((rusumOrani * toplamTutar) / 100));
+            $("#NavlunKdv").val(SetInputVal((navKdvOrani * nav) / 100));
+            $("#Bagkur").val(SetInputVal((bagkurOrani * toplamTutar) / 100));
+            $("#Stopaj").val(SetInputVal((stopajOrani * toplamTutar) / 100));
+            var stopaj = GetInputVal($("#Stopaj").val());
+            var bagkur = GetInputVal($("#Bagkur").val());
+
+            var borsaTutar = (toplamTutar - stopaj - bagkur) * borsaOrani;
+            $("#Borsa").val(SetInputVal(borsaTutar / 1000));
+            $("#Komisyon").val(SetInputVal((komisyonOrani * toplamTutar) / 100));
+            var komisyon = GetInputVal($("#Komisyon").val());
+            var borsa = GetInputVal($("#Borsa").val());
+            $("#KomisyonKdv").val(SetInputVal((komisyonKdvOrani * komisyon) / 100));
+            $("#TutarYekun").val(SetInputVal(toplamTutar));
+            var rusum = GetInputVal($("#Rusum").val());
+            var navKdv = GetInputVal($("#NavlunKdv").val());
+            var komisyonKdv = GetInputVal($("#KomisyonKdv").val());
+
+            var kesintilerDahilMasraf = rusum + nav + navKdv + bagkur + stopaj + borsa + komisyon + komisyonKdv + toplamToplam;
+            $("#KesintilerDahilMasrafYekun").val(SetInputVal(kesintilerDahilMasraf));
+            var tutarYekun = GetInputVal($("#TutarYekun").val());
+            var kesintilerDahilMasraf = GetInputVal($("#KesintilerDahilMasrafYekun").val());
+            $("#SafiYekun").val(SetInputVal(tutarYekun - kesintilerDahilMasraf));
+            $("#MalKdv").val(SetInputVal(malKdv));
+            var safiYekun = GetInputVal($("#SafiYekun").val());
+            //var malKdv = GetInputVal($("#MalKdv").val());
+            $("#NetYekun").val(SetInputVal(safiYekun + malKdv));
+
+
+            var formatInputs = ["Rusum", "NavlunKdv", "Bagkur", "Stopaj", "Borsa", "Komisyon", "KomisyonKdv", "TutarYekun", "KesintilerDahilMasrafYekun", "SafiYekun", "MalKdv", "NetYekun",];
+            for (var i = 0; i < formatInputs.length; i++) {
+                formatNumberInput(document.getElementById(formatInputs[i]));
+            }
+        }
+
+        const ctrlShortcuts = {
+            "d": () => $('#makbuzDetayModal').modal('show'),
+            "o": () => console.log("ctrl o"),
+            "t": () => console.log("ctrl t"),
+        };
+        const generalshortCuts = {
+            "f9": () => StokDetay(),
+            "f10": () => FaturaKes(),
+            "f2": () => console.log("F2"),
+            "f3": () => console.log("F3"),
+            "f4": () => console.log("F4"),
+            "f5": () => $("#RusumOrani").focus(),
+        }
+        document.addEventListener("keydown", function (ev) {
+            if (ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
+                if (ctrlShortcuts[ev.key.toLowerCase()]) {
+                    ev.preventDefault();
+                    ctrlShortcuts[ev.key.toLowerCase()]();
+                }
+            } else if (!ev.shiftKey && !ev.ctrlKey && !ev.altKey) {
+                if (generalshortCuts[ev.key.toLowerCase()]) {
+                    ev.preventDefault();
+                    generalshortCuts[ev.key.toLowerCase()]();
+                }
+            }
+        });
+        function StokDetay() {
+            $.get("/DokumIslemleri/MakbuzMustahsilStok?id=" + $("#MakbuzId").val(), function (res, status) {
+                console.log(res);
+                console.log(status);
+                loadModal(res, "stokdetay", "Müstahsil Stok");
+            });
+        }
+        function FaturaKes() {
+            $("#Kesildi").attr('value', true);
+            postGrid(true);
+        }
+    </script>
+    <script>
+        $("#makbuzForm").on("submit", function (e) {
+            e.preventDefault();
+            postGrid(false);
+        });
+
+        function apiRequest(reqUrl, trgt) {
+            $.ajax({
+                url: reqUrl,
+                type: "GET",
+                success: function (e) {
+                    loadModal(e, trgt);
+                }
+            });
+        }
+
+        function muhatapchange() {
+            var muhatapPostaKutusu = $("#GibMuhatapPostaKutusu").val();
+        };
+    </script>
+}

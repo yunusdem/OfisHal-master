@@ -1,0 +1,139 @@
+@model VohalHesapTanimlari
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="hesapNavlunHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Navlun Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesNavlunHesabiId" id="HesNavlunHesabiId" value="@Model.HesNavlunHesabiId" />
+                <input type="text" id="hesapNavlunHesabi" name="hesapNavlunHesabi" class="form-control form-control-sm" data-id="@Model.HesNavlunHesabiId" value="@Model.HesNavlunHesabiKodu" />
+                <button type="button" data-btarget="navlunhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapNavlunHesabi", isCode = true, inputType = "code", isInput = true })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapRehinHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Rehin Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesCiroPrimiHesabiId" id="HesCiroPrimiHesabiId" value="@Model.HesCiroPrimiHesabiId" />
+                <input type="hidden" name="HesRehinHesabiId" id="HesRehinHesabiId" value="@Model.HesRehinHesabiId" />
+                <input type="text" id="hesapRehinHesabi" name="hesapRehinHesabi" class="form-control form-control-sm" data-id="@Model.HesRehinHesabiId" value="@Model.HesRehinHesabiKodu" />
+                <button type="button" data-btarget="rehinhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapRehinHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapIadesizSandikHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            Ýadesiz Sandýk Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesIadesizSandikHesabiId" id="HesIadesizSandikHesabiId" value="@Model.HesIadesizSandikHesabiId" />
+                <input type="text" id="hesapIadesizSandikHesabi" name="hesapIadesizSandikHesabi" class="form-control form-control-sm" data-id="@Model.HesIadesizSandikHesabiId" value="@Model.HesIadesizSandikHesabiKodu" />
+                <button type="button" data-btarget="sandikhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapIadesizSandikHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapRusumHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            Rusum Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesRusumHesabiId" id="HesRusumHesabiId" value="@Model.HesRusumHesabiId" />
+                <input type="text" id="hesapRusumHesabi" name="hesapRusumHesabi" class="form-control form-control-sm" data-id="@Model.HesRusumHesabiId" value="@Model.HesRusumHesabiKodu" />
+                <button type="button" data-btarget="rusumhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapRusumHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapYuklemeHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            Yükleme Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesHamaliyeHesabiId" id="HesHamaliyeHesabiId" value="@Model.HesHamaliyeHesabiId" />
+                <input type="text" id="hesapYuklemeHesabi" name="hesapYuklemeHesabi" class="form-control form-control-sm" data-id="@Model.HesHamaliyeHesabiId" value="@Model.HesHamaliyeHesabiKodu" />
+                <button type="button" data-btarget="hamaliyehesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapYuklemeHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapNakliyeHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            Nakliye Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesNakliyeHesabiId" id="HesNakliyeHesabiId" value="@Model.HesNakliyeHesabiId" />
+                <input type="text" id="hesapNakliyeHesabi" name="hesapNakliyeHesabi" class="form-control form-control-sm" data-id="@Model.HesNakliyeHesabiId" value="@Model.HesNakliyeHesabiKodu" />
+                <button type="button" data-btarget="nakliyehesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapNakliyeHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapStopajHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>7-</span>
+            Stopja Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesStopajHesabiId" id="HesStopajHesabiId" value="@Model.HesStopajHesabiId" />
+                <input type="text" id="hesapStopajHesabi" name="hesapStopajHesabi" class="form-control form-control-sm" data-id="@Model.HesStopajHesabiId" value="@Model.HesStopajHesabiKodu" />
+                <button type="button" data-btarget="stopajhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapStopajHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapBorsaHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>8-</span>
+            Borsa Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesBorsaHesabiId" id="HesBorsaHesabiId" value="@Model.HesBorsaHesabiId" />
+                <input type="text" id="hesapBorsaHesabi" name="hesapBorsaHesabi" class="form-control form-control-sm" data-id="@Model.HesBorsaHesabiId" value="@Model.HesBorsaHesabiKodu" />
+                <button type="button" data-btarget="borsahesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapBorsaHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <label for="hesapBagkurHesabi" class="col-sm-6 col-form-label pb-0">
+            <span>9-</span>
+            Baðkur Hesabý
+        </label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="hidden" name="HesBagkurHesabiId" id="HesBagkurHesabiId" value="@Model.HesBagkurHesabiId" />
+                <input type="text" id="hesapBagkurHesabi" name="hesapBagkurHesabi" class="form-control form-control-sm" data-id="@Model.HesBagkurHesabiId" value="@Model.HesBagkurHesabiKodu" />
+                <button type="button" data-btarget="bagkurhesapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("HesapKodlar", "Common", new { target = "hesapBagkurHesabi", isCode = true, isInput = true, inputType = "code" })">
+                    Seç
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

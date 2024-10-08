@@ -1,0 +1,4 @@
+EF6 Migrations - Çoklu context için migrations
+Enable-Migrations -ContextTypeName CatalogDb -MigrationsDirectory Migrations\ApplicationDbContext
+Add-Migration -ConfigurationTypeName OfisHal.Data.Migrations.Configuration "Upd2"
+Update-Database -ConfigurationTypeName OfisHal.Data.Migrations.Configuration

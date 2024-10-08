@@ -1,0 +1,67 @@
+@model List<VohalStokHareketi>
+@{
+    var dt = Model;
+}
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+            <thead class="table-primary">
+                <tr>
+                    <th>Mal</th>
+                    <th>Kap</th>
+                    <th>Gelen Kap</th>
+                    <th>Satýlan Kap</th>
+                    <th>Gelen Kilo</th>
+                    <th>Satýlan Kilo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model.ElementAt(i);
+                    <tr>
+                        <td>@item.MalKodu</td>
+                        <td>@item.KapAdi</td>
+                        <td>@item.KapSayisi</td>
+                        <td>@item.SatilanKap</td>
+                        <td>@item.Miktar</td>
+                        <td>@item.SatilanMiktar</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <label for="iadesiKap" class="col-sm-4 col-form-label pb-0">Ýadesiz Kap</label>
+            <div class="col-sm-8">
+                <input type="text" data-type="num" name="iadesiKap" id="iadesiKap" class="form-control form-control-sm" value="0" />
+            </div>
+        </div>
+        <div class="row">
+            <label for="toplamKap" class="col-sm-4 col-form-label pb-0">Toplam Kap</label>
+            <div class="col-sm-8">
+                <input type="text" data-type="num" name="toplamKap" id="toplamKap" class="form-control form-control-sm" value="0" />
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+            <label for="iadeliKap" class="col-sm-4 col-form-label pb-0">Ýadeli Kap</label>
+            <div class="col-sm-8">
+                <input type="text" data-type="num" name="iadeliKap" id="iadeliKap" class="form-control form-control-sm" value="0" />
+            </div>
+        </div>
+        <div class="row">
+            <label for="toplamKilo" class="col-sm-4 col-form-label pb-0">Toplam Kilo</label>
+            <div class="col-sm-8">
+                <input type="text" data-type="num" name="toplamKilo" id="toplamKilo" class="form-control form-control-sm" value="0" />
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>

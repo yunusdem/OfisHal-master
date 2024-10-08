@@ -1,0 +1,78 @@
+﻿@using System.ComponentModel.DataAnnotations
+@model List<OfisHal.Core.Domain.TohalCariSifat>
+@{
+    ViewBag.title = "Teslimat Yeri Ve Sıfat";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Hks Tanımları";
+    ViewBag.ptitle = "Teslimat Yeri Ve Sıfat";
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-md-9">
+                <div id="myGrid" class="slick-container" style="height:100%;"></div>
+                <ul id="contextMenu" style="display:none;position:absolute">
+                    <div class="context-header">Tip:</div>
+                    @foreach (IsletmeTuru tur in Enum.GetValues(typeof(IsletmeTuru)))
+                    {
+                        <li data="@Convert.ToInt32(tur)">@tur.ToString()</li>
+                    }
+                </ul>
+                <div class="row mt-2">
+                    <div class="col">
+                        @Html.ActionLink("Hks Bilgi Al", "HksBilgiAl", "TeknikIslemler", new { }, new { @class = "btn btn-sm btn-secondary" })
+
+                        <button id="gridPostButton" class="btn btn-sm btn-success">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div data-simplebar style="max-height: 400px;">
+                    @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                    {
+                        bool isSelected = Model.Any(c => c.Sifat == Convert.ToByte(sifat)); // Model, TohalCariSifat listesidir
+
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="@sifat" name="@sifat.ToString().ToLower()" value="@Convert.ToInt32(sifat)" @(isSelected ? "checked" : "")>
+                            <label class="form-check-label" for="@sifat">
+                                @sifat
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    <script src="~/assets/libs/cleave.js/cleave.min.js"></script>
+    <script src="~/assets/js/pages/form-masks.init.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @Html.Partial("~/Views/TeknikIslemler/Partials/_teslimatYerGrid.cshtml")
+
+    <script>
+        $(document).ready(function () {
+            document.getElementById('gridPostButton').addEventListener('click', postGrid);
+        });</script>
+}

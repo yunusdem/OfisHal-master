@@ -1,0 +1,459 @@
+@model VohalDigerTanimlar
+<div style="height: 435px;" class="overflow-auto overflow-x-hidden">
+    <div class="row">
+        <label for="DigFiyatKurusSayisi" class="col-sm-6 col-form-label pb-0">
+            <span>1-</span>
+            Fiyat Kuruþ Basamak Sayýsý
+        </label>
+        <div class="col-sm-6">
+            <input type="number" id="DigFiyatKurusSayisi" name="DigFiyatKurusSayisi" class="form-control form-control-sm" value="@Model.DigFiyatKurusSayisi" min="0" max="99" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKiloOndalikSayisi" class="col-sm-6 col-form-label pb-0">
+            <span>2-</span>
+            Kilo Ondalýk Basamak Sayýsý
+        </label>
+        <div class="col-sm-6">
+            <input type="number" id="DigKiloOndalikSayisi" name="DigKiloOndalikSayisi" class="form-control form-control-sm" min="0" max="99" value="@Model.DigKiloOndalikSayisi" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBordroSayfaNo" class="col-sm-6 col-form-label pb-0">
+            <span>3-</span>
+            Bordro Sayfa No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigBordroSayfaNo" name="DigBordroSayfaNo" class="form-control form-control-sm" value="@Model.DigBordroSayfaNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBordroKapDevri" class="col-sm-6 col-form-label pb-0">
+            <span>4-</span>
+            Dünden Kap Devri
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigBordroKapDevri" name="DigBordroKapDevri" class="form-control form-control-sm" value="@Model.DigBordroKapDevri" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBordroKiloDevri" class="col-sm-6 col-form-label pb-0">
+            <span>5-</span>
+            Dünden Kilo Devri
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigBordroKiloDevri" name="DigBordroKiloDevri" class="form-control form-control-sm" value="@Model.DigBordroKiloDevri" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigMalBeyanSayfaNo" class="col-sm-6 col-form-label pb-0">
+            <span>6-</span>
+            Mal Beyan Sayfa No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigMalBeyanSayfaNo" name="DigMalBeyanSayfaNo" class="form-control form-control-sm" value="@Model.DigMalBeyanSayfaNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigDokumDefterSayfaNo" class="col-sm-6 col-form-label pb-0">
+            <span>7-</span>
+            Döküm Defteri Sayfa No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigDokumDefterSayfaNo" name="DigDokumDefterSayfaNo" class="form-control form-control-sm" value="@Model.DigDokumDefterSayfaNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigDokumNoBasinaSifir">
+            <span>8-</span>
+            Döküm No Baþýna Sýfýr Konsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigDokumNoBasinaSifir" name="DigDokumNoBasinaSifir" value="true" @(Model.DigDokumNoBasinaSifir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigMustahsilKodSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>9-</span>
+            Müstahsil Kod Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigMustahsilKodSiraNo" name="DigMustahsilKodSiraNo" class="form-control form-control-sm" value="@Model.DigMustahsilKodSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigMusteriKodSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>10-</span>
+            Müþteri Kod Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigMusteriKodSiraNo" name="DigMusteriKodSiraNo" class="form-control form-control-sm" value="@Model.DigMusteriKodSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigCariKodBasinaSifir">
+            <span>11-</span>
+            Cari Kod Baþýna Sýfýr Konsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigCariKodBasinaSifir" name="DigCariKodBasinaSifir" value="true" @(Model.DigCariKodBasinaSifir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigFaturaNoBasinaSifir">
+            <span>12-</span>
+            Fatura No Baþýna Sýfýr Konsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigFaturaNoBasinaSifir" name="DigFaturaNoBasinaSifir" value="true" @(Model.DigFaturaNoBasinaSifir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigRehinIadeCalismaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>13-</span>
+            Rehin Ýade Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigRehinIadeCalismaSekli" id="DigRehinIadeCalismaSekli">
+                <option value="0" @(Model.DigRehinIadeCalismaSekli == 0 ? "selected" : "")>Fatura Bazlý</option>
+                <option value="1" @(Model.DigRehinIadeCalismaSekli == 1 ? "selected" : "")>Müþteri Bazlý</option>
+                <option value="2" @(Model.DigRehinIadeCalismaSekli == 2 ? "selected" : "")>Tutar Bazlý</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigRehinTahsilatGosterimi" class="col-sm-6 col-form-label pb-0">
+            <span>14-</span>
+            Rehin Tahsilat Gösterimi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigRehinTahsilatGosterimi" id="DigRehinTahsilatGosterimi">
+                <option value="0" @(Model.DigRehinTahsilatGosterimi == 0 ? "selected" : "")>Toplu</option>
+                <option value="1" @(Model.DigRehinTahsilatGosterimi == 1 ? "selected" : "")>Tek Tek</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKasaVeresiyeSekli" class="col-sm-6 col-form-label pb-0">
+            <span>15-</span>
+            Kasa Veresiye Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigKasaVeresiyeSekli" id="DigKasaVeresiyeSekli">
+                <option value="0" @(Model.DigKasaVeresiyeSekli == 0 ? "selected" : "")>Detaylý Gösterilsin</option>
+                <option value="1" @(Model.DigKasaVeresiyeSekli == 1 ? "selected" : "")>Toplam Gösterilsin</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKasaDevri" class="col-sm-6 col-form-label pb-0">
+            <span>16-</span>
+            Kasa Devri
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" id="DigKasaDevri" name="DigKasaDevri" class="form-control form-control-sm" maxlength="14" value="@Model.DigKasaDevri" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBelgeDizini" class="col-sm-6 col-form-label pb-0">
+            <span>17-</span>
+            Belge Dizini
+        </label>
+        <div class="col-sm-6">
+            <input type="text" id="DigBelgeDizini" name="DigBelgeDizini" class="form-control form-control-sm" value="@Model.DigBelgeDizini" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigEditDenetimIsleyisi" class="col-sm-6 col-form-label pb-0">
+            <span>18-</span>
+            Veri Giriþ Ekraný Ýþleyiþi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigEditDenetimIsleyisi" id="DigEditDenetimIsleyisi">
+                <option value="0" @(Model.DigEditDenetimIsleyisi == 0 ? "selected" : "")>Deðer Ýle Baþlayanlarý Listele</option>
+                <option value="1" @(Model.DigEditDenetimIsleyisi == 1 ? "selected" : "")>Deðer Varsa Seç</option>
+                <option value="2" @(Model.DigEditDenetimIsleyisi == 2 ? "selected" : "")>Girilen Deðeri Ýçerenleri Listele</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKasaDefterindeDevirVar">
+            <span>19-</span>
+            Kasa Defterinde Devir Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKasaDefterindeDevirVar" name="DigKasaDefterindeDevirVar" value="true" @(Model.DigKasaDefterindeDevirVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKasaDevirSekli" class="col-sm-6 col-form-label pb-0">
+            <span>20-</span>
+            Kasa Devir Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigKasaDevirSekli" id="DigKasaDevirSekli">
+                <option value="0" @(Model.DigKasaDevirSekli == 0 ? "selected" : "")>Otomatik</option>
+                <option value="1" @(Model.DigKasaDevirSekli == 1 ? "selected" : "")>Manuel</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKasaDevrindeYukNakVar">
+            <span>21-</span>
+            Kasa Devrinde Yükleme Nakliye Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKasaDevrindeYukNakVar" name="DigKasaDevrindeYukNakVar" value="true" @(Model.DigKasaDevrindeYukNakVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigRehinBakiyeGosterilsin">
+            <span>22-</span>
+            Ekranlarda Rehin Bakiye Gösterilsin
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigRehinBakiyeGosterilsin" name="DigRehinBakiyeGosterilsin" value="true" @(Model.DigRehinBakiyeGosterilsin == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigCariHareketRefNo" class="col-sm-6 col-form-label pb-0">
+            <span>23-</span>
+            Cari Hareket Ref No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigCariHareketRefNo" name="DigCariHareketRefNo" class="form-control form-control-sm" value="@Model.DigCariHareketRefNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigBuyukHarfeCevir">
+            <span>24-</span>
+            Büyük Harefe Çevir
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigBuyukHarfeCevir" name="DigBuyukHarfeCevir" value="true" @(Model.DigBuyukHarfeCevir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigOdemeBordroSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>25-</span>
+            Ödeme Bordrosu Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" id="DigOdemeBordroSiraNo" name="DigOdemeBordroSiraNo" class="form-control form-control-sm" value="@Model.DigOdemeBordroSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigOdemeBordroBasinaSifir">
+            <span>26-</span>
+            Ödeme Bordro No Baþýna Sýfýr Konsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigOdemeBordroBasinaSifir" name="DigOdemeBordroBasinaSifir" value="true" @(Model.DigOdemeBordroBasinaSifir == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigVadeFarkiOrani" class="col-sm-6 col-form-label pb-0">
+            <span>27-</span>
+            Vade Farký Oraný
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="num" id="DigVadeFarkiOrani" name="DigVadeFarkiOrani" class="form-control form-control-sm" value="@Model.DigVadeFarkiOrani" maxlength="5" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigRehinBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>28-</span>
+            Rehin Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6 d-flex align-items-center">
+            <input class="form-check-input me-1" type="checkbox" id="DigRehinBaslangicTarihiCheck" name="DigRehinBaslangicTarihiCheck" value="true" @(Model.DigRehinBaslangicTarihi != null ? "checked" : "")>
+            <input type="date" name="DigRehinBaslangicTarihi" id="DigRehinBaslangicTarihi" class="form-control form-control-sm" @(Model.DigRehinBaslangicTarihi == null ? "disabled" : "") value="@(Model.DigRehinBaslangicTarihi.HasValue ? Model.DigRehinBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigDonemBaslangicTarihi" class="col-sm-6 col-form-label pb-0">
+            <span>29-</span>
+            Dönem Baþlangýç Tarihi
+        </label>
+        <div class="col-sm-6">
+            <input type="date" name="DigDonemBaslangicTarihi" id="DigDonemBaslangicTarihi" class="form-control form-control-sm" value="@(Model.DigDonemBaslangicTarihi.HasValue ? Model.DigDonemBaslangicTarihi?.ToString("yyyy-MM-dd") : String.Empty)" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigTutarHesaplamaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>30-</span>
+            Tutar Hesaplama Biçimi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigTutarHesaplamaSekli" id="DigTutarHesaplamaSekli">
+                <option value="0" @(Model.DigTutarHesaplamaSekli == 0 ? "selected" : "")>Kilo Girilmesine Baðlý</option>
+                <option value="1" @(Model.DigTutarHesaplamaSekli == 1 ? "selected" : "")>Mal Birimine Baðlý</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigKasMustahCalismaSekli" class="col-sm-6 col-form-label pb-0">
+            <span>31-</span>
+            Kasa Müstahsil Çalýþma Þekli
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigKasMustahCalismaSekli" id="DigKasMustahCalismaSekli">
+                <option value="0" @(Model.DigKasMustahCalismaSekli == 0 ? "selected" : "")>Detaylý</option>
+                <option value="1" @(Model.DigKasMustahCalismaSekli == 1 ? "selected" : "")>Toplam</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigSatisTipi" class="col-sm-6 col-form-label pb-0">
+            <span>32-</span>
+            Satýþ Tipi
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigSatisTipi" id="DigSatisTipi">
+                <option value="0" @(Model.DigSatisTipi == 0 ? "selected" : "")>Komisyon</option>
+                <option value="1" @(Model.DigSatisTipi == 1 ? "selected" : "")>Ticari</option>
+                <option value="2" @(Model.DigSatisTipi == 2 ? "selected" : "")>Komisyon / Ticari</option>
+                <option value="3" @(Model.DigSatisTipi == 3 ? "selected" : "")>Ticari / Komisyon </option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigHalMudurlukFormuKlasoru" class="col-sm-6 col-form-label pb-0">
+            <span>33-</span>
+            Hal Müdürlük Klasörü
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigHalMudurlukFormuKlasoru" id="DigHalMudurlukFormuKlasoru" class="form-control form-control-sm" value="@Model.DigHalMudurlukFormuKlasoru" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigYedekKlasoru" class="col-sm-6 col-form-label pb-0">
+            <span>34-</span>
+            Yedek Klasörü
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigYedekKlasoru" id="DigYedekKlasoru" class="form-control form-control-sm" value="@Model.DigYedekKlasoru" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigVergiSorgulayanTcKNo" class="col-sm-6 col-form-label pb-0">
+            <span>35-</span>
+            Vergi No Sorgulayan TC Kimlik No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigVergiSorgulayanTcKNo" id="DigVergiSorgulayanTcKNo" class="form-control form-control-sm" value="@Model.DigVergiSorgulayanTcKNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigVeresiyeAsimOlayi" class="col-sm-6 col-form-label pb-0">
+            <span>36-</span>
+            Cari Veresiye Aþýmýnda
+        </label>
+        <div class="col-sm-6">
+            <select class="form-select form-select-sm" name="DigVeresiyeAsimOlayi" id="DigVeresiyeAsimOlayi">
+                <option value="0" @(Model.DigVeresiyeAsimOlayi == 0 ? "selected" : "")>Uyar</option>
+                <option value="1" @(Model.DigVeresiyeAsimOlayi == 1 ? "selected" : "")>Kaydetme</option>
+                <option value="2" @(Model.DigVeresiyeAsimOlayi == 2 ? "selected" : "")>Kaydet</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigAciklama2Goster">
+            <span>37-</span>
+            Ýkinci Cari Hareket Açýklamasýný Göster
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigAciklama2Goster" name="DigAciklama2Goster" value="true" @(Model.DigAciklama2Goster == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="HalMudurlukXmlAdi">
+            <span>38-</span>
+            Hal Müdürlük xml Adý Tarihli Olsun
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="HalMudurlukXmlAdi" name="HalMudurlukXmlAdi" value="true" @(Model.HalMudurlukXmlAdi == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigIkinciYedekKlasoru" class="col-sm-6 col-form-label pb-0">
+            <span>39-</span>
+            Ýkinci Yedek Klasörü
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigIkinciYedekKlasoru" id="DigIkinciYedekKlasoru" class="form-control form-control-sm" value="@Model.DigIkinciYedekKlasoru" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="FisSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>40-</span>
+            Fiþ Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" name="FisSiraNo" id="FisSiraNo" class="form-control form-control-sm" value="@Model.FisSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="MalKabulSiraNo" class="col-sm-6 col-form-label pb-0">
+            <span>41-</span>
+            Mal Kabul Sýra No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" data-type="numNotDec" name="MalKabulSiraNo" id="MalKabulSiraNo" class="form-control form-control-sm" value="@Model.MalKabulSiraNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigVeresiyeMizaniAc">
+            <span>42-</span>
+            Veresiye Mizan Ekraný Açýlsýn
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigVeresiyeMizaniAc" name="DigVeresiyeMizaniAc" value="true" @(Model.DigVeresiyeMizaniAc == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKasaDefterindeAlisVar">
+            <span>43-</span>
+            Kasa Defterinde Alýþ Ýþlemleri Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKasaDefterindeAlisVar" name="DigKasaDefterindeAlisVar" value="true" @(Model.DigKasaDefterindeAlisVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigKasaKrediKartiVar">
+            <span>44-</span>
+            Kasa Defterinde Kredi Kartý Var
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigKasaKrediKartiVar" name="DigKasaKrediKartiVar" value="true" @(Model.DigKasaKrediKartiVar == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-6 form-check-label customlbl" for="DigRehinBazliKapCari">
+            <span>45-</span>
+            Rehin Bazlý Müstahsil Kap Cari
+        </label>
+        <div class="col-sm-6">
+            <input class="form-check-input" type="checkbox" id="DigRehinBazliKapCari" name="DigRehinBazliKapCari" value="true" @(Model.DigRehinBazliKapCari == true ? "checked" : "")>
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigBagkurDosyaNo" class="col-sm-6 col-form-label pb-0">
+            <span>46-</span>
+            Baðkur Dosya No
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigBagkurDosyaNo" id="DigBagkurDosyaNo" class="form-control form-control-sm" value="@Model.DigBagkurDosyaNo" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="DigEtaFaturaKlasoru" class="col-sm-6 col-form-label pb-0">
+            <span>49-</span>
+            Eta Fatura Klasörü
+        </label>
+        <div class="col-sm-6">
+            <input type="text" name="DigEtaFaturaKlasoru" id="DigEtaFaturaKlasoru" class="form-control form-control-sm" value="@Model.DigEtaFaturaKlasoru" />
+        </div>
+    </div>
+</div>

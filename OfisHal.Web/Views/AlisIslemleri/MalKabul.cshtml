@@ -1,0 +1,756 @@
+﻿@model VohalFatura
+@{
+    ViewBag.Title = "Satış Faturası";
+    ViewBag.pTitle = "Satış Faturası";
+    ViewBag.pageTitle = "Satış Faturası Sayfası";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var FaturaModel = (List<VohalFaturaSatiriUrt>)ViewData["faturaModel"];
+    var FaturaRehinModel = (List<VohalRehinFisi>)ViewData["faturaRehinModel"];
+    var FaturaToplamModel = (VohalFaturaSonToplam)ViewData["faturaToplam"];
+    var dt = Model;
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- jQuery CDN -->
+    @* <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> *@
+
+    <style>
+
+        #rehinGrid {
+            overflow: unset !important;
+        }
+
+        #IhracatKuru {
+            text-align: end;
+            direction: ltr;
+        }
+    </style>
+}
+
+
+
+<div class="row mb-1">
+    <div class="col-lg-6 btn-group btn-group-sm d-flex justify-content-start align-items-center">
+        @*Yeni Kayıt*@
+        <button type="button" id="gridPostButtonNew" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-file-add-line fs-6"></i>
+            <span>Yeni</span>
+        </button>
+        @*Kaydet*@
+        <button type="button" id="gridPostButton" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-save-line fs-6"></i>
+            <span>Kaydet</span>
+        </button>
+    </div>
+</div>
+<form id="faturaForm">
+    <div class="row mb-1">
+        <div class="col-12">
+            <table width="100%">
+                <tr>
+                    <td valign="top" width="50%">
+                        <input type="hidden" id="gridKod" name="gridKod" />
+                        <input type="hidden" id="gridGonderen" name="gridGonderen" />
+                        <input type="hidden" id="gridMal" name="gridMal" />
+                        <input type="hidden" id="gridKap" name="gridKap" />
+                        <input type="hidden" id="gridStokKunye" name="gridStokKunye" />
+                        <input type="hidden" id="gridSatisKunye" name="gridSatisKunye" />
+                        <div id="myGrid" class="slick-container" style="height:200px;"></div>
+                        <div id="pager" style="width: 100%; height: 20px"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="mb-1"></div>
+    <ul id="contextMenu" style="display:none;position:absolute">
+        <div class="context-header">Satış Tipi:</div>
+        <li data="Ticari">- Ticari</li>
+        <li data="Komisyon">- Komisyon</li>
+    </ul>
+
+    <div id="inlineFilterPanel" style="
+    display: none;
+    background: #f6f6f6;
+    color: black;
+    height: 100%;
+    padding: 4px;
+  ">
+        Show tasks with title including <input type="text" id="txtSearch2" />
+        and % at least &nbsp;
+        <input style="width: 100px; display: inline-block" id="pcSlider2" type="range" min="1" max="100" value="1" />
+    </div>
+
+
+    <div class="modal fade" id="malKdvModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mal Kdv</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Oran</th>
+                                <th>Kdv Tevkifat Tanımı</th>
+                                <th>Pay</th>
+                                <th>Payda</th>
+                                <th>Matrah</th>
+                                <th>Kdv Tahakkuku</th>
+                                <th>Tevkifat</th>
+                                <th>Tahsilat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>Tutardaki Rakam Gelecek!!??</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<div class="modal fade" id="kayitliKunyeModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Kayıtlı Künye Listesi</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body" id="kunyelerModalBody">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="hataliHksModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Hatalı Hks İstekleri</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body" id="hataliHksModalBody">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var kdvorani = @ViewData["tanimKdvOrani"];
+    </script>
+    @*@Html.Partial("~/Views/TohalFaturas/Partials/_kunyeModal.cshtml")*@
+    @Html.Partial("~/Views/Shared/_FaturaKisayollar.cshtml")
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/AlisIslemleri/Partials/_faturaGridMalKabul.cshtml")
+    <script>
+        var maxlenght = 20;
+        /*Fatura Detay İşlemleri*/
+        new Cleave("#IhracatKuru", {
+            numeral: true,
+            numeralDecimalScale: 6,
+            numeralIntegerScale: 3,
+            delimiter: ".",
+            numeralDecimalMark: ","
+        });
+        /*Fatura Detay İşlemleri*/
+        var uyari = @Html.Raw(Json.Encode(ViewBag.resultText));
+        if (uyari != null && uyari.message?.length > 0) {
+            ShowAlert(uyari.state, uyari.message);
+        }
+        var il = $("#IlId");
+        var ilce = $("#IlceId");
+        var belde = $("#BeldeId");
+        var ilBtn = $("#IlIdBtn");
+        var ilceBtn = $("#IlceIdBtn");
+        var beldeBtn = $("#BeldeIdBtn");
+
+        checkDisableYer();
+        $(document).on("show.bs.modal", "#kayitliKunyeModal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#kunyelerModalBody");
+            container.empty();
+            container.load(btn.data("remote-url"));
+        });
+        $(document).on("show.bs.modal", "#hataliHksModal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#hataliHksModalBody");
+            container.empty();
+            container.load(btn.data("remote-url"));
+        });
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var ilDataId = document.getElementById("IlId").getAttribute("data-id");
+            var ilceDataId = document.getElementById("IlceId").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "IlceId": ilDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilDataId}`) : null; break;
+                    case "BeldeId": ilceDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilceDataId}`) : null; break;
+                    case "stokkunye":
+                        setTimeout(function () {
+                            var currentRow = data[grid.activeRow];
+                            if (parseInt(currentRow?.malId) > 0 && parseInt(currentRow?.markaId) > 0) {
+                                container.load(btn.data("remote-url") + `&marka=${currentRow.markaId}&mal=${currentRow.malId}`)
+                            }
+                        }, 200);
+                        break;
+
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"));
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var gondMarka = document.getElementById("gridGonderen").getAttribute("data-marka");
+            var gondName = document.getElementById("gridGonderen").getAttribute("data-name");
+            var gondCode = document.getElementById("gridGonderen").getAttribute("data-code");
+            var malId = document.getElementById("gridMal").getAttribute("data-id");
+            var malFiyat = document.getElementById("gridMal").getAttribute("data-fiyat");
+            var kapId = document.getElementById("gridKap").getAttribute("data-id");
+            var kapKod = document.getElementById("gridKap").getAttribute("data-code");
+            var kapDurum = document.getElementById("gridKap").getAttribute("data-durum");
+            var kapFiyat = document.getElementById("gridKap").getAttribute("data-fiyat");
+            var stokKunyeId = document.getElementById("gridStokKunye").getAttribute("data-id");
+            var satisKunyeId = document.getElementById("gridSatisKunye").getAttribute("data-id");
+
+            var rehinKapId = document.getElementById("gridRehinKap").getAttribute("data-id");
+            var rehinGondName = document.getElementById("gridRehinGonderen").getAttribute("data-name");
+            var rehinGondCode = document.getElementById("gridRehinGonderen").getAttribute("data-code");
+            var rehinGondMarka = document.getElementById("gridRehinGonderen").getAttribute("data-marka");
+            switch (target) {
+                case "IlId": if (document.getElementById("IlId").getAttribute("data-id") > 0) enableDisableFields(true, false, false, false, ilce, document.getElementById("IlId").getAttribute("data-id")); break;
+                case "IlceId": if (document.getElementById("IlceId").getAttribute("data-id") > 0) enableDisableFields(true, true, true, false, belde, document.getElementById("IlceId").getAttribute("data-id")); break;
+                case "BeldeId": if (document.getElementById("BeldeId").getAttribute("data-id") > 0) $("#HiddenBeldeId").val(document.getElementById("BeldeId").getAttribute("data-id")); break;
+                case "CariKod": autoFill("CariKod"); break;
+                case "CariUnvan": autoFill("CariUnvan"); break;
+                case "vergidairesiid": if (document.getElementById("VergiDairesi").getAttribute("data-id") > 0) $("#HiddenVergiDairesiId").val(document.getElementById("VergiDairesi").getAttribute("data-id")); break;
+                case "gonderen": updateMusteriCell(gondMarka, gondName, gondCode); goToNextCol(); break;
+                case "mal": updateMalCell(malId, $("#gridMal").val(), malFiyat); goToNextCol(); break;
+                case "kap": updateKapCell(kapId, kapKod, $("#gridKap").val(), kapDurum, kapFiyat); goToNextCol(); break;
+                case "stokkunye": updateStokKunyeCell(stokKunyeId, $("#gridStokKunye").val()); goToNextCol(); break;
+                case "satiskunye": updateSatisKunyeCell(satisKunyeId, $("#gridSatisKunye").val()); goToNextCol(); break;
+                case "rehindGonderen": RehinupdateMusteriCell(rehinGondName, rehinGondCode, rehinGondMarka); goToNextCol(); break;
+                case "rehinKap": RehinupdateKapCell($("#gridRehinKap").val(), rehinKapId); goToNextCol(); break;
+                /*Fatura Detay İşlemleri*/
+                case "soforadi": document.getElementById("SoforAdi").getAttribute("data-id") > 0 ? $("#SoforId").val(document.getElementById("SoforAdi").getAttribute("data-id")) : $("#SoforId").val(null); break;
+                case "parabirimi": document.getElementById("IhracatParaBirimi").getAttribute("data-id") > 0 ? $("#IhracatParaBirimiId").val(document.getElementById("IhracatParaBirimi").getAttribute("data-id")) : $("#IhracatParaBirimiId").val(null); break;
+                case "teslimatsekli": document.getElementById("TeslimatSekli").getAttribute("data-id") > 0 ? $("#TeslimatSekliId").val(document.getElementById("TeslimatSekli").getAttribute("data-id")) : $("#TeslimatSekliId").val(null); break;
+                case "ulasimsekli": document.getElementById("UlasimSekli").getAttribute("data-id") > 0 ? $("#UlasimSekliId").val(document.getElementById("UlasimSekli").getAttribute("data-id")) : $("#UlasimSekliId").val(null); break;
+                case "odemesekli": document.getElementById("OdemeSekli").getAttribute("data-id") > 0 ? $("#OdemeSekliId").val(document.getElementById("OdemeSekli").getAttribute("data-id")) : $("#OdemeSekliId").val(null); break;
+                case "siparisno": document.getElementById("SiparisNo").getAttribute("data-id") > 0 ? $("#SiparisId").val(document.getElementById("SiparisNo").getAttribute("data-id")) : $("#SiparisId").val(null); break;
+                case "reffatura": document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id") > 0 ? $("#FiyatReferansFaturaId").val(document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id")) : $("#FiyatReferansFaturaId").val(null); break;
+                case "haladi": document.getElementById("HalAdi").getAttribute("data-id") > 0 ? $("#HalId").val(document.getElementById("HalAdi").getAttribute("data-id")) : $("#HalId").val(null); break;
+                case "firmapostakutusu": document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id") > 0 ? $("#GibFirmamizPostaKutusuId").val(document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id")) : $("#GibFirmamizPostaKutusuId").val(null); break;
+                case "muhatappostakutusu": document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id") > 0 ? $("#GibMuhatapPostaKutusuId").val(document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id")) : $("#GibMuhatapPostaKutusuId").val(null); break;
+                case "firmairspostakutusu": document.getElementById("GibFirmamizIrsaliyeKutusu").getAttribute("data-id") > 0 ? $("#GibFirmamizIrsaliyeKutusuId").val(document.getElementById("GibFirmamizIrsaliyeKutusu").getAttribute("data-id")) : $("#GibFirmamizIrsaliyeKutusuId").val(null); break;
+                case "muhatapirspostakutusu": document.getElementById("GibMuhatapIrsaliyeKutusu").getAttribute("data-id") > 0 ? $("#GibMuhatapIrsaliyeKutusuId").val(document.getElementById("GibMuhatapIrsaliyeKutusu").getAttribute("data-id")) : $("#GibMuhatapIrsaliyeKutusuId").val(null); break;
+                /*Fatura Detay İşlemleri*/
+                case "arabtn":
+                    sessionStorage.getItem('faturaId') > 0 ? window.location.href = `/TohalFaturas/Index?faturaId=${sessionStorage.getItem('faturaId')}` : null;
+                    sessionStorage.removeItem("faturaId");
+                    break;
+                case "satisfaturalar":
+                    sessionStorage.getItem('kesilmeyenFaturaId') > 0 ? window.location.href = `/TohalFaturas/Index?faturaId=${sessionStorage.getItem('kesilmeyenFaturaId')}` : null;
+                    sessionStorage.removeItem("kesilmeyenFaturaId");
+                    break;
+            }
+        });
+        il.on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/ilGetir?isInput=True&target=IlId", "Ad", "YerId", e, null, "IlId");
+            val.result ? enableDisableFields(true, false, false, false, ilce, val.data.YerId) : enableDisableFields(false, false, false, false, null, 0); //il yoksa hepsi pasif olacak
+        });
+        ilce.on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/ilceGetir?isInput=True&target=IlceId", "Ad", "YerId", e, document.getElementById("IlId").getAttribute("data-id"), "IlceId");
+            val.result ? enableDisableFields(true, true, true, false, belde, val.data.YerId) : enableDisableFields(true, true, false, false, null, document.getElementById("IlId").getAttribute("data-id")); // ilce yoksa belde pasif
+        });
+        belde.on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/ilceGetir?isInput=True&target=BeldeId", "Ad", "YerId", e, document.getElementById("IlceId").getAttribute("data-id"), "BeldeId");
+            val.result ? $("#HiddenBeldeId").val(val.data.YerId) : $("#HiddenBeldeId").val(document.getElementById("IlceId").getAttribute("data-id"));;
+        });
+        $("#CariKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=CariKod&tip=1&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "CariKod");
+           _ = val.result ? autoFill("CariKod") : null;
+        });
+        $("#CariUnvan").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=CariUnvan&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "CariUnvan");
+           _ = val.result ? autoFill("CariUnvan") : null;
+        });
+        $("#VergiDairesi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=VergiDairesi&tur=2", "Ad", "TabloMaddesiId", e, null, "vergidairesiid");
+            val.result ? $("#HiddenVergiDairesiId").val(val.data.TabloMaddesiId) : $("#HiddenVergiDairesiId").val(null);
+        });
+        /*Fatura Detay İşlemleri*/
+        $("#SoforAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=SoforAdi&tur=15", "Ad", "TabloMaddesiId", e, null, "soforadi");
+            val.result ? $("#SoforId").val(val.data.TabloMaddesiId) : $("#SoforId").val(null);
+        });
+        $("#IhracatParaBirimi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=IhracatParaBirimi&tur=14", "Ad", "TabloMaddesiId", e, null, "parabirimi");
+            val.result ? $("#IhracatParaBirimiId").val(val.data.TabloMaddesiId) : $("#IhracatParaBirimiId").val(null);
+        });
+        $("#TeslimatSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=TeslimatSekli&tur=11", "Ad", "TabloMaddesiId", e, null, "teslimatsekli");
+            val.result ? $("#TeslimatSekliId").val(val.data.TabloMaddesiId) : $("#TeslimatSekliId").val(null);
+        });
+        $("#UlasimSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=UlasimSekli&tur=12", "Ad", "TabloMaddesiId", e, null, "ulasimsekli");
+            val.result ? $("#UlasimSekliId").val(val.data.TabloMaddesiId) : $("#UlasimSekliId").val(null);
+        });
+        $("#OdemeSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=OdemeSekli&tur=13", "Ad", "TabloMaddesiId", e, null, "odemesekli");
+            val.result ? $("#OdemeSekliId").val(val.data.TabloMaddesiId) : $("#OdemeSekliId").val(null);
+        });
+        $("#SiparisNo").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/SiparisGetir?isInput=True&target=SiparisNo", "SiparisNo", "SiparisId", e, null, "siparisno");
+            val.result ? $("#SiparisId").val(val.data.SiparisId) : $("#SiparisId").val(null);
+        });
+        $("#HalAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HalGetir?isInput=True&target=HalAdi", "Ad", "HalId", e, null, "haladi");
+            val.result ? $("#HalId").val(val.data.HalId) : $("#HalId").val(null);
+        });
+        $("#GibFirmamizPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibFirmamizPostaKutusu&vkn=111&dokTip=0&pkTip=0&kayitSekli=1&tip=1", "PostaKutusu", "GibKullaniciId", e, null, "firmapostakutusu");
+            val.result ? $("#GibFirmamizPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibFirmamizPostaKutusuId").val(null);
+        });
+        $("#GibMuhatapPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibMuhatapPostaKutusu&vkn= &dokTip=0", "PostaKutusu", "GibKullaniciId", e, null, "muhatappostakutusu");
+            val.result ? $("#GibMuhatapPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibMuhatapPostaKutusuId").val(null);
+        });
+        $("#GibFirmamizIrsaliyeKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibFirmamizIrsaliyeKutusu&vkn=111&dokTip=1&pkTip=0&kayitSekli=1&tip=1", "PostaKutusu", "GibKullaniciId", e, null, "firmairspostakutusu");
+            val.result ? $("#GibFirmamizIrsaliyeKutusuId").val(val.data.GibKullaniciId) : $("#GibFirmamizIrsaliyeKutusuId").val(null);
+        });
+        $("#GibMuhatapIrsaliyeKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibMuhatapIrsaliyeKutusu&vkn= &dokTip=1", "PostaKutusu", "GibKullaniciId", e, null, "muhatapirspostakutusu");
+            val.result ? $("#GibMuhatapIrsaliyeKutusuId").val(val.data.GibKullaniciId) : $("#GibMuhatapIrsaliyeKutusuId").val(null);
+        });
+        $("#FiyatReferansFaturaNo").on("focusout", async function (e) {
+            var faturaid = $("#FaturaId").val();
+            var carikartid = $("#CariKartId").val();
+            var tip = $("#Tip").val();
+            var val = await getData($(this), `/Common/FiyatRefFatGetir?isInput=True&target=FiyatReferansFaturaNo&tip=${tip}&cariKartId=${carikartid}&faturaId=${faturaid}`, "SiparisNo", "SiparisId", e, null, "reffatura");
+            val.result ? $("#FiyatReferansFaturaId").val(val.data.FaturaId) : $("#FiyatReferansFaturaId").val(null);
+        });
+        /*Fatura Detay İşlemleri*/
+        function enableDisableFields(ilc, ilcVal, beld, beldVal, focusEl, yerid) {
+            $(ilce).prop("disabled", !ilc);
+            $(ilceBtn).prop("disabled", !ilc);
+            ilcVal ? null : $(ilce).val(null);
+
+            $(belde).prop("disabled", !beld);
+            $(beldeBtn).prop("disabled", !beld);
+            beldVal ? null : $(belde).val(null);
+
+            setTimeout(function () {
+                focusEl ? focusEl.focus() : null;
+            });
+            yerid != null ? $("#HiddenBeldeId").val(yerid) : null;
+        }
+        function autoFill(idValElement) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            if (parseInt(idVal) > 0) {
+                $.ajax({
+                    url: "/Common/getCariByIdCustom",
+                    type: "GET",
+                    data: { id: parseInt(idVal) },
+                    cache: false,
+                    success: (res) => {
+                        // Assume dropdown is your dropdown element
+                        var dropdown = document.getElementById("MagazaId");
+
+                        // Clear existing options
+                        dropdown.innerHTML = "";
+
+                        // Iterate through the result and add options to the dropdown
+                        $.get("/Common/MagazalarGetirJson?id=" + res.val.CariKartId, function (dt, status) {
+                            if (status=="success") {
+                                for (var i = 0; i < dt?.length; i++) {
+                                    var option = document.createElement("option");
+                                    option.value = dt[i].MagazaId;
+                                    option.text = dt[i].Ad;
+                                    dropdown.add(option);
+                                }
+                            }
+                        });
+                        var yer = { il: res.val.IlAdi, ilId: res.val.IlId, ilce: res.val.IlceAdi, ilceId: res.val.IlceId, belde: res.val.BeldeAdi, beldeId: res.val.BeldeId };
+                        fillData(res.val.CariKartId, res.val.Kod, res.val.Ad,
+                            res.val.GsmNo, res.val.KisilikTipi, res.val.VergiKimlikNo,
+                            res.val.VergiDaireId, res.val.Adres, res.val.GidecegiYerTipi,
+                            res.val.PlakaNo, res.val.Vade, res.val.Bakiye, res.val.EPosta,
+                            yer, res.bakiye, res.val.SatinAlaninSifati, res.val.GibEFaturaPostaKutusuId,
+                            res.val.EIrsaliyePostaKutusuId, res.val.GibEFaturaPostaKutusu, res.val.EIrsaliyePostaKutusu,res.val.Oran, res.val.EFaturaSenaryosu);
+                    }
+                });
+            }
+        }
+        function fillData(cariId, kod, ad, gsm, kisilikTipi, kimlikNo, vergiDaireId, adres, gidecegiYer, plakaNo, vade, bakiye, eposta, yerObjet, bakiye, sifati, efId,eiId, efText, eiText ,iskontoOrani ,senaryo) {
+            if (kimlikNo == null) {
+                kimlikNo = "";
+            }
+            if (kisilikTipi == 0) {
+                kdvorani = @ViewData["tanimKdvOrani0"];
+            }
+            else {
+                kdvorani = @ViewData["tanimKdvOrani1"];
+            }
+            $("#CariKod").val(kod);
+            $("#CariUnvan").val(ad);
+            $("#GsmNo").attr('value', gsm);
+            $("#KisilikTipi").val(kisilikTipi).change();
+            $("#VergiKimlikNo").attr('value', kimlikNo.trim());
+            vknchanged();
+            $("#Adres").attr('value', adres);
+            $("#GidecegiYerTipi").val(gidecegiYer).change();
+            $("#PlakaNo").attr('value', plakaNo);
+            $("#Vade").attr('value', vade);
+            $("#Unvan").attr('value', ad);
+            $("#hiddenCariKartId").val(cariId);
+            $("#CariKod").attr("data-id", cariId);
+            $("#CariUnvan").attr("data-id", cariId);
+            $("#EPosta").attr('value', eposta);
+            if (bakiye != null) {
+                $("#bakiyeText").text(parseFloat(bakiye).toLocaleString('tr-TR', { minimumFractionDigits: 2 }));
+            }
+            $("#CariSifati").val(sifati).change();
+            if (senaryo != null) {
+                $("#EFaturaSenaryosuBox").val(senaryo).change();
+            }
+            $("#GibMuhatapPostaKutusuId").attr('value', efId);
+            $("#GibMuhatapIrsaliyeKutusuId").attr('value', eiId);
+            $("#GibMuhatapPostaKutusu").attr('value', efText);
+            $("#GibMuhatapIrsaliyeKutusu").attr('value', eiText);
+            $("#IskontoOrani").attr('value', iskontoOrani);
+            $("#IskontoOrani").val(parseFloat(iskontoOrani).toFixed(2));
+
+            il.attr({ "value": yerObjet.il, "data-id": yerObjet.ilId });
+            ilce.attr({ "value": yerObjet.ilce, "data-id": yerObjet.ilceId });
+            belde.attr({ "value": yerObjet.belde, "data-id": yerObjet.beldeId });
+            var hiddenYer = yerObjet.beldeId || (yerObjet.ilceId > 0 ? yerObjet.ilceId : yerObjet.ilId);
+            $("#HiddenBeldeId").attr("value", hiddenYer);
+            checkDisableYer();
+            muhatapchange()
+            iskontochange()
+            var el = $("#CariUnvan").closest('.row').next('.row').find('input, select');
+            if (cariId > 0) el.focus();
+        }
+        $(document).ready(function () {
+            document.getElementById('gridPostButton').addEventListener('click', function () {
+                setTahsilatTipi()
+                postGridElements(false, false, false);
+            });
+        });
+
+        $(document).ready(function () {
+            document.getElementById('gridPostButtonNew').addEventListener('click', function () {
+                setTahsilatTipi()
+                postGridElements(true, false, false);
+            });
+        });
+
+        $(document).ready(function () {
+
+            $("#kunyeAlButton").click(function () {
+                const plakaNo = $("#PlakaNo").val();
+                const vergiKimlikNo = $("#VergiKimlikNo").val();
+                const yerId = $("#HiddenBeldeId").val();
+                const GsmNo = $("#GsmNo").val();
+                if (plakaNo === "" || vergiKimlikNo === "" || yerId === "") {
+                    const uyarıMetni = plakaNo === "" ? 'Plaka No alanı boş olamaz!' : vergiKimlikNo ==="" ? 'Vergi Kimlik No alanı boş olamaz!' : "Belde alanı boş olamaz";
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Uyarı',
+                        text: uyarıMetni,
+                    });
+                    return;
+                }
+
+                //if GsmNo more than 10 digits
+
+                if (GsmNo.length > 10) {
+                    const uyariMetni2 = 'Gsm No 10 haneli olmalıdır!';
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Uyarı',
+                        text: uyariMetni2,
+                    });
+                    return;
+                }
+
+                setTahsilatTipi()
+                postGridElements(false, false, true);
+
+            });
+
+            document.getElementById('faturaForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+            });
+
+        });
+
+         function redirectInvoice() {
+             try {
+                 var muhatapPostaKutusu = document.getElementById("GibMuhatapPostaKutusu").value;
+
+                 if (muhatapPostaKutusu === "") {
+                     $("#type").attr('value', 1);
+                 }
+                 else {
+                     $("#type").attr('value', 0);
+                 }
+
+
+                 var form = document.getElementById("invoiceForm");
+                 form.target = '_blank';
+                 form.submit();
+
+                 form.target = '';
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+
+        }
+
+        function muhatapchange() {
+            var muhatapPostaKutusu = $("#GibMuhatapPostaKutusu").val();
+            if (muhatapPostaKutusu === "") {
+                $("#eFaturaText").text('e-Arşiv');
+            } else {
+                $("#eFaturaText").text('e-Fatura');
+            }
+
+        };
+
+        function iskontochange() {
+            var iskontoOrani = $("#IskontoOrani").val();
+            if (parseFloat(iskontoOrani) >= 0) {
+                //iskontoyu fatura toplamı ve iskonta oranından hesapla
+                var faturaToplami = parseFloat($("#WFIfatTop").val());
+                var iskontoOrani = parseFloat($("#IskontoOrani").val());
+                var iskontoTutari = parseFloat(faturaToplami * iskontoOrani / 100).toFixed(2);
+                $("#Iskonto").attr("value", parseFloat(iskontoTutari));
+                $("#Iskonto").val(parseFloat(iskontoTutari));
+                $("#IskontoOrani").attr("value", parseFloat(iskontoOrani));
+                UpdateAllTotals();
+            } 
+            
+        };
+
+        function setTahsilatTipi() {
+            var krediKartiInput = document.getElementById("KrediKartiTahsilatiInput").value;
+            var nakitInput = document.getElementById("NakitTahsilatInput").value;
+
+
+            var krediKartiInputNumber = parseFloat(krediKartiInput.replace(".", "").replace(",", "."));
+
+            var nakitInputNumber = parseFloat(nakitInput.replace(".", "").replace(",", "."));
+
+            // Girilen değerleri kontrol et
+            krediKartiInputNumber = isNaN(krediKartiInputNumber) ? 0 : krediKartiInputNumber;
+            nakitInputNumber = isNaN(nakitInputNumber) ? 0 : nakitInputNumber;
+
+            $("#KrediKartiTahsilati").attr('value', krediKartiInputNumber);
+            $("#NakitTahsilat").attr('value', nakitInputNumber);
+
+            var tahsilatTipiSelect = document.getElementById("tahsilatTipi");
+
+            // Girilen değerleri kontrol et
+            krediKartiInput = krediKartiInput.trim() === "0" ? "" : krediKartiInput;
+            nakitInput = nakitInput.trim() === "0" ? "" : nakitInput;
+
+
+            if (krediKartiInput && !nakitInput) {
+                tahsilatTipiSelect.value = "1";
+            } else if (!krediKartiInput && nakitInput) {
+                tahsilatTipiSelect.value = "0";
+            } else if (krediKartiInput && nakitInput) {
+                tahsilatTipiSelect.value = "2";
+            }
+        }
+
+        $(document).ready(function () {
+            setTahsilatTipi();
+            var muhatapPostaKutusu = $("#GibMuhatapPostaKutusu").val();
+            if (muhatapPostaKutusu === "") {
+                $("#eFaturaText").text('e-Arşiv');
+            } else {
+                $("#eFaturaText").text('e-Fatura');
+            }
+        });
+
+
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    var id = $('#hiddenFatId').val();
+                    window.location.href = `/TohalFaturas/Delete?faturaid=${id}&kullaniciId=${0}`
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+
+        function apiRequest(reqUrl, trgt) {
+            $.ajax({
+                url: reqUrl,
+                type: "GET",
+                success: function (e) {
+                    loadModal(e, trgt);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('#Sifati').on('change', function () {
+                var selectedValue = $(this).val();
+                $(this).find('option').removeAttr('selected').filter('[value="' + selectedValue + '"]').attr('selected', true);
+                $("#Sifati").attr('value', selectedValue);
+            });
+        });
+
+        //VergiKimlikNo inputu değiştiğinde GibMuhatapIrsaliyeKutusuBut ve GibMuhatapPostaKutusuBut buttonlarının click eventlerini değiştirir.
+
+        $('#VergiKimlikNo').on('change', function () {
+            vknchanged();
+        });
+
+        function vknchanged(){
+            var muhatapEFPath = "/Common/GibPostaKutular?target=GibMuhatapPostaKutusu&vkn=" + $('#VergiKimlikNo').val() + "&dokTip=0";
+            var muhatapEIPath = "/Common/GibPostaKutular?target=GibMuhatapIrsaliyeKutusu&vkn=" + $('#VergiKimlikNo').val() + "&dokTip=1";
+            document.getElementById("GibMuhatapPostaKutusuBut").setAttribute("onclick", "apiRequest('" + muhatapEFPath + "','muhatappostakutusu')");
+            document.getElementById("GibMuhatapIrsaliyeKutusuBut").setAttribute("onclick", "apiRequest('" + muhatapEIPath + "','muhatapirspostakutusu')");
+        }
+        function handleKisilikTipiChange() {
+            var kisilikTipi = document.getElementById("KisilikTipi").value;
+            var vergiKimlikNoInput = document.getElementById("VergiKimlikNo");
+
+            if (kisilikTipi == 2) {
+                maxLength = 10;
+            }
+            else {
+                maxLength = 11;
+            }
+        }
+
+        function handleCharacterCount() {
+            var characterCount = document.getElementById("VergiKimlikNo").value.length;
+            if (characterCount > maxLength) {
+                document.getElementById("VergiKimlikNo").value = document.getElementById("VergiKimlikNo").value.slice(0, maxLength);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            handleKisilikTipiChange()
+            handleCharacterCount();
+        });
+        function checkDisableYer() {
+            $(il).val() ? $(ilce).prop("disabled", false) : null;
+            $(il).val() ? $(ilceBtn).prop("disabled", false) : null;
+
+            $(ilce).val() ? $(belde).prop("disabled", false) : null;
+            $(ilce).val() ? $(beldeBtn).prop("disabled", false) : null;
+        }
+
+        $("#EFaturaSenaryosuBox").change(function () {
+            $("#EFaturaSenaryosu").attr('value', $(this).val());
+
+        });
+
+        document.getElementById('faturaAktarmaForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+        });
+
+        function faturaAktar() {
+            // Form verilerini serialize ediyoruz
+            var formData = $("#faturaAktarmaForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/TohalFaturas/FaturaAktarma",
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        ShowAlert(true, response.message);
+                    }
+                    else {
+                        ShowAlert(false, "Fatura Hata " + response.message);
+                    }
+                },
+                error: function (error) {
+                    ShowAlert(false, "Fatura Hata " + error);
+
+                }
+            });
+        }
+    </script>
+
+
+}

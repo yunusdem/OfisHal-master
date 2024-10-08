@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.title = "Kayıtlı Künyeleri Al";
+
+    ViewBag.pagetitle = "Alış İşlemleri";
+    ViewBag.ptitle = "Kayıtlı Künyeleri Al";
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-lg-8">
+            @*  <div class="row">
+            <div class="col-lg-3">
+            <div class="row">
+            <label for="firstDate" class="col-sm-5 col-form-label">
+            İlk Tarih
+            </label>
+            <div class="col-sm-7">
+            <input type="text" name="firstDate" id="firstDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+            </div>
+            <div class="row">
+            <label for="lastDate" class="col-sm-5 col-form-label">
+            Son Tarih
+            </label>
+            <div class="col-sm-7">
+            <input type="text" name="lastDate" id="lastDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+            </div>
+            </div>
+            <div class="col-lg-5">
+            <div class="row">
+            <label for="minKg" class="col-sm-5 col-form-label">
+            Kilo Alt Sınrı
+            </label>
+            <div class="col-sm-7">
+            <input type="number" value="0" name="minKg" id="minKg" class="form-control form-control-sm" />
+            </div>
+            </div>
+            <div class="row">
+            <label for="placeDelivery" class="col-sm-5 col-form-label">
+            Teslimat Yeri
+            </label>
+            <div class="col-sm-7">
+            <select class="form-select form-select-sm" data-choices id="placeDelivery" name="placeDelivery" asp-items="ViewBag.teslimatyerler">
+            <option></option>
+            </select>
+            </div>
+            </div>
+            </div>
+            <div class="col-lg-4">
+            <div class="row">
+            <div class="col">
+            <label for="minKap" class="col-sm-6 col-form-label">
+            Kap Alt Sınrı
+            </label>
+            <div class="col-sm-6">
+            <input type="number" value="0" name="minKap" id="minKap" class="form-control form-control-sm" />
+            </div>
+            </div>
+            <div class="col">
+            <select class="form-select form-select-sm" id="targetAccount" name="targetAccount">
+            <option>Sınırın Üstündekiler</option>
+            <option>Sınırın Altındakiler</option>
+            <option>Hepsi</option>
+            </select>
+            </div>
+
+            </div>
+            <div class="row">
+            <label for="targetAccount" class="col-sm-3 col-form-label">Sifat</label>
+            <div class="col-sm-9">
+            <select class="form-select form-select-sm" id="targetAccount" name="targetAccount">
+            <option>Hepsi</option>
+            <option>İhracat</option>
+            <option>İtahlat</option>
+            </select>
+            </div>
+            </div>
+
+            </div>
+            </div> *@
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="firstDate" class="col-sm-4 col-form-label">
+                            İlk Tarih
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="firstDate" id="firstDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="minKg" class="col-sm-4 col-form-label">
+                            Kilo Alt Sınrı
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="number" value="0" name="minKg" id="minKg" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <label for="lastDate" class="col-sm-4 col-form-label">
+                            Son Tarih
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="lastDate" id="lastDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="placeDelivery" class="col-sm-4 col-form-label">
+                            Teslimat Yeri
+                        </label>
+                        <div class="col-sm-8">
+                            <select class="form-select form-select-sm" data-choices id="placeDelivery" name="placeDelivery" asp-items="ViewBag.teslimatyerler">
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col d-flex">
+                            <label for="minKap" class="col-sm-6 col-form-label">
+                                Kap Alt Sınrı
+                            </label>
+                            <div class="col-sm-6">
+                                <input type="number" value="0" name="minKap" id="minKap" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <select class="form-select form-select-sm" id="targetAccount" name="targetAccount">
+                                <option>Sınırın Üstündekiler</option>
+                                <option>Sınırın Altındakiler</option>
+                                <option>Hepsi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="targetAccount" class="col-sm-4 col-form-label">Sifat</label>
+                        <div class="col-sm-8">
+                            <select class="form-select form-select-sm" id="targetAccount" name="targetAccount">
+                                <option>Hepsi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col" data-simplebar style="max-height: 230px;">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Seç</th>
+                                <th>Tarih</th>
+                                <th>Giriş Tarihi</th>
+                                <th>Künye</th>
+                                <th>Mal Adı</th>
+                                <th>Kap</th>
+                                <th>Kilo</th>
+                                <th>Fiyat</th>
+                                <th>Gönderen Kimlik No</th>
+                                <th>Gönderen</th>
+                                <th>Üretici</th>
+                                <th>Teslimat Yeri</th>
+                                <th>Plaka No</th>
+                                <th>Belge No</th>
+                                <th>Sifatı</th>
+                                <th>Bildirim Miktarı</th>
+                                <th>Rüsum</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <button class="btn btn-sm btn-success">Künyeleri Getir</button>
+                            <button class="btn btn-sm btn-danger my-1">Vazgeç</button>
+                            <button class="btn btn-sm btn-secondary">Alış Faturası Oluştur</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-sm btn-secondary">Sıfırla</button>
+                            <button class="btn btn-sm btn-secondary my-1">Hks Ürünlerini Al</button>
+                            <button class="btn btn-sm btn-secondary">Excele Aktar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <label for="kunyeTuru" class="col-sm-4 col-form-label">
+                            Künye Türü
+                        </label>
+                        <div class="col-sm-8">
+                            <select class="form-select form-select-sm" data-choices id="kunyeTuru" name="kunyeTuru">
+                                <option>Nihai Tüketim</option>
+                                <option>Referans Künye</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="costInclude" name="costInclude">
+                            <label class="form-check-label" for="costInclude">
+                                Ürünleri Tek Olarak Al
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="costInclude" name="costInclude">
+                            <label class="form-check-label" for="costInclude">
+                                Kullanımdan Kaldırılanları Göster
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

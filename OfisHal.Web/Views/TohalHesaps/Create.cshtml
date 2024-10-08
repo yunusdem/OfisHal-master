@@ -1,0 +1,171 @@
+﻿@model OfisHal.Web.Models.VohalHesap
+
+@{
+    ViewBag.title = "Yeni Hesap";
+
+    ViewBag.pagetitle = "Kasa İşlemleri";
+    ViewBag.pagesubtitle = "Hesap";
+    ViewBag.ptitle = "Yeni Hesap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalHesaps/Create";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/Hesaplar?isNavigator=true&target=null";
+    ViewBag.firstDataUrl = "/TohalHesaps/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "";
+    ViewBag.afterDataUrl = "";
+    ViewBag.lastDataUrl = "/TohalHesaps/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = true;
+}
+@section styles {
+    <style>
+        .numericInput {
+            text-align: end;
+            direction: ltr;
+        }
+    </style>
+}
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" action="@Url.Action("Create")">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label for="Kod" class="col-sm-4 col-form-label pb-0">Hesap Kodu</label>
+                <div class="col-sm-8">
+                    <input name="Kod" id="Kod" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kod)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="Ad" class="col-sm-4 col-form-label pb-0">Hesap Adı</label>
+                <div class="col-sm-8">
+                    <input name="Ad" id="Ad" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Ad)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="KdvOrani" class="col-sm-4 col-form-label pb-0">Kdv %</label>
+                <div class="col-sm-3">
+                    <input type="number" name="KdvOrani" id="KdvOrani" class="form-control form-control-sm" min="0" max="99" value="0"/>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.KdvOrani)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="IscilikKiloKatsayisi" class="col-sm-4 col-form-label pb-0">İşçilik Kilo Katsayısı</label>
+                <div class="col-sm-3">
+                    <input type="text" name="IscilikKiloKatsayisi" id="IscilikKiloKatsayisi" class="form-control form-control-sm numericInput" value="00,000000" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.IscilikKiloKatsayisi)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="IscilikAdetKatsayisi" class="col-sm-4 col-form-label pb-0">İşçilik Adet Katsayısı</label>
+                <div class="col-sm-3">
+                    <input type="text" name="IscilikAdetKatsayisi" id="IscilikAdetKatsayisi" class="form-control form-control-sm numericInput" value="00,000000" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.IscilikAdetKatsayisi)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="KesintiOrani" class="col-sm-4 col-form-label pb-0">Kesinti Oranı %</label>
+                <div class="col-sm-3">
+                    <input type="text" data-type="num" name="KesintiOrani" id="KesintiOrani" class="form-control form-control-sm" value="0" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.KesintiOrani)</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="YilsonuDevri" name="YilsonuDevri" value="true">
+                        <label class="form-check-label" for="YilsonuDevri">Yıl Sonu Bakiye Devri Yapılacak</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="RehinDevri" name="RehinDevri" value="true">
+                        <label class="form-check-label" for="RehinDevri">Rehin Devri</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        var inputs = document.querySelectorAll(".numericInput");
+        for (var i = 0; i < inputs.length; i++) {
+            new Cleave(inputs[i], {
+                numeral: true,
+                numeralDecimalScale: 6,
+                numeralIntegerScale: 2,
+                delimiter: ".",
+                numeralDecimalMark: ","
+            });
+            inputs[i].addEventListener("focus", function () { this.select(); });
+        }
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "arabtn":
+                    sessionStorage.getItem('hesapId') > 0 ? window.location.href = `/TohalHesaps/Edit/${sessionStorage.getItem('hesapId')}` : null;
+                    sessionStorage.removeItem("hesapId");
+                    break;
+            }
+        });
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+    </script>
+}
+

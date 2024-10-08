@@ -1,0 +1,60 @@
+﻿<div class="row mb-1">
+    <div class="col-lg-3 btn-group btn-group-sm d-flex justify-content-start align-items-center">
+        @*Yeni Kayıt*@
+        <button type="button" id="newData" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='@ViewBag.addUrl'">
+            <i class="ri-file-add-line fs-6"></i>
+            <span>Yeni</span>
+        </button>
+        @*Kaydet*@
+        <button type="button" id="navigatorSaveBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-save-line fs-6"></i>
+            <span>Kaydet</span>
+        </button>
+        @*Kayıt Ara*@
+        <button id="arabtn" type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" data-btarget="arabtn" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@ViewBag.searchUrl">
+            <i class="ri-search-line fs-6"></i>
+            <span>Ara</span>
+        </button>
+        @*İlk Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='@ViewBag.firstDataUrl'">
+            <i class="ri-skip-back-line fs-6"></i>
+            <span>İlk</span>
+        </button>
+        @*Önceki Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='@ViewBag.beforeDataUrl'" @(ViewBag.disabledBeforeAfter ? "disabled" : "")>
+            <i class="ri-rewind-line fs-6"></i>
+            <span>Önceki</span>
+        </button>
+        @*Sonraki Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='@ViewBag.afterDataUrl'" @(ViewBag.disabledBeforeAfter ? "disabled" : "")>
+            <i class="ri-speed-line fs-6"></i>
+            <span>Sonraki</span>
+        </button>
+        @*Son Kayıt*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='@ViewBag.lastDataUrl'">
+            <i class="ri-skip-forward-line fs-6"></i>
+            <span>Son</span>
+        </button>
+        @*Sil*@
+        <button type="button" id="recordDeleteBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" @(ViewBag.disabledBeforeAfter ? "disabled" : "")>
+            <i class="ri-delete-bin-line fs-6"></i>
+            <span>Sil</span>
+        </button>
+        @if (ViewBag.raporYazdirVar ?? false)
+        {
+            @*Yazdır*@
+            <a href="@ViewBag.belgeUrl" target="_blank" id="belgeBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+                <i class="ri-printer-line fs-6"></i>
+                <span>Yazdır</span>
+            </a>
+
+            @*Rapor*@
+            <a href="@ViewBag.raporUrl" target="_blank" id="raporBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+                <i class="ri-file-list-2-line fs-6"></i>
+                <span>Rapor</span>
+            </a>
+
+        }
+
+    </div>
+</div>

@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.title = "Stoksuz Entegrasyon";
+
+    ViewBag.pagetitle = "Döküm İşlemleri";
+    ViewBag.pagesubtitle = "Entegrasyon";
+    ViewBag.ptitle = "Stoksuz Entegrasyon";
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<form method="post">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <label for="date" class="col-sm-3 col-form-label pb-0">
+                    Tarih
+                </label>
+                <div class="col-sm-9">
+                    <input type="date" name="date" id="date" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="brand" class="col-sm-3 col-form-label pb-0">
+                    Marka
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="brand" name="brand" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="brand" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Markalar", "Common", new { target = "brand", kapandi = false })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div> 
+            <div class="row">
+                <label for="malKod" class="col-sm-3 col-form-label pb-0">
+                    Mal Kodu
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="malKod" name="malKod" class="form-control form-control-sm" />
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("MalKodlar", "Common", new { target = "malKod",isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="openDoc" id="openDoc" value="true">
+                        <label class="form-check-label" for="openDoc">
+                            Gün Bazında Döküm Aç
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <button class="btn btn-primary">Başlat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="row mt-1">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header p-2">
+                    <h6 class="card-title m-0">Satılan Mal</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-bordered mb-0">
+                        <tr>
+                            <th class="table-info">Fatura No</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Referans No</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Satır No</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Marka</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Mal Adı</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Kap</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /></td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Safi Kilo</th>
+                            <td class="p-0"><input type="text" class="form-control form-control-sm" /> </td>
+                        </tr>
+                        <tr>
+                            <th class="table-info">Fiyat</th>
+                            <td class="p-0"><input type="text" data-type="num" class="form-control form-control-sm" value="0"/></td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>*@
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+        });
+
+        $("#malKod").on("focusout", async function (e) {
+            await getData($(this), "/Common/MalGetir?isInput=True&target=malKod&codeOrName=true&inputType=name", "Kod", "MalId", e, null, null);
+        });
+        $("#brand").on("focusout", async function (e) {
+            await getData($(this), "/Common/MarkaGetir?target=brand&kapandi=false", "Marka", "MarkaId", e, null, null);
+        });
+    </script>
+}
+

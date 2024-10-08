@@ -1,0 +1,306 @@
+﻿@model VohalKapHareket
+@{
+    ViewBag.title = "Rehin İade Düzeltme";
+
+    ViewBag.pagetitle = "Müşteri Cari";
+    ViewBag.ptitle = "Rehin İade Düzeltme (Kayıt Arama)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/MusteriCari/RehinIadeDuzeltme";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/KapHareketler?kartTip=1";
+    ViewBag.firstDataUrl = "/MusteriCari/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "/MusteriCari/sonrakiOncekiKayit?afterOrBefore=false&currentId=" + Model.KapHareketId;
+    ViewBag.afterDataUrl = "/MusteriCari/sonrakiOncekiKayit?afterOrBefore=true&currentId=" + Model.KapHareketId;
+    ViewBag.lastDataUrl = "/MusteriCari/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = false;
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form action="@Url.Action("RehinIadeDuzeltme")" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="KapHareketId" id="KapHareketId" value="@Model.KapHareketId" />
+    <input type="hidden" name="RehinFisiId" id="RehinFisiId" value="@Model.RehinFisiId" />
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <input type="hidden" name="CariKartId" id="CariKartId" value="@Model.CariKartId" />
+                <label for="cariKartKod" class="col-sm-3 col-form-label pb-0">Cari Kod</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="cariKartKod" name="cariKartKod" class="form-control form-control-sm" data-id="@Model.CariKartId" value="@Model.CariKod" />
+                        <button type="button" data-btarget="code" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "cariKartKod", tip = 1,isInput = true ,inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="cariKartAd" class="col-sm-3 col-form-label pb-0">Cari Ad</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="cariKartAd" name="cariKartAd" class="form-control form-control-sm" data-id="@Model.CariKartId" value="@Model.CariAd" />
+                        <button type="button" data-btarget="name" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "cariKartAd", tip = 1,isInput = true ,inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tarih" class="col-sm-3 col-form-label pb-0">Tarih</label>
+                <div class="col-sm-4">
+                    <input type="date" name="Tarih" id="Tarih" class="form-control form-control-sm" value="@Model.Tarih.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="FaturaNo"> Fatura No</label>
+                <input type="hidden" name="FaturaId" id="FaturaId" value="@Model.FaturaId" />
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col pe-0">
+                            <input type="text" id="FaturaNo" name="FaturaNo" class="form-control form-control-sm" value="@Model.FaturaNo" readonly />
+                        </div>
+                        <div class="col ps-1">
+                            <input id="FaturaRefNo" name="FaturaRefNo" class="form-control form-control-sm" value="@Model.FaturaRefNo" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="KapId" id="KapId" value="@Model.KapId" />
+                <label class="col-sm-3 col-form-label pb-0" for="kapKodu">Kap Kodu</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="kapKodu" name="kapKodu" class="form-control form-control-sm" data-id="@Model.KapId" value="@Model.KapKodu" />
+                        <button type="button" data-btarget="kapCode" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("KapKodlar", "Common",new { target = "kapKodu", isInput = true, inputType = "code" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-3 col-form-label pb-0" for="kapAdi">Kap Adı</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="kapAdi" name="kapAdi" class="form-control form-control-sm" data-id="@Model.KapId" value="@Model.KapAdi" />
+                        <button type="button" data-btarget="kapName" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Kaplar", "Common",new { target = "kapAdi", isInput = true, inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Aciklama" class="col-sm-3 col-form-label pb-0">Açıklama</label>
+                <div class="col-sm-9">
+                    <input type="text" name="Aciklama" id="Aciklama" class="form-control form-control-sm" value="@Model.Aciklama" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Miktar" class="col-sm-3 col-form-label pb-0">Miktar</label>
+                <div class="col-sm-4">
+                    <input type="text" data-type="numNotDec" name="Miktar" id="Miktar" class="form-control form-control-sm" value="@Model.Miktar.ToString()" />
+                </div>
+                <div class="col-sm-4 d-flex">
+                    <input type="text" class="form-control form-control-sm" data-type="num" id="bakiye" value="0" disabled readonly /> <span id="borcAlacak" class="fs-4 fw-bold ms-1"></span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Fiyat" class="col-sm-3 col-form-label pb-0">Fiyat</label>
+                <div class="col-sm-4">
+                    <input type="text" data-type="num" name="Fiyat" id="Fiyat" class="form-control form-control-sm" value="@Model.Fiyat.ToString()" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tutar" class="col-sm-3 col-form-label pb-0">Tutar</label>
+                <div class="col-sm-4">
+                    <input type="text" data-type="num" name="Tutar" id="Tutar" class="form-control form-control-sm" value="@Model.Tutar.ToString()" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="Tip" class="col-sm-3 col-form-label pb-0">Hareket Tipi</label>
+                <div class="col-sm-4">
+                    <select id="Tip" name="Tip" class="form-control form-control-sm" disabled>
+                        <option value="0" @(Model.Tip == 0 ? "selected" : "")>Kap Iade</option>
+                        <option value="1" @(Model.Tip == 1 ? "selected" : "")>...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="IslenecegiHesap" class="col-sm-3 col-form-label pb-0">Hesap Tipi</label>
+                <div class="col-sm-4">
+                    <select id="IslenecegiHesap" name="IslenecegiHesap" class="form-control form-control-sm">
+                        <option value="0" @(Model.IslenecegiHesap == 0 ? "selected" : "")>Kasa</option>
+                        <option value="1" @(Model.IslenecegiHesap == 1 ? "selected" : "")>Müşeri</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    @Html.Partial("_ValidationScriptsPartial")
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        bakiyeSoyle();
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "code": autoFill("cariKartKod", "/Common/getCariById", false); break;
+                case "name": autoFill("cariKartAd", "/Common/getCariById", false); break;
+                case "kapCode": autoFill("kapKodu", "/Common/getKapById", true); break;
+                case "kapName": autoFill("kapAdi", "/Common/getKapById", true); break;
+                default:
+            }
+            if (target == "arabtn") {
+                sessionStorage.getItem('kapHareketId') > 0 ? window.location.href = `/MusteriCari/RehinIadeDuzeltme?id=${sessionStorage.getItem('kapHareketId')}` : null;
+                sessionStorage.removeItem("kapHareketId");
+            }
+        });
+        
+
+        $("#cariKartKod").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartKod&tip=1&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "code");
+            val.result ? autoFill("cariKartKod", "/Common/getCariById", false) : fillData(null, null, null, false);
+        });
+        $("#cariKartAd").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/cariGetir?isInput=True&target=cariKartAd&tip=1&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "name");
+            val.result ? autoFill("cariKartAd", "/Common/getCariById", false) : fillData(null, null, null, false);
+        });
+        $("#kapKodu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/KapGetir?isInput=True&target=kapKodu&codeOrName=true&inputType=code", "Kod", "KapId", e, null, "kapCode");
+            val.result ? autoFill("kapKodu", "/Common/getKapById", true) : fillData(null, null, null, true);
+        });
+        $("#kapAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/KapGetir?isInput=True&target=kapAdi&codeOrName=false&inputType=name", "Ad", "KapId", e, null, "kapName");
+            val.result ? autoFill("kapAdi", "/Common/getKapById", true) : fillData(null, null, null, true);
+        });
+
+        function autoFill(idValElement, reqUrl, kapYadaCari) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            if (parseInt(idVal) > 0) {
+                $.ajax({
+                    url: reqUrl,
+                    type: "GET",
+                    data: { id: parseInt(idVal) },
+                    cache: false,
+                    success: (res) => {
+                        //kapyadacari true ise kap false ise cari
+                        if (kapYadaCari) {
+                            fillData(res.KapId, res.Kod, res.Ad, kapYadaCari);
+                        } else {
+                            fillData(res.CariKartId, res.Kod, res.Ad, kapYadaCari);
+                        }
+                    }
+                });
+            } else {
+                fillData(null, null, null, kapYadaCari);
+            }
+        }
+        function fillData(id, kod, ad, kapYadaCari) {
+            //kapYadaCari eğer true ise kap işlemleri false ise cari işlemleri
+            if (kapYadaCari) {
+                $("#kapKodu").val(kod);
+                $("#kapAdi").val(ad);
+                $("#KapId").val(id);
+                $("#kapKodu").attr("data-id", id);
+                $("#kapAdi").attr("data-id", id);
+                if (id > 0) setTimeout(() => $("#kapAdi").closest('.row').next('.row').find('input').focus(), 100);
+            } else {
+                $("#cariKartKod").val(kod);
+                $("#cariKartAd").val(ad);
+                $("#CariKartId").val(id);
+                $("#cariKartKod").attr("data-id", id);
+                $("#cariKartAd").attr("data-id", id);
+                if (id > 0) setTimeout(() => $("#cariKartAd").closest('.row').next('.row').find('input').focus(), 100);
+            }
+        }
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+
+        function bakiyeSoyle() {
+            $.ajax({
+                url: "/MusteriCari/BakiyeSoyleAsync",
+                type: "GET",
+                data: { cariId: $("#CariKartId").val(), kapId: $("#KapId").val() },
+                cache: false,
+                success: (res) => {
+                    if (res != "" && res != null) {
+                        var posOrNeg = parseInt(res) > 0 ? true : false;
+                        if (!posOrNeg)
+                            res = res.slice(1);
+                        $("#bakiye").val(res);
+                        formatNumberInput(document.getElementById("bakiye"));
+                        posOrNeg ? $("#borcAlacak").text(" A") : $("#borcAlacak").text(" B");
+                    }
+                }
+            });
+        }
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    var id = $('#KapHareketId').val();
+                    window.location.href = `/MusteriCari/Delete?kapHareketId=${id}&kullaniciId=${0}`
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+    </script>
+}

@@ -1,0 +1,1096 @@
+﻿@model VohalFatura
+@{
+    ViewBag.Title = "Alış Faturası";
+    ViewBag.pTitle = "Alış Faturası";
+    ViewBag.pageTitle = "Alış İşlemleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = Model;
+    var FaturaModel = (List<VohalFaturaSatiriUrt>)ViewData["faturaModel"];
+    var FaturaToplamModel = (VohalFaturaSonToplam)ViewData["faturaToplam"];
+    var pgdown = "";
+    if (Model.Sifati == null || Model.Sifati == 0)
+    {
+        Model.Sifati = (byte)ViewData["tanimSifati"];
+    }
+    if (Model.BildirimTuru == null || Model.BildirimTuru == 0)
+    {
+        Model.BildirimTuru = (byte)ViewData["tanimBildirimTuru"];
+    }
+    var bakiye = ViewData["Bakiye"];
+    if (ViewData["Bakiye"] == null)
+    {
+        bakiye = 0;
+    }
+    else
+    {
+        bakiye = string.Format("{0:N2}", bakiye);
+    }
+    if (ViewData["nextModelId"] == null || (string)ViewData["nextModelId"] == "")
+    {
+        pgdown = "yeni";
+    }
+    if (Model.VergiKimlikNo != null)
+    {
+        Model.VergiKimlikNo = Model.VergiKimlikNo.Trim();
+    }
+    else
+    {
+        Model.VergiKimlikNo = "";
+    }
+    if (Model.FaturaNo == null)
+    {
+        Model.FaturaNo = "";
+    }
+    Model.CariUnvan = Model.CariUnvan == null || Model.CariUnvan == "" ? Model.Unvan : Model.CariUnvan;
+}
+@section styles {
+    <link rel="stylesheet" href="~/assets/css/icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick.columnpicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-icons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/js/SlickGrid/dist/styles/css/slick-alpine-theme.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <style>
+        #IhracatKuru {
+            text-align: end;
+            direction: ltr;
+        }
+    </style>
+}
+<div class="row mb-1">
+    <div class="col-lg-7 btn-group btn-group-sm d-flex justify-content-start align-items-center">
+        @*Yeni Kayıt*@
+        <button type="button" id="gridPostButtonNew" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-file-add-line fs-6"></i>
+            <span>Yeni</span>
+        </button>
+        @*Kaydet*@
+        <button type="button" id="gridPostButton" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-save-line fs-6"></i>
+            <span>Kaydet</span>
+        </button>
+        @*Kayıt Ara*@
+        <button type="button" id="kayitAraBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" data-btarget="arabtn" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Faturalar","Common",new {tip = 0})">
+            <i class="ri-search-line fs-6"></i>
+            <span>Ara</span>
+        </button>
+        @*İlk Kayıt*@
+        <button type="button" id="firstBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='/AlisIslemleri/ilkSonKayit?firstOrLast=true'">
+            <i class="ri-skip-back-line fs-6"></i>
+            <span>İlk</span>
+        </button>
+        @*Önceki Kayıt*@
+        <div>
+            <form method="post" action="/AlisIslemleri/Index">
+                <button type="submit" id="prevBtn" name="direction" class="btn btn-primary d-flex flex-column align-items-center me-1 rounded-0" style="padding: 4px 10px; font-size:12px;">
+                    <i class="ri-rewind-line fs-6"></i>
+                    <span>Önceki</span>
+                </button>
+                <input type="hidden" name="faturaId" value="@ViewData["prevModelId"]" />
+            </form>
+        </div>
+
+        @*Sonraki Kayıt*@
+        <form method="get" action="/AlisIslemleri/Index">
+            <input type="hidden" name="faturaId" value="@ViewData["nextModelId"]" />
+            <input type="hidden" name="pgdown" value="@pgdown" />
+            <button type="submit" id="nextBtn" name="direction" class="btn btn-primary d-flex flex-column align-items-center me-1 rounded-0" style="padding: 4px 10px; font-size:12px;">
+                <i class="ri-speed-line fs-6"></i>
+                <span>Sonraki</span>
+            </button>
+        </form>
+        @*Son Kayıt*@
+        <button type="button" id="lastBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="window.location.href='/AlisIslemleri/ilkSonKayit?firstOrLast=false'">
+            <i class="ri-skip-forward-line fs-6"></i>
+            <span>Son</span>
+        </button>
+        @*Sil*@
+        <button type="button" id="recordDeleteBtn" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1">
+            <i class="ri-delete-bin-line fs-6"></i>
+            <span>Sil</span>
+        </button>
+        @*Yazdır*@
+        <div class="dropdown">
+            <button href="#" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1 rounded-0" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:12px;">
+                <i class="ri-printer-line fs-6"></i>
+                <span>Yazdır</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/alisfaturasi/?IslemId=@Model.FaturaId" id="faturakes" target="_blank">Fatura</a>
+            </div>
+        </div>
+        @*Rapor*@
+        <div class="dropdown">
+            <button href="#" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1 rounded-0" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:12px;">
+                <i class="ri-file-list-2-line fs-6"></i>
+                Rapor
+            </button>
+
+            <div class="dropdown-menu">
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/exportreport/alisfaturasi/?IslemId=@Model.FaturaId" id="faturakes" target="_blank">Fatura</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/musteriveresiyedefteri" target="_blank">Veresiye Defteri</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/mustahsilcaridefteri" target="_blank">Cari Defteri</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/kasadefteri" target="_blank">Kasa Defteri</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/mustahsilkapcaridefteri" target="_blank">Kap Cari Defteri (Müstahsil)</a>
+                <a class="dropdown-item py-0 px-2" style="font-size: smaller;" href="/reports/details/musterikapcaridefteri" target="_blank">Kap Cari Defteri (Müşteri)</a>
+            </div>
+        </div>
+                @*HKS Hataları İsteği*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" data-bs-toggle="modal" data-bs-target="#hataliHksModal" data-remote-url="@Url.Action("HksHatalariGetir", "TohalFaturas")">
+            <i class="ri-file-4-fill fs-6"></i>
+            <span>xHKS</span>
+        </button>
+        @*E-Belge Bildirimi*@
+        <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="redirectInvoice()">
+            <i class="ri-file-4-fill fs-6"></i>
+            <span>E-Belge</span>
+        </button>
+        <span style="font-size:22px;"><span style="font-weight:bold;">Bakiye :</span> <span id="bakiyeText">@bakiye</span></span>
+    </div>
+</div>
+<form id="invoiceForm" action="/Invoice/EMustahsilMakbuzu" method="post" style="display:none;">
+    <input type="hidden" name="status" value="0">
+    <input type="hidden" name="startDate" value="@Model.Tarih">
+    <input type="hidden" name="endDate" value="@Model.Tarih">
+
+    <button type="button" class="btn btn-primary d-flex flex-column align-items-center p-1 me-1" onclick="submitForm()">
+        <i class="ri-file-4-fill fs-6"></i>
+        <span>E-Belge</span>
+    </button>
+</form>
+<input type="hidden" value="@Model.FaturaId" id="hiddenFatId" />
+<form id="faturaForm">
+    <div class="row mb-1">
+        <div class="col-12">
+            <div class="collapse show border rounded p-2" id="collapseExample2">
+                <div class="live-preview">
+
+                    @Html.HiddenFor(model => model.CariKartId, new { id = "hiddenCariKartId" })
+                    @Html.HiddenFor(model => model.MarkaId, new { id = "hiddenMarkaId" })
+                    @Html.HiddenFor(model => model.EklemeZamani)
+                    @Html.HiddenFor(model => model.GuncellemeZamani)
+                    @Html.HiddenFor(model => model.Degistirildi)
+                    @Html.HiddenFor(model => model.EkleyenId)
+                    @Html.HiddenFor(model => model.Tip, new { value = 0 })
+                    @*@Html.HiddenFor(model => model.Tarih, new { id = "TarihHidden" })*@
+                    @Html.HiddenFor(model => model.IrsaliyeZamani)
+                    @Html.HiddenFor(model => model.Zaman)
+                    @Html.HiddenFor(model => model.Guid)
+                    @Html.HiddenFor(model => model.Veresiye)
+                    @Html.HiddenFor(model => model.Kesildi)
+                    @Html.Hidden("IKesildi", false, new { id = "IKesildi" })
+                    @Html.Hidden("YerId", Model.BeldeId, new { id = "HiddenBeldeId" })
+                    @Html.HiddenFor(model => model.VergiDairesiId, new { id = "HiddenVergiDairesiId" })
+                    @Html.HiddenFor(model => model.Unvan)
+                    @Html.HiddenFor(model => model.Rusum)
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="row">
+                                <label for="CariKod" class="col-sm-2 col-form-label pb-0">Kod</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" id="CariKod" name="CariKod" value="@Model.CariKod" class="form-control form-control-sm" />
+                                        <button type="button" data-btarget="CariKod" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerCodes", "Common", new { target = "CariKod", tip = 0,isInput = true ,inputType = "code" })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.CariKod)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="CariUnvan" class="col-sm-2 col-form-label pb-0">Ad</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input id="CariUnvan" name="CariUnvan" value="@Model.CariUnvan" class="form-control form-control-sm" />
+                                        <button type="button" data-btarget="CariUnvan" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("ProducerNames", "Common", new { target = "CariUnvan", tip = 0,isInput = true ,inputType = "name" })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.CariUnvan)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GsmNo" class="col-sm-2 col-form-label pb-0">GSM</label>
+                                <div class="col-sm-10">
+                                    <input value="@Model.GsmNo" id="GsmNo" name="GsmNo" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GsmNo)</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end col-->
+                        <div class="col-lg-2">
+                            <div class="row">
+                                <label for="IlId" class="col-sm-2 col-form-label pb-0">İl</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" data-id="@Model.IlId" value="@Model.IlAdi" id="IlId" name="IlId" class="form-control form-control-sm" />
+                                        <button type="button" data-btarget="IlId" id="IlIdBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "IlId", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="IlceId" class="col-sm-2 col-form-label pb-0">İlce</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" data-id="@Model.IlceId" value="@Model.IlceAdi" id="IlceId" name="IlceId" class="form-control form-control-sm" disabled />
+                                        <button disabled data-btarget="IlceId" id="IlceIdBtn" type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "IlceId", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="BeldeId" class="col-sm-2 col-form-label pb-0">Belde</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" data-id="@Model.BeldeId" id="BeldeId" value="@Model.BeldeAdi" name="BeldeId" class="form-control form-control-sm" disabled />
+                                        <button disabled data-btarget="BeldeId" type="button" id="BeldeIdBtn" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Iller", "Common", new { target = "BeldeId", isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end col-->
+                        <div class="col-lg-3">
+                            <div class="row">
+                                <label for="VergiKimlikNo" class="col-sm-4 col-form-label pb-0">Kimlik No</label>
+                                <div class="col-sm-8">
+                                    <input value="@Model.VergiKimlikNo" id="VergiKimlikNo" type="number" name="VergiKimlikNo" class="form-control form-control-sm" style=" text-align: start; direction: unset;" oninput="handleCharacterCount()" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.VergiKimlikNo)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="IrsaliyeNo" class="col-sm-4 col-form-label pb-0 pe-0">İrsaliye No</label>
+                                <div class="col-sm-8">
+                                    <input value="@Model.IrsaliyeNo" id="IrsaliyeNo" name="IrsaliyeNo" class="form-control form-control-sm" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.IrsaliyeNo)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="PlakaNo" class="col-sm-4 col-form-label pb-0">Plaka No</label>
+                                <div class="col-sm-8">
+                                    <input value="@Model.PlakaNo" id="PlakaNo" name="PlakaNo" class="form-control form-control-sm" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.PlakaNo)</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end col-->
+                        <div class="col-lg-3">
+                            <div class="row">
+                                <label for="VergiDairesi" class="col-sm-4 col-form-label pb-0 pe-0">Vergi Daire</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" value="@Model.VergiDairesi" id="VergiDairesi" name="VergiDairesi" class="form-control form-control-sm" />
+                                        <button type="button" data-btarget="vergidairesiid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "VergiDairesi",tur = 2, isInput = true })">
+                                            Seç
+                                        </button>
+                                    </div>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.VergiDairesi)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="GidecegiYerTipi" class="col-sm-4 col-form-label pb-0">Gideceği Yer</label>
+                                <div class="col-sm-8">
+                                    <select value="@Model.GidecegiYerTipi" id="GidecegiYerTipi" name="GidecegiYerTipi" class="form-control form-control-sm">
+                                        <option value="0">Hal İçi Deposu</option>
+                                        <option value="1">Hal Dışı Deposu</option>
+                                        <option value="2">Hal İçi İşyeri</option>
+                                        <option value="3">Hal Dışı İşyeri</option>
+                                        <option value="4">Sınai İşletme</option>
+                                        <option value="5">Dağıtım Merkezi</option>
+                                        <option value="6">Bireysel Tüketim</option>
+                                        <option value="7">Perakende Satış Yeri</option>
+                                        <option value="8">Şube</option>
+                                        <option value="9">Tasnifleme Ve Ambajlama</option>
+                                    </select>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.GidecegiYerTipi)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="FaturaNo" class="col-sm-4 col-form-label pb-0 pe-0">Fatura No</label>
+                                <div class="col-sm-8">
+                                    <input value="@Model.FaturaNo" id="FaturaNo" name="FaturaNo" class="form-control form-control-sm" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.FaturaNo)</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end col-->
+                        <div class="col-lg-2">
+                            <div class="row">
+                                <label for="CariSifati" class="col-sm-4 col-form-label pb-0">Sıfatı</label>
+                                <div class="col-sm-8">
+                                    <select value="@Model.CariSifati" id="CariSifati" name="CariSifati" class="form-control form-control-sm">
+                                        @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                                        {
+                                            <option value="@Convert.ToInt32(sifat)" @(Convert.ToByte(sifat) == Model.CariSifati ? "selected" : "")>
+                                                @EnumHelperFunc.GetDisplayName((Sifat)sifat)
+                                            </option>
+                                        }
+                                    </select>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.CariSifati)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="KisilikTipi" class="col-sm-4 col-form-label pb-0">Kisilik Tipi</label>
+                                <div class="col-sm-8">
+                                    <select value="@Model.KisilikTipi" id="KisilikTipi" name="KisilikTipi" class="form-control form-control-sm" onchange="handleKisilikTipiChange()">
+                                        <option value="1">Şahıs</option>
+                                        <option value="0">Şahıs Firması</option>
+                                        <option value="2">Firma</option>
+                                    </select>
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.KisilikTipi)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="Vade" class="col-sm-4 col-form-label  pb-0">Vade</label>
+                                <div class="col-sm-8">
+                                    <input type="number" value="@Model.Vade" id="Vade" name="Vade" class="form-control form-control-sm" min="0" max="999" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Vade)</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <label for="Adres" class="col-sm-1 col-form-label pb-0">Adres</label>
+                                <div class="col-sm-11">
+                                    <input value="@Model.Adres" id="Adres" name="Adres" class="form-control form-control-sm" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Adres)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="row">
+                                <label for="Tarih" class="col-sm-4 col-form-label pb-0">Tarih</label>
+                                <div class="col-sm-8">
+                                    <input type="date" value="@Model.Tarih.ToString("yyyy-MM-dd")" id="Tarih" name="Tarih" class="form-control form-control-sm" />
+                                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Tarih)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end row-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-12">
+            <table width="100%">
+                <tr>
+                    <td valign="top" width="50%">
+                        <input type="hidden" id="gridKod" name="gridKod" />
+                        <input type="hidden" id="gridGonderen" name="gridGonderen" />
+                        <input type="hidden" id="gridMal" name="gridMal" />
+                        <input type="hidden" id="gridKap" name="gridKap" />
+                        <div id="myGrid" class="slick-container" style="height:180px;"></div>
+                        <div id="pager" style="width: 100%; height: 20px"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label class="col-sm-4 col-form-label pb-0" for="Sifati"> Sıfat / Bildirim Türü</label>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col pe-0">
+                            <select value="@Model.Sifati" id="Sifati" name="Sifati" class="form-select form-select-sm">
+                                @foreach (var sifat in Enum.GetValues(typeof(Sifat)))
+                                {
+                                    <option value="@Convert.ToInt32(sifat)" @(Convert.ToByte(sifat) == Model.Sifati ? "selected" : "")>
+                                        @EnumHelperFunc.GetDisplayName((Sifat)sifat)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col ps-1">
+                            <select value="@Model.BildirimTuru" id="BildirimTuru" name="BildirimTuru" class="form-select form-select-sm">
+                                <option value="17" @(17 == (byte)Model.BildirimTuru ? "selected" : "")>Üreticiden Sevk Alım</option>
+                                <option value="18" @(18 == (byte)Model.BildirimTuru ? "selected" : "")>Satın Alım</option>
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="TeslimatYeriId" class="col-sm-5 col-form-label">
+                    Teslimat Yeri
+                </label>
+                <div class="col-sm-7">
+                    @Html.DropDownList("TeslimatYeriId", ViewBag.TeslimatYer as SelectList, new { @class = "form-select form-select-sm" })
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-1 d-flex justify-content-center align-items-center">
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#malKdvModal" style="display:none;">Mal Kdv</button>
+        </div>
+        <div class="col-lg-2">
+            <input type="text" id="kdvCan" class="form-control form-control-sm" data-type="num" disabled />
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-lg-5">
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" for="EFaturaNot">E-Fatura Not</label>
+                    <input type="text" value="@Model.EFaturaNot" id="EFaturaNot" name="EFaturaNot" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col">
+                    <button id="kunyeAlButton" type="button" class="btn btn-sm btn-primary">Künye Al</button>
+                    <button type="button" class="btn btn-sm btn-primary" style="display:none;">Barkod Bas</button>
+                    <button type="button" class="btn btn-sm btn-primary" style="display:none;">Fatura Aktar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-sm btn-primary mt-1" onclick="changeText()"><i class="ri-file-search-line"></i>Pesin/Veresiye</button>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="FaturaKes()"><i class="ri-file-search-line"></i>Fatura Kes</button>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="IrsaliyeKes()"><i class="ri-file-search-line"></i>Irsaliye Kes</button>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="$('#faturaDetayBtn').trigger('click')"><i class="ri-file-search-line"></i>Fatura Detay</button>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="$('#kesilmemisFaturalarBtn').trigger('click')" style="display:none;"><i class="ri-file-search-line"></i>Kesilmemiş Faturalar</button>
+                    <button class="btn btn-sm btn-primary mt-1" onclick="$('#kesilmemisFaturalarHepsiBtn').trigger('click')" style="display:none;"><i class="ri-file-search-line"></i>Kesilmemiş Faturalar(Hepsi)</button></br>
+                </div>
+                <div class="col-sm-12">
+                    @if (Model.Kesildi.HasValue && Model.Kesildi.Value)
+                    {
+                        <span id="kesildiText" name="kesildiText" class="fw-bold fs-3">K</span>
+                    }
+                    else
+                    {
+                        <span id="kesildiText" name="kesildiText" class="fw-bold fs-3"></span>
+                    }
+
+                    @if (Model.Veresiye.HasValue && Model.Veresiye.Value)
+                    {
+                        <span id="pesinText" name="pesinText" class="fw-bold fs-3">V</span>
+                    }
+                    else
+                    {
+                        <span id="pesinText" name="pesinText" class="fw-bold fs-3">P</span>
+                    }
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <label for="IadesizKapKdv" class="col-sm-5 col-form-label pb-0">İadesiz Kap</label>
+                <div class="col-sm-7">
+                    <input value="@Model.IadesizKapKdv" id="IadesizKapKdv" name="IadesizKapKdv" class="form-control form-control-sm" data-type="num" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-5 col-form-label pb-0" for="IadesizKapKdvOrani"> Kap Kdv</label>
+                <div class="col-sm-7">
+                    <div class="row">
+                        <div class="col-lg-3 pe-0">
+                            <input value="@Model.IadesizKapKdvOrani" id="IadesizKapKdvOrani" name="IadesizKapKdvOrani" class="form-control form-control-sm" data-type="num" />
+                        </div>
+                        <div class="col-lg-9 ps-1">
+                            <input disabled class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="KdvsizIadesizKap" class="col-sm-5 col-form-label pb-0">Kadvsiz İadesiz Kap</label>
+                <div class="col-sm-7">
+                    <input value="@Model.KdvsizIadesizKap" id="KdvsizIadesizKap" name="KdvsizIadesizKap" class="form-control form-control-sm" data-type="num" />
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <label>Fat.Top</label>
+                <input id="WFIfatTop" type="hidden" />
+
+                <span id="fatTop" class="fw-bold fs-3">@FaturaToplamModel.FaturaSonToplam</span>
+            </div>
+            <div class="row">
+                <label for="rehin" class="col-sm-5 col-form-label pb-0">Iskonto Orani / Iskonto</label>
+                <div class="col-sm-3">
+                    <input id="IskontoOrani" value="@Model.IskontoOrani" class="form-control form-control-sm" data-type="num" />
+                    <input type="hidden" value="@Model.IskontoOrani" id="iskontooran" />
+                </div>
+                <div class="col-sm-4">
+                    <input id="Iskonto" value="@Model.Iskonto" class="form-control form-control-sm" data-type="num" />
+                    <input type="hidden" value="@Model.Iskonto" id="totaliskontoVal" />
+
+                </div>
+            </div>
+            <div class="row">
+                <label for="rehin" class="col-sm-5 col-form-label pb-0">Masraf</label>
+                <div class="col-sm-7">
+                    <input id="masraf" name="masraf" class="form-control form-control-sm" data-type="num" />
+                    <input type="hidden" id="totalmasraf" />
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <label>Son.Top</label>
+                <span id="sonTop" class="fw-bold fs-3">@FaturaToplamModel.FaturaSonToplam</span>
+
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <input type="hidden" name="gridHesap" id="gridHesap" />
+            <div id="evrakGrid" class="slick-container" style="height:200px;"></div>
+            <div id="pager" style="width: 100%; height: 20px"></div>
+        </div>
+    </div>
+    <ul id="contextMenu" style="display:none;position:absolute">
+        <div class="context-header">Satış Tipi:</div>
+        <li data="Ticari">- Ticari</li>
+        <li data="Komisyon">- Komisyon</li>
+    </ul>
+
+    <div id="inlineFilterPanel" style="
+    display: none;
+    background: #f6f6f6;
+    color: black;
+    height: 100%;
+    padding: 4px;
+  ">
+        Show tasks with title including <input type="text" id="txtSearch2" />
+        and % at least &nbsp;
+        <input style="width: 100px; display: inline-block" id="pcSlider2" type="range" min="1" max="100" value="1" />
+    </div>
+
+    <div class="modal fade" id="selectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Seçim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="allDataTable" class="table" tabindex="0"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("~/Views/Shared/_FaturaDetay.cshtml")
+</form>
+
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="hataliHksModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Hatalı Hks İstekleri</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body" id="hataliHksModalBody">
+
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var IsType = 0;
+    </script>
+    @Html.Partial("~/Views/Shared/_FaturaKisayollar.cshtml")
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs/Sortable.min.js"></script>
+
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.core.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.interactions.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.grid.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.formatters.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.editors.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/plugins/slick.rowselectionmodel.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/slick.dataview.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.pager.js"></script>
+    <script src="~/assets/js/SlickGrid/dist/browser/controls/slick.columnpicker.js"></script>
+    @Html.Partial("~/Views/AlisIslemleri/Partials/_faturaGrid.cshtml")
+    @Html.Partial("~/Views/AlisIslemleri/Partials/_evrakMasraflarGrid.cshtml")
+
+    <script>
+        var maxlenght = 20;
+        /*Fatura Detay İşlemleri*/
+        new Cleave("#IhracatKuru", {
+            numeral: true,
+            numeralDecimalScale: 6,
+            numeralIntegerScale: 3,
+            delimiter: ".",
+            numeralDecimalMark: ","
+        });
+        /*Fatura Detay İşlemleri*/
+        var uyari = @Html.Raw(Json.Encode(ViewBag.resultText));
+        if (uyari != null && uyari.message?.length > 0) {
+            ShowAlert(uyari.state, uyari.message);
+        }
+        var il = $("#IlId");
+        var ilce = $("#IlceId");
+        var belde = $("#BeldeId");
+        var ilBtn = $("#IlIdBtn");
+        var ilceBtn = $("#IlceIdBtn");
+        var beldeBtn = $("#BeldeIdBtn");
+
+        checkDisableYer();
+
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var ilDataId = document.getElementById("IlId").getAttribute("data-id");
+            var ilceDataId = document.getElementById("IlceId").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "IlceId": ilDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilDataId}`) : null; break;
+                    case "BeldeId": ilceDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilceDataId}`) : null; break;
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+        $(document).on("show.bs.modal", "#hataliHksModal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#hataliHksModalBody");
+            container.empty();
+            container.load(btn.data("remote-url"));
+        });
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+
+            var gondMarka = document.getElementById("gridGonderen").getAttribute("data-marka");
+            var gondName = document.getElementById("gridGonderen").getAttribute("data-name");
+            var gondCode = document.getElementById("gridGonderen").getAttribute("data-code");
+            var malId = document.getElementById("gridMal").getAttribute("data-id");
+            var kapId = document.getElementById("gridKap").getAttribute("data-id");
+            var hiddenHesap = document.getElementById("gridHesap");
+            var hesaporan = document.getElementById("gridHesap").getAttribute("data-kdvoran");
+            var kesoran = document.getElementById("gridHesap").getAttribute("data-kesoran");
+
+            switch (target) {
+                case "IlId": if (document.getElementById("IlId").getAttribute("data-id") > 0) enableDisableFields(true, false, false, false, ilce, document.getElementById("IlId").getAttribute("data-id")); break;
+                case "IlceId": if (document.getElementById("IlceId").getAttribute("data-id") > 0) enableDisableFields(true, true, true, false, belde, document.getElementById("IlceId").getAttribute("data-id")); break;
+                case "BeldeId": if (document.getElementById("BeldeId").getAttribute("data-id") > 0) $("#HiddenBeldeId").val(document.getElementById("BeldeId").getAttribute("data-id")); break;
+                case "vergidairesiid": if (document.getElementById("VergiDairesi").getAttribute("data-id") > 0) $("#HiddenVergiDairesiId").val(document.getElementById("VergiDairesi").getAttribute("data-id")); break;
+                case "CariKod": autoFill("CariKod"); break;
+                case "CariUnvan": autoFill("CariUnvan"); break;
+                case "gonderen": updateMusteriCell(gondMarka, gondName, gondCode); goToNextCol(); break;
+                case "mal": updateMalCell(malId, $("#gridMal").val()); goToNextCol(); break;
+                case "kap": updateKapCell(kapId, $("#gridKap").val()); goToNextCol(); break;
+                case "hesap": updateHesapCell(hiddenHesap.getAttribute("data-id"), hiddenHesap.getAttribute("value"), hesaporan, kesoran); break;
+                /*Fatura Detay İşlemleri*/
+                case "soforadi": document.getElementById("SoforAdi").getAttribute("data-id") > 0 ? $("#SoforId").val(document.getElementById("SoforAdi").getAttribute("data-id")) : $("#SoforId").val(null); break;
+                case "parabirimi": document.getElementById("IhracatParaBirimi").getAttribute("data-id") > 0 ? $("#IhracatParaBirimiId").val(document.getElementById("IhracatParaBirimi").getAttribute("data-id")) : $("#IhracatParaBirimiId").val(null); break;
+                case "teslimatsekli": document.getElementById("TeslimatSekli").getAttribute("data-id") > 0 ? $("#TeslimatSekliId").val(document.getElementById("TeslimatSekli").getAttribute("data-id")) : $("#TeslimatSekliId").val(null); break;
+                case "ulasimsekli": document.getElementById("UlasimSekli").getAttribute("data-id") > 0 ? $("#UlasimSekliId").val(document.getElementById("UlasimSekli").getAttribute("data-id")) : $("#UlasimSekliId").val(null); break;
+                case "odemesekli": document.getElementById("OdemeSekli").getAttribute("data-id") > 0 ? $("#OdemeSekliId").val(document.getElementById("OdemeSekli").getAttribute("data-id")) : $("#OdemeSekliId").val(null); break;
+                case "siparisno": document.getElementById("SiparisNo").getAttribute("data-id") > 0 ? $("#SiparisId").val(document.getElementById("SiparisNo").getAttribute("data-id")) : $("#SiparisId").val(null); break;
+                case "reffatura": document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id") > 0 ? $("#FiyatReferansFaturaId").val(document.getElementById("FiyatReferansFaturaNo").getAttribute("data-id")) : $("#FiyatReferansFaturaId").val(null); break;
+                case "haladi": document.getElementById("HalAdi").getAttribute("data-id") > 0 ? $("#HalId").val(document.getElementById("HalAdi").getAttribute("data-id")) : $("#HalId").val(null); break;
+                case "firmapostakutusu": document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id") > 0 ? $("#GibFirmamizPostaKutusuId").val(document.getElementById("GibFirmamizPostaKutusu").getAttribute("data-id")) : $("#GibFirmamizPostaKutusuId").val(null); break;
+                case "muhatappostakutusu": document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id") > 0 ? $("#GibMuhatapPostaKutusuId").val(document.getElementById("GibMuhatapPostaKutusu").getAttribute("data-id")) : $("#GibMuhatapPostaKutusuId").val(null); break;
+                case "firmairspostakutusu": document.getElementById("GibFirmamizIrsaliyeKutusu").getAttribute("data-id") > 0 ? $("#GibFirmamizIrsaliyeKutusuId").val(document.getElementById("GibFirmamizIrsaliyeKutusu").getAttribute("data-id")) : $("#GibFirmamizIrsaliyeKutusuId").val(null); break;
+                case "muhatapirspostakutusu": document.getElementById("GibMuhatapIrsaliyeKutusu").getAttribute("data-id") > 0 ? $("#GibMuhatapIrsaliyeKutusuId").val(document.getElementById("GibMuhatapIrsaliyeKutusu").getAttribute("data-id")) : $("#GibMuhatapIrsaliyeKutusuId").val(null); break;
+                /*Fatura Detay İşlemleri*/
+                case "arabtn":
+                    sessionStorage.getItem('faturaId') > 0 ? window.location.href = `/AlisIslemleri/Index?faturaId=${sessionStorage.getItem('faturaId')}` : null;
+                    sessionStorage.removeItem("faturaId");
+                    break;
+
+            }
+        });
+        il.on("focusout", async function (e) {
+            var val = await getDataCustom($(this), "/Common/ilGetir?isInput=True&target=IlId", "Ad", "YerId", e, null, "IlId");
+            val.result ? enableDisableFields(true, false, false, false, ilce, val.data.YerId) : enableDisableFields(false, false, false, false, null, 0); //il yoksa hepsi pasif olacak
+        });
+        ilce.on("focusout", async function (e) {
+            var val = await getDataCustom($(this), "/Common/ilceGetir?isInput=True&target=IlceId", "Ad", "YerId", e, document.getElementById("IlId").getAttribute("data-id"), "IlceId");
+            val.result ? enableDisableFields(true, true, true, false, belde, val.data.YerId) : enableDisableFields(true, true, false, false, null, document.getElementById("IlId").getAttribute("data-id")); // ilce yoksa belde pasif
+        });
+        belde.on("focusout", async function (e) {
+            var val = await getDataCustom($(this), "/Common/ilceGetir?isInput=True&target=BeldeId", "Ad", "YerId", e, document.getElementById("IlceId").getAttribute("data-id"), "BeldeId");
+            val.result ? $("#HiddenBeldeId").val(val.data.YerId) : $("#HiddenBeldeId").val(document.getElementById("IlId").getAttribute("data-id"));;
+        });
+        $("#CariKod").on("focusout", async function (e) {
+            var val = await getDataCustom($(this), "/Common/cariGetir?isInput=True&target=CariKod&tip=0&codeOrName=true&inputType=code", "Kod", "CariKartId", e, null, "CariKod");
+            _ = val.result ? autoFill("CariKod") : null;
+
+        });
+        $("#CariUnvan").on("focusout", async function (e) {
+            var val = await getDataCustom($(this), "/Common/cariGetir?isInput=True&target=CariUnvan&tip=0&codeOrName=false&inputType=name", "Ad", "CariKartId", e, null, "CariUnvan");
+            _ = val.result ? autoFill("CariUnvan") : null;
+        });
+        $("#VergiDairesi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=VergiDairesi&tur=2", "Ad", "TabloMaddesiId", e, null, "vergidairesiid");
+            val.result ? $("#HiddenVergiDairesiId").val(val.data.TabloMaddesiId) : $("#HiddenVergiDairesiId").val(null);
+        });
+        /*Fatura Detay İşlemleri*/
+        $("#SoforAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=SoforAdi&tur=15", "Ad", "TabloMaddesiId", e, null, "soforadi");
+            val.result ? $("#SoforId").val(val.data.TabloMaddesiId) : $("#SoforId").val(null);
+        });
+        $("#IhracatParaBirimi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=IhracatParaBirimi&tur=14", "Ad", "TabloMaddesiId", e, null, "parabirimi");
+            val.result ? $("#IhracatParaBirimiId").val(val.data.TabloMaddesiId) : $("#IhracatParaBirimiId").val(null);
+        });
+        $("#TeslimatSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=TeslimatSekli&tur=11", "Ad", "TabloMaddesiId", e, null, "teslimatsekli");
+            val.result ? $("#TeslimatSekliId").val(val.data.TabloMaddesiId) : $("#TeslimatSekliId").val(null);
+        });
+        $("#UlasimSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=UlasimSekli&tur=12", "Ad", "TabloMaddesiId", e, null, "ulasimsekli");
+            val.result ? $("#UlasimSekliId").val(val.data.TabloMaddesiId) : $("#UlasimSekliId").val(null);
+        });
+        $("#OdemeSekli").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=OdemeSekli&tur=13", "Ad", "TabloMaddesiId", e, null, "odemesekli");
+            val.result ? $("#OdemeSekliId").val(val.data.TabloMaddesiId) : $("#OdemeSekliId").val(null);
+        });
+        $("#SiparisNo").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/SiparisGetir?isInput=True&target=SiparisNo", "SiparisNo", "SiparisId", e, null, "siparisno");
+            val.result ? $("#SiparisId").val(val.data.SiparisId) : $("#SiparisId").val(null);
+        });
+        $("#HalAdi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HalGetir?isInput=True&target=HalAdi", "Ad", "HalId", e, null, "haladi");
+            val.result ? $("#HalId").val(val.data.HalId) : $("#HalId").val(null);
+        });
+        $("#GibFirmamizPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibFirmamizPostaKutusu&vkn=111&dokTip=0&pkTip=0&kayitSekli=1&tip=1", "PostaKutusu", "GibKullaniciId", e, null, "firmapostakutusu");
+            val.result ? $("#GibFirmamizPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibFirmamizPostaKutusuId").val(null);
+        });
+        $("#GibMuhatapPostaKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibMuhatapPostaKutusu&vkn= &dokTip=0", "PostaKutusu", "GibKullaniciId", e, null, "muhatappostakutusu");
+            val.result ? $("#GibMuhatapPostaKutusuId").val(val.data.GibKullaniciId) : $("#GibMuhatapPostaKutusuId").val(null);
+        });
+        $("#GibFirmamizIrsaliyeKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibFirmamizIrsaliyeKutusu&vkn=111&dokTip=1&pkTip=0&kayitSekli=1&tip=1", "PostaKutusu", "GibKullaniciId", e, null, "firmairspostakutusu");
+            val.result ? $("#GibFirmamizIrsaliyeKutusuId").val(val.data.GibKullaniciId) : $("#GibFirmamizIrsaliyeKutusuId").val(null);
+        });
+        $("#GibMuhatapIrsaliyeKutusu").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/PostaKutusuGetir?target=GibMuhatapIrsaliyeKutusu&vkn= &dokTip=1", "PostaKutusu", "GibKullaniciId", e, null, "muhatapirspostakutusu");
+            val.result ? $("#GibMuhatapIrsaliyeKutusuId").val(val.data.GibKullaniciId) : $("#GibMuhatapIrsaliyeKutusuId").val(null);
+        });
+        $("#FiyatReferansFaturaNo").on("focusout", async function (e) {
+            var faturaid = $("#FaturaId").val();
+            var carikartid = $("#CariKartId").val();
+            var tip = $("#Tip").val();
+            var val = await getData($(this), `/Common/FiyatRefFatGetir?isInput=True&target=FiyatReferansFaturaNo&tip=${tip}&cariKartId=${carikartid}&faturaId=${faturaid}`, "SiparisNo", "SiparisId", e, null, "reffatura");
+            val.result ? $("#FiyatReferansFaturaId").val(val.data.FaturaId) : $("#FiyatReferansFaturaId").val(null);
+        });
+        /*Fatura Detay İşlemleri*/
+        async function getDataCustom(el, url, valprop, idprop, ev, ustid, target) {
+            if (ev.type == "focusout") {
+                var res = await getResponseCustom(el, url, valprop, idprop, ev, ustid, target);
+                res.result ? clickEnter(el) : null;
+                return res;
+            } else {
+                return { result: false };
+            }
+        }
+
+        function getResponseCustom(el, reqUrl, valProp, idProp, evn, ustid, target) {
+            var deger = el.val().trim();
+            return new Promise((resolve, reject) => {
+                evn.preventDefault();
+                if (deger.length > 0) {
+                    $.ajax({
+                        url: reqUrl,
+                        type: "GET",
+                        data: { ustId: ustid, content: deger },
+                        success: (res) => {
+                            switch (res.length) {
+                                case 0:
+                                    alert("Böyle Bir Kayıt Bulunamadı");
+
+                                    const elementId = el.attr("id"); // id'yi burada al
+                                    if (elementId !== "CariUnvan" && elementId !== "CariKod" && elementId !=="VergiDairesi") {
+                                        el.focus();
+                                        el.val(null);
+                                        el.removeAttr("data-id");
+                                        resolve({ result: false, data: null });
+                                    }
+                                    else {
+                                        $("#Unvan").attr('value', el.val());
+                                    }
+
+                                    break;
+                                case 1:
+                                    el.val(res[0][valProp]);
+                                    el.attr("data-id", res[0][idProp]);
+                                    resolve({ result: true, data: res[0] });
+                                    break;
+                                default:
+                                    el.val(null);
+                                    el.removeAttr("data-id");
+                                    resolve({ result: false, data: null });
+                                    loadModal(res, target);
+                                    break;
+                            }
+                        }
+                    });
+                }
+                else {
+                    resolve({ result: false, data: null });
+                    el.removeAttr("data-id");
+                }
+            });
+        }
+
+        function enableDisableFields(ilc, ilcVal, beld, beldVal, focusEl, yerid) {
+            $(ilce).prop("disabled", !ilc);
+            $(ilceBtn).prop("disabled", !ilc);
+            ilcVal ? null : $(ilce).val(null);
+
+            $(belde).prop("disabled", !beld);
+            $(beldeBtn).prop("disabled", !beld);
+            beldVal ? null : $(belde).val(null);
+
+            setTimeout(function () {
+                focusEl ? focusEl.focus() : null;
+            });
+            yerid != null ? $("#HiddenBeldeId").val(yerid) : null;
+        }
+
+        function autoFill(idValElement) {
+            var idVal = document.getElementById(idValElement).getAttribute("data-id");
+            if (parseInt(idVal) > 0) {
+                $.ajax({
+                    url: "/Common/getCariByIdCustom",
+                    type: "GET",
+                    data: { id: parseInt(idVal) },
+                    cache: false,
+                    success: (res) => {
+                        var yer = { il: res.val.IlAdi, ilId: res.val.IlId, ilce: res.val.IlceAdi, ilceId: res.val.IlceId, belde: res.val.BeldeAdi, beldeId: res.val.BeldeId };
+                        fillData(res.val.CariKartId, res.val.Kod, res.val.Ad, res.val.MarkaId, res.val.GsmNo, res.val.KisilikTipi, res.val.VergiKimlikNo, res.val.VergiDairesiId, res.val.VergiDairesiAdi, res.val.Adres, res.val.GidecegiYerTipi, res.val.PlakaNo, res.val.Vade, res.val.EPosta, yer, res.bakiye, res.val.SatinAlaninSifati, res.val.Oran);
+                    }
+                });
+            }
+        }
+
+        function fillData(cariId, kod, ad, markaId, gsm, kisilikTipi, kimlikNo, vergiDaireId, vergiDaireAdi, adres, gidecegiYer, plakaNo, vade, eposta, yerObjet, bakiye, sifati, iskontoOrani) {
+            if (kimlikNo == null)
+            {
+                kimlikNo = "";
+            }
+            $("#CariKod").val(kod);
+            $("#CariUnvan").val(ad);
+            $("#GsmNo").attr('value', gsm);
+            $("#KisilikTipi").attr('value', kisilikTipi);
+            $("#VergiKimlikNo").attr('value', kimlikNo.trim());
+            vknchanged();
+            $("#HiddenVergiDairesiId").val(vergiDaireId);
+            $("#HiddenVergiDairesiId").attr('value', vergiDaireId);
+            $("#VergiDairesi").val(vergiDaireAdi);
+            $("#Adres").attr('value', adres);
+            $("#GidecegiYerTipi").val(gidecegiYer).change();
+            $("#PlakaNo").attr('value', plakaNo);
+            $("#Vade").attr('value', vade);
+            $("#Unvan").attr('value', ad);
+            $("#hiddenCariKartId").val(cariId);
+            $("#hiddenMarkaId").val(markaId);
+            $("#CariKod").attr("data-id", cariId);
+            $("#CariUnvan").attr("data-id", cariId);
+            $("#EPosta").attr('value', eposta);
+            if (bakiye != null) {
+                $("#bakiyeText").text(parseFloat(bakiye).toLocaleString('tr-TR', { minimumFractionDigits: 2 }));
+            }
+            $("#CariSifati").val(sifati).change();
+
+            $("#IskontoOrani").val(parseFloat(iskontoOrani).toFixed(2).replace(".", ","));
+            $("#iskontooran").attr('value', iskontoOrani);
+            $("#iskontooran").val(parseFloat(iskontoOrani).toFixed(2));
+            il.attr({ "value": yerObjet.il, "data-id": yerObjet.ilId });
+            ilce.attr({ "value": yerObjet.ilce, "data-id": yerObjet.ilceId });
+            belde.attr({ "value": yerObjet.belde, "data-id": yerObjet.beldeId });
+            var hiddenYer = yerObjet.beldeId || (yerObjet.ilceId > 0 ? yerObjet.ilceId : yerObjet.ilId);
+            $("#HiddenBeldeId").attr("value", hiddenYer);
+            checkDisableYer();
+
+            var el = $("#CariUnvan").closest('.row').next('.row').find('input, select');
+            if (cariId > 0) el.focus();
+        }
+
+
+        $(document).ready(function () {
+
+            $("#kunyeAlButton").click(function () {
+
+                const plakaNo = $("#PlakaNo").val();
+                const vergiKimlikNo = $("#VergiKimlikNo").val();
+
+                if (plakaNo === "" || vergiKimlikNo === "") {
+                    const uyarıMetni = plakaNo === "" ? 'Plaka No alanı boş olamaz!' : 'Vergi Kimlik No alanı boş olamaz!';
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Uyarı',
+                        text: uyarıMetni,
+                    });
+                    return;
+                }
+                postGridElements(false, false,true);
+
+            });
+
+            document.getElementById('faturaForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+            });
+        });
+        $(document).ready(function () {
+            document.getElementById('gridPostButton').addEventListener('click', function () {
+                postGridElements(false,false,false);
+            });
+        });
+
+        $(document).ready(function () {
+            document.getElementById('gridPostButtonNew').addEventListener('click', function () {
+                postGridElements(true,false,false);
+            });
+        });
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    DeleteConfirm("Faturanın veresiye işlemi var fatura silinsin mi ?").then(e => {
+                        if (e.isConfirmed) {
+                            DeleteConfirm("Faturanın veresiye hareketi silinsin mi ?").then(t => {
+                                if (t.isConfirmed) {
+                                    var id = $('#hiddenFatId').val();
+                                    window.location.href = `/AlisIslemleri/Delete?faturaid=${id}&kullaniciId=${0}`;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+            function redirectInvoice() {
+        try {
+            document.getElementById('invoiceForm').submit();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        }
+
+        function apiRequest(reqUrl, trgt) {
+            $.ajax({
+                url: reqUrl,
+                type: "GET",
+                success: function (e) {
+                    loadModal(e, trgt);
+                }
+            });
+        }
+
+        $('#VergiKimlikNo').on('change', function () {
+            vknchanged();
+        });
+
+        $('#IskontoOrani').on('change', function () {
+            IsType = 0;
+            calculateKdvValues();
+            UpdateAllTotals();
+           
+        });
+
+        $('#Iskonto').on('change', function () {
+            IsType = 1;
+            calculateKdvValues();
+            UpdateAllTotals();
+  
+        });
+
+
+        function vknchanged() {
+            var muhatapEFPath = "/Common/GibPostaKutular?target=GibMuhatapPostaKutusu&vkn=" + $('#VergiKimlikNo').val() + "&dokTip=0";
+            var muhatapEIPath = "/Common/GibPostaKutular?target=GibMuhatapIrsaliyeKutusu&vkn=" + $('#VergiKimlikNo').val() + "&dokTip=1";
+            document.getElementById("GibMuhatapPostaKutusuBut").setAttribute("onclick", "apiRequest('" + muhatapEFPath + "','muhatappostakutusu')");
+            document.getElementById("GibMuhatapIrsaliyeKutusuBut").setAttribute("onclick", "apiRequest('" + muhatapEIPath + "','muhatapirspostakutusu')");
+        }
+
+        function handleKisilikTipiChange() {
+            var kisilikTipi = document.getElementById("KisilikTipi").value;
+            var vergiKimlikNoInput = document.getElementById("VergiKimlikNo");
+
+            if (kisilikTipi == 2) {
+                maxLength = 10;
+            }
+            else {
+                maxLength = 11;
+            }
+        }
+
+        function handleCharacterCount() {
+            var characterCount = document.getElementById("VergiKimlikNo").value.length;
+            if (characterCount > maxLength) {
+                document.getElementById("VergiKimlikNo").value = document.getElementById("VergiKimlikNo").value.slice(0, maxLength);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            handleKisilikTipiChange()
+            handleCharacterCount();
+        });
+        function checkDisableYer() {
+            $(il).val() ? $(ilce).prop("disabled", false) : null;
+            $(il).val() ? $(ilceBtn).prop("disabled", false) : null;
+
+            $(ilce).val() ? $(belde).prop("disabled", false) : null;
+            $(ilce).val() ? $(beldeBtn).prop("disabled", false) : null;
+        }
+    </script>
+
+
+}

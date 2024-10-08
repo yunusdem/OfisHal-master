@@ -1,0 +1,52 @@
+@model IList<VohalFaturaSatiriUrt>
+
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="stokKunyeTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">Fatura Tarihi</th>
+                <th scope="col">Mal Adý</th>
+                <th scope="col">Mal Fiyatý</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <td>@item.FaturaTarihi.ToShortDateString()</td>
+                    <td>@item.MalAdi</td>
+                    <td class="column-sayi">@Math.Round(item.MalFiyati)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isgrid" type="hidden" value="@Request.QueryString["isGrid"]" />
+    <input id="marka" type="hidden" value="@Request.QueryString["marka"]" />
+    <input id="mal" type="hidden" value="@Request.QueryString["mal"]" />
+</div>
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#malFiyatlarTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        //closeModal();
+        $("#modal").modal("hide");
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isGrid = $("#isgrid").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#stokKunyeTable").find("input:checked");
+        if (isGrid) {
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        }
+        $("#modal").modal("hide");
+    }
+</script>

@@ -1,0 +1,203 @@
+﻿@model VohalKap
+@{
+    ViewBag.title = "Yeni Kap";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.pagesubtitle = "Kap";
+    ViewBag.ptitle = "Yeni Kap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalKaps/Create";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/AramaKaplar?target=null&isNavigator=true";
+    ViewBag.firstDataUrl = "/TohalKaps/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "";
+    ViewBag.afterDataUrl = "";
+    ViewBag.lastDataUrl = "/TohalKaps/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = true;
+}
+<style>
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" action="@Url.Action("Create")">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label for="Kod" class="col-sm-3 col-form-label pb-0">Kap Kodu</label>
+                <div class="col-sm-9">
+                    <input name="Kod" id="Kod" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kod)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Ad" class="col-sm-3 col-form-label pb-0">Kap Adı</label>
+                <div class="col-sm-9">
+                    <input name="Ad" id="Ad" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Ad)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Dara" class="col-sm-3 col-form-label pb-0">Dara</label>
+                <div class="col-sm-9">
+                    <input type="text" data-type="numNotDec" name="Dara" id="Dara" class="form-control form-control-sm"  value="0"/>
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Dara)</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="BirimFiyati" class="col-sm-3 col-form-label pb-0">Birim Fiyat</label>
+                <div class="col-sm-9">
+                    <input type="text" data-type="num" name="BirimFiyati" id="BirimFiyati" class="form-control form-control-sm" value="0" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.BirimFiyati)</span>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" id="RehinKabiId" name="RehinKabiId" />
+                <label for="hidRehinKabiId" class="col-sm-3 col-form-label pb-0">Rehin Kabı</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hidRehinKabiId" name="hidRehinKabiId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="rehinkapid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Kaplar", "Common",new { target = "hidRehinKabiId", isInput = true, inputType = "name" })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" id="DigerAdId" name="DigerAdId" />
+                <label for="hidDigerAdId" class="col-sm-3 col-form-label pb-0">Diğer Adı</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input id="hidDigerAdId" name="hidDigerAdId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="digeradid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("DigerAdlar", "TohalKaps",new { target = "hidDigerAdId",tur = 1})">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label for="Kapasite" class="col-sm-3 col-form-label pb-0">Kapasite</label>
+                <div class="col-sm-9">
+                    <input type="text" data-type="numNotDec" id="Kapasite" name="Kapasite" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Kapasite)</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Iadeli" id="Iadeli" value="true">
+                        <label class="form-check-label" for="Iadeli">
+                            Iadeli
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="border p-2">
+                <h6>İhracat</h6>
+                <div class="row">
+                    <label for="AmbalajTipiKodu" class="col-sm-4 col-form-label pb-0">Ambalaj Tipi Kodu</label>
+                    <div class="col-sm-8">
+                        <input id="AmbalajTipiKodu" name="AmbalajTipiKodu" class="form-control form-control-sm" />
+                        <span class="text-danger">@Html.ValidationMessageFor(model => model.AmbalajTipiKodu)</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="AmbalajMarkasi" class="col-sm-4 col-form-label pb-0">Ambalaj Markası</label>
+                    <div class="col-sm-8">
+                        <input id="AmbalajMarkasi" name="AmbalajMarkasi" class="form-control form-control-sm" />
+                        <span class="text-danger">@Html.ValidationMessageFor(model => model.AmbalajMarkasi)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "rehinkapid":
+                    document.getElementById("hidRehinKabiId").getAttribute("data-id") > 0 ? $("#RehinKabiId").val(document.getElementById("hidRehinKabiId").getAttribute("data-id")) : $("#RehinKabiId").val(null);
+                    break;
+                case "digeradid":
+                    document.getElementById("hidDigerAdId").getAttribute("data-id") > 0 ? $("#DigerAdId").val(document.getElementById("hidDigerAdId").getAttribute("data-id")) : $("#DigerAdId").val(null);
+                    break;
+                case "arabtn":
+                    sessionStorage.getItem('kapId') > 0 ? window.location.href = `/TohalKaps/Edit/${sessionStorage.getItem('kapId')}` : null;
+                    sessionStorage.removeItem("kapId");
+                    break;
+            }
+        });
+
+        $("#hidRehinKabiId").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/KapGetir?isInput=True&target=hidRehinKabiId&codeOrName=false&inputType=name", "Ad", "KapId", e, null, "rehinkapid");
+            val.result ? $("#RehinKabiId").val(val.data.KapId) : $("#RehinKabiId").val(null);
+        });
+        $("#hidDigerAdId").on("focusout", async function (e) {
+            var val = await getData($(this), "/TohalKaps/DigerAdGetir?tur=1&target=hidDigerAdId", "Ad", "DigerAdId", e, null, "digeradid");
+            val.result ? $("#DigerAdId").val(val.data.DigerAdId) : $("#DigerAdId").val(null);
+        });
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+    </script>
+}
+

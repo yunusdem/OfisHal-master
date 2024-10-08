@@ -1,0 +1,541 @@
+﻿@model HalEntegreViewModel
+@{
+    ViewBag.title = "Hal Entegre Tanımları";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.ptitle = "Hal Entegre Tanımları";
+    TohalGibKullanici efaturapk = (TohalGibKullanici)ViewData["efaturapk"] == null ? new TohalGibKullanici() : (TohalGibKullanici)ViewData["efaturapk"];
+    TohalGibKullanici eirsaliyepk = (TohalGibKullanici)ViewData["eirsaliyepk"] == null ? new TohalGibKullanici() : (TohalGibKullanici)ViewData["eirsaliyepk"];
+}
+<style>
+    .customlbl {
+        margin-top: 3px;
+    }
+
+    .choices__inner {
+        min-height: 0;
+        font-size: .750rem;
+    }
+
+    .choices__list--single {
+        padding: 0;
+    }
+</style>
+<div class="row">
+    <form action="/TeknikIslemler/HalEntegreTanimlari" method="post">
+        <div class="col-lg-6">
+            <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-dokum" type="button" role="tab" aria-controls="pills-dokum" aria-selected="true">
+                        Döküm
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-satis" type="button" role="tab" aria-controls="pills-satis" aria-selected="false">
+                        Satış
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-alis" type="button" role="tab" aria-controls="pills-alis" aria-selected="false">
+                        Alış
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-hesap" type="button" role="tab" aria-controls="pills-hesap" aria-selected="false">
+                        Hesap
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-hks" type="button" role="tab" aria-controls="pills-hks" aria-selected="false">
+                        HKS
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-firma" type="button" role="tab" aria-controls="pills-firma" aria-selected="false">
+                        Firma
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-eBelge" type="button" role="tab" aria-controls="pills-eBelge" aria-selected="false">
+                        E-Belge
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-diger" type="button" role="tab" aria-controls="pills-diger" aria-selected="false">
+                        Diğer
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-dokum" role="tabpanel" aria-labelledby="pills-dokum-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETDokum.cshtml", Model.dokum)
+                </div>
+                <div class="tab-pane fade" id="pills-satis" role="tabpanel" aria-labelledby="pills-satis-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETSatis.cshtml", Model.satis)
+                </div>
+                <div class="tab-pane fade" id="pills-alis" role="tabpanel" aria-labelledby="pills-alis-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETAlis.cshtml", Model.alis)
+                </div>
+                <div class="tab-pane fade" id="pills-hesap" role="tabpanel" aria-labelledby="pills-hesap-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETHesap.cshtml", Model.hesap)
+                </div>
+                <div class="tab-pane fade" id="pills-hks" role="tabpanel" aria-labelledby="pills-hks-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETHks.cshtml", Model.hks)
+                </div>
+                <div class="tab-pane fade" id="pills-firma" role="tabpanel" aria-labelledby="pills-firma-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETFirma.cshtml", Model.firma)
+                </div>
+                <div class="tab-pane fade" id="pills-eBelge" role="tabpanel" aria-labelledby="pills-eBelge-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETEbelge.cshtml", Model.ebelge)
+                </div>
+                <div class="tab-pane fade" id="pills-diger" role="tabpanel" aria-labelledby="pills-diger-tab" tabindex="0">
+                    @Html.Partial("~/Views/TeknikIslemler/Partials/_HETDiger.cshtml", Model.diger)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-sm btn-success">Kaydet</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="modal fade" id="modalKiloBaz" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Yükleme Fiyat (Kilo Bazında)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>
+                                        <input type="text" data-type="num" name="@Model.satis.Sat" value="" />
+                                    </th>
+                                    <th>Birim Fiyat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalKapBaz" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Yükleme Fiyat (Kap Bazında)</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
+                        <h6>Grid...</h6>
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Üst Sınır</th>
+                                    <th>Birim Fiyat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+<div class="modal fade" id="modalLogo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel">Logo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <input class="form-control form-control-sm mb-2" type="file" name="firmaLogo" id="firmaLogo" />
+                    <img src="" id="imgLogo" width="250" height="250" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="logoKaydetBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalImza" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel">Imza</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <input class="form-control form-control-sm mb-2" type="file" name="firmaImza" id="firmaImza" />
+                    <img src="" id="imgImza" width="250" height="250" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="imzaKaydetBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalPostaKutulari" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel">Gönderici Posta Kutuları</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <div class="form-group">
+                        <label for="efaturapk" class="form-label">e-Fatura</label>
+                        <input type="text" id="efaturapk" name="efaturapk" class="form-control form-control-sm" value="@efaturapk.PostaKutusu" />
+                    </div>
+                    <div class="form-group">
+                        <label for="eirsaliyepk" class="form-label">e-İrsaliye</label>
+                        <input type="text" id="eirsaliyepk" name="eirsaliyepk" class="form-control form-control-sm" value="@eirsaliyepk.PostaKutusu" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="pkSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="~/assets/libs/cleave.js/cleave.min.js"></script>
+    <script src="~/assets/js/pages/form-masks.init.js"></script>
+    <script>
+        var il = $("#hksIl");
+        var ilce = $("#hksIlce");
+        var belde = $("#hksBelde");
+        var ilBtn = $("#ilBtn");
+        var ilceBtn = $("#ilceBtn");
+        var beldeBtn = $("#beldeBtn");
+
+        $(il).val() ? $(ilce).prop("disabled", false) : null;
+        $(il).val() ? $(ilceBtn).prop("disabled", false) : null;
+
+        $(ilce).val() ? $(belde).prop("disabled", false) : null;
+        $(ilce).val() ? $(beldeBtn).prop("disabled", false) : null;
+
+        $(belde).val() ? $(belde).prop("disabled", false) : null;
+        $(belde).val() ? $(beldeBtn).prop("disabled", false) : null;
+
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            var ilDataId = document.getElementById("hksIl").getAttribute("data-id");
+            var ilceDataId = document.getElementById("hksIlce").getAttribute("data-id");
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                switch (target) {
+                    case "ilce": ilDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilDataId}`) : null; break;
+                    case "belde": ilceDataId > 0 ? container.load(btn.data("remote-url") + `&ustId=${ilceDataId}`) : null; break;
+                    default: container.load(btn.data("remote-url")); break;
+                }
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            switch (target) {
+                case "il": if (document.getElementById("hksIl").getAttribute("data-id") > 0) enableDisableFields(true, false, false, false, $("#IlId"), document.getElementById("hksIl").getAttribute("data-id")); break;
+                case "ilce": if (document.getElementById("hksIlce").getAttribute("data-id") > 0) enableDisableFields(true, true, true, false, $("#IlceId"), document.getElementById("hksIlce").getAttribute("data-id")); break;
+                case "belde": if (document.getElementById("hksBelde").getAttribute("data-id") > 0) enableDisableFields(true, true, true, true, $("#BeldeId"), document.getElementById("hksBelde").getAttribute("data-id")); break;
+                case "dokumhizmetbedeliid": if (document.getElementById("dokumHizmetBedeliHesabi").getAttribute("data-id") > 0) $("#DokHizmetBedeliHesabiId").val(document.getElementById("dokumHizmetBedeliHesabi").getAttribute("data-id")); break;
+                case "firmavergidairesi": if (document.getElementById("firmaVergiDairesi").getAttribute("data-id") > 0) $("#DigVergiDairesiId").val(document.getElementById("firmaVergiDairesi").getAttribute("data-id")); break;
+                case "hal": if (document.getElementById("firmaHalAdi").getAttribute("data-id") > 0) $("#HalId").val(document.getElementById("firmaHalAdi").getAttribute("data-id")); break;
+                case "navlunhesapid": if (document.getElementById("hesapNavlunHesabi").getAttribute("data-id") > 0) $("#HesNavlunHesabiId").val(document.getElementById("hesapNavlunHesabi").getAttribute("data-id")); break;
+                case "rehinhesapid": if (document.getElementById("hesapRehinHesabi").getAttribute("data-id") > 0) $("#HesRehinHesabiId").val(document.getElementById("hesapRehinHesabi").getAttribute("data-id")); break;
+                case "sandikhesapid": if (document.getElementById("hesapIadesizSandikHesabi").getAttribute("data-id") > 0) $("#HesIadesizSandikHesabiId").val(document.getElementById("hesapIadesizSandikHesabi").getAttribute("data-id")); break;
+                case "rusumhesapid": if (document.getElementById("hesapRusumHesabi").getAttribute("data-id") > 0) $("#HesRusumHesabiId").val(document.getElementById("hesapRusumHesabi").getAttribute("data-id")); break;
+                case "hamaliyehesapid": if (document.getElementById("hesapYuklemeHesabi").getAttribute("data-id") > 0) $("#HesHamaliyeHesabiId").val(document.getElementById("hesapYuklemeHesabi").getAttribute("data-id")); break;
+                case "nakliyehesapid": if (document.getElementById("hesapNakliyeHesabi").getAttribute("data-id") > 0) $("#HesNakliyeHesabiId").val(document.getElementById("hesapNakliyeHesabi").getAttribute("data-id")); break;
+                case "stopajhesapid": if (document.getElementById("hesapStopajHesabi").getAttribute("data-id") > 0) $("#HesStopajHesabiId").val(document.getElementById("hesapStopajHesabi").getAttribute("data-id")); break;
+                case "borsahesapid": if (document.getElementById("hesapBorsaHesabi").getAttribute("data-id") > 0) $("#HesBorsaHesabiId").val(document.getElementById("hesapBorsaHesabi").getAttribute("data-id")); break;
+                case "bagkurhesapid": if (document.getElementById("hesapBagkurHesabi").getAttribute("data-id") > 0) $("#HesBagkurHesabiId").val(document.getElementById("hesapBagkurHesabi").getAttribute("data-id")); break;
+            }
+        });
+        il.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilGetir?isInput=True&target=hksIl", "Ad", "YerId", e, null, "il");
+            res.result ? enableDisableFields(true, false, false, false, $("#IlId"), res.data.YerId) : enableDisableFields(false, false, false, false, $("#IlId"), null);//il varsa ilce kutucugu aktif olacak ve değeri olmayacak diger kutucuklar pasif //il yoksa hepsi pasif olacak
+        });
+        ilce.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=hksIlce", "Ad", "YerId", e, $(il).data("id"), "ilce");
+            res.result ? enableDisableFields(true, true, true, false, $("#IlceId"), res.data.YerId) : enableDisableFields(true, true, false, false, $("#IlceId"), null);// ilce varsa belde alanı aktif hal alanı pasif olacak // ilce yoksa belde ve hal pasif
+        });
+        belde.on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/ilceGetir?isInput=True&target=hksBelde", "Ad", "YerId", e, $(ilce).data("id"), "belde");
+            res.result ? enableDisableFields(true, true, true, true, $("#BeldeId"), res.data.YerId) : enableDisableFields(true, true, true, true, $("#BeldeId"), null);
+        });
+        $("#dokumHizmetBedeliHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=dokumHizmetBedeliHesabi&codeOrName=true", "Kod", "HesapId", e, null, "dokumhizmetbedeliid");
+            val.result ? $("#DokHizmetBedeliHesabiId").val(val.data.HesapId) : $("#DokHizmetBedeliHesabiId").val(null);
+        });
+        $("#hesapNavlunHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapNavlunHesabi&codeOrName=true", "Kod", "HesapId", e, null, "navlunhesapid");
+            val.result ? $("#HesNavlunHesabiId").val(val.data.HesapId) : $("#HesNavlunHesabiId").val(null);
+        });
+        $("#hesapRehinHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapRehinHesabi&codeOrName=true", "Kod", "HesapId", e, null, "rehinhesapid");
+            val.result ? $("#HesRehinHesabiId").val(val.data.HesapId) : $("#HesRehinHesabiId").val(null);
+        });
+        $("#hesapIadesizSandikHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapIadesizSandikHesabi&codeOrName=true", "Kod", "HesapId", e, null, "sandikhesapid");
+            val.result ? $("#HesIadesizSandikHesabiId").val(val.data.HesapId) : $("#HesIadesizSandikHesabiId").val(null);
+        });
+        $("#hesapRusumHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapRusumHesabi&codeOrName=true", "Kod", "HesapId", e, null, "rusumhesapid");
+            val.result ? $("#HesRusumHesabiId").val(val.data.HesapId) : $("#HesRusumHesabiId").val(null);
+        });
+        $("#hesapYuklemeHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapYuklemeHesabi&codeOrName=true", "Kod", "HesapId", e, null, "hamaliyehesapid");
+            val.result ? $("#HesHamaliyeHesabiId").val(val.data.HesapId) : $("#HesHamaliyeHesabiId").val(null);
+        });
+        $("#hesapNakliyeHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapNakliyeHesabi&codeOrName=true", "Kod", "HesapId", e, null, "nakliyehesapid");
+            val.result ? $("#HesNakliyeHesabiId").val(val.data.HesapId) : $("#HesNakliyeHesabiId").val(null);
+        });
+        $("#hesapStopajHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapStopajHesabi&codeOrName=true", "Kod", "HesapId", e, null, "stopajhesapid");
+            val.result ? $("#HesStopajHesabiId").val(val.data.HesapId) : $("#HesStopajHesabiId").val(null);
+        });
+        $("#hesapBorsaHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapBorsaHesabi&codeOrName=true", "Kod", "HesapId", e, null, "borsahesapid");
+            val.result ? $("#HesBorsaHesabiId").val(val.data.HesapId) : $("#HesBorsaHesabiId").val(null);
+        });
+        $("#hesapBagkurHesabi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/HesapGetir?isInput=True&inputType=code&target=hesapBagkurHesabi&codeOrName=true", "Kod", "HesapId", e, null, "bagkurhesapid");
+            val.result ? $("#HesBagkurHesabiId").val(val.data.HesapId) : $("#HesBagkurHesabiId").val(null);
+        });
+        $("#firmaVergiDairesi").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=firmaVergiDairesi&tur=2", "Ad", "TabloMaddesiId", e, null, "firmavergidairesi");
+            val.result ? $("#DigVergiDairesiId").val(val.data.TabloMaddesiId) : $("#DigVergiDairesiId").val(null);
+        });
+        $("#firmaHalAdi").on("focusout", async function (e) {
+            var res = await getData($(this), "/Common/HalGetir?target=firmaHalAdi", "Ad", "HalId", e, null, "hal");
+            res.result ? $("#HalId").val(res.data.HalId) : $("#HalId").val(null);
+        });
+        function enableDisableFields(ilc, ilcVal, beld, beldVal, hiddenYerElm, hiddenYerVal) {
+            $(ilce).prop("disabled", !ilc);
+            $(ilceBtn).prop("disabled", !ilc);
+            ilcVal ? null : $(ilce).val(null);
+            ilcVal ? null : $("#IlceId").val(null);
+
+            $(belde).prop("disabled", !beld);
+            $(beldeBtn).prop("disabled", !beld);
+            beldVal ? null : $(belde).val(null);
+            beldVal ? null : $("#BeldeId").val(null);
+
+            $(hiddenYerElm).val(hiddenYerVal);
+        }
+        $("#satisRusumOranCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#SatRusumOrani", "0,00");
+        });
+        $("#satisRusumKdvOraniCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#SatRusumKdvOrani", null);
+        });
+        $("#satisKdvOraniCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#SatYuklemeKdvOrani", null);
+        });
+        $("#satisNakliyeKdvOraniCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#SatNakliyeKdvOrani", null);
+        });
+        $("#alisRusumOraniCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#AlsRusumOrani", "0,00");
+        });
+        $("#hksGecerlilikTarihCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#DigKunyeGecerlilikTarihi", null);
+        });
+        $("#EFaturaBaslangicTarihiCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#EFaturaBaslangicTarihi", null);
+        });
+        $("#EArsivBaslangicTarihiCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#EArsivBaslangicTarihi", null);
+        });
+        $("#EMustahsilMakbuzuBaslangicTarihiCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#EMustahsilMakbuzuBaslangicTarihi", null);
+        });
+        $("#EIrsaliyeBaslangicTarihiCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#EIrsaliyeBaslangicTarihi", null);
+        });
+        $("#DigRehinBaslangicTarihiCheck").on("change", function () {
+            enableDisableInput($(this).prop("checked"), "#DigRehinBaslangicTarihi", null);
+        });
+        $("#alisMalBakiyeHesaplamaSekliCheck").on("change", function () {
+            if ($(this).prop("checked")) {
+                $("#AlsMalBakiyeHesaplamaSekli").append("<option value='0'>Alış Faturası Bazında</option> <option value='1'>Marka Bazında</option>");
+            } else {
+                $("#AlsMalBakiyeHesaplamaSekli").empty();
+                $("#AlsMalBakiyeHesaplamaSekli").val(null);
+            }
+            $("#AlsMalBakiyeHesaplamaSekli").prop("disabled", !$(this).prop("checked"));
+        });
+
+        function enableDisableInput(evn, inputSelector, defaultVal) {
+            $(inputSelector).prop("disabled", !evn);
+            evn ? $(inputSelector).val(defaultVal) : $(inputSelector).val("");
+        }
+
+        $("#SatRusumKdvIliskisi").on("change", function () {
+            if ($(this).val() != 2) {
+                $("#SatRusumKdvGosterimi").empty();
+                $("#SatRusumKdvGosterimi").val(null);
+            } else {
+                $("#SatRusumKdvGosterimi").append("<option value='0'>Satır Kısmında</option> <option value='1'>Genel Toplam Kısmında</option>");
+            }
+        });
+
+        $(document).on("show.bs.modal", "#modalLogo, #modalImza", function (e) {
+            //tur logo = 1, imza = 2
+            var tur = $(e.relatedTarget).data("tur");
+            tur == 1 ? $("#imgLogo").prop("src", null) : $("#imgImza").prop("src", null);
+            $.ajax({
+                url: "/TeknikIslemler/GetImage",
+                data: { sahipTur: tur },
+                type: "GET",
+                success: (response) => {
+                    var imgSrc = "data:image/png;base64," + response.Image;
+                    tur == 1 ? $("#imgLogo").prop("src", imgSrc) : $("#imgImza").prop("src", imgSrc);
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.error("Error fetching image: " + textStatus, errorThrown);
+                }
+            });
+        });
+
+        document.getElementById("firmaLogo").addEventListener("change", (e) => convertBase64(e, $("#imgLogo")));
+        document.getElementById("firmaImza").addEventListener("change", (e) => convertBase64(e, $("#imgImza")));
+
+        document.getElementById("logoKaydetBtn").addEventListener("click", (e) => saveImage(1, baseString, "Logo"));
+        document.getElementById("imzaKaydetBtn").addEventListener("click", (e) => saveImage(2, baseString, "Imza"));
+        var baseString = "";
+        function convertBase64(e, previewImg) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                $(previewImg).prop("src", reader.result);
+                baseString = reader.result;
+            }
+            reader.readAsDataURL(file);
+        }
+        function saveImage(sahipTur, reqData, alertMessage) {
+            $.ajax({
+                url: "/TeknikIslemler/ImageSave",
+                data: { sahipTuru: sahipTur, baseString: reqData },
+                type: "POST",
+                success: () => {
+                    ShowAlert(true, alertMessage + " Yüklendi");
+                }
+            });
+        }
+        function formPost() {
+            //var frm = $("form").serialize();
+
+            //var data = $('form').serializeArray().reduce(function (obj, item) {
+            //    obj[item.name] = item.value;
+            //    return obj;
+            //}, {});
+            //console.log(data);
+        }
+
+        document.getElementById("pkSaveBtn").addEventListener("click", function () {
+
+            var efValue = $("#efaturapk").val();
+            var eiValue = $("#eirsaliyepk").val();
+            var tcknVal = $("#DigVergiKimlikNo").val();
+            $.ajax({
+                type: "GET",
+                url: "/TeknikIslemler/GibKaydet",
+                data: { efVal: efValue, eiVal: eiValue, tcknVal },
+                success: function (result) {
+
+                    ShowAlert(true, "İşlem Başarılı");
+                },
+                error: function (error) {
+
+                    ShowAlert(false, "Kayıt Bulunamadı " + error);
+                }
+            });
+        });
+    </script>
+}

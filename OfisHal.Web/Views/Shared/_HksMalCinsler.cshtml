@@ -1,0 +1,87 @@
+﻿@model IList<VohalHksMal>
+<style>
+    table.dataTable.table-sm .sorting:before, table.dataTable.table-sm .sorting_asc:before, table.dataTable.table-sm .sorting_desc:before {
+        top: 3px;
+        right: 8px;
+    }
+
+    table.dataTable.table-sm .sorting:after, table.dataTable.table-sm .sorting_asc:after, table.dataTable.table-sm .sorting_desc:after {
+        top: 9px;
+    }
+
+    .dt-button {
+        margin: 0 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dt-buttons button:first-child {
+        border-radius: 5px 0 0 5px !important;
+    }
+
+    .dt-buttons button:last-child {
+        border-radius: 0 5px 5px 0 !important;
+    }
+</style>
+<div class="table-responsive">
+    <table class="display table table-hover table-sm mt-0" id="hksMalTable" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Mal Adı</th>
+                <th scope="col">Mal Cinsi</th>
+                <th scope="col">Üretim Şekli</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var item = Model.ElementAtOrDefault(i);
+                <tr class="rows" ondblclick="closeModal()">
+                    <th scope="row">
+                        @(i + 1)
+                        <input type="radio" name="hksmal" data-id="@item.MalCinsiId" class="form-check-input ms-1" data-name="@item.MalAdi" data-type="@item.MalCinsi" data-urt="@item.UretimSekliAciklamasi"/>
+                    </th>
+                    <td>@item.MalAdi</td>
+                    <td>@item.MalCinsi</td>
+                    <td>@item.UretimSekliAciklamasi</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input id="tur" type="hidden" value="@Request.QueryString["tur"]" />
+    <input id="modalTarget" type="hidden" value="@Request.QueryString["target"]" />
+    <input id="isgrid" type="hidden" value="@Request.QueryString["isGrid"]" />
+
+</div>
+<script>
+    $(document).on("click", "tbody .rows", function (e) {
+        $(this).find("input").prop("checked", true);
+    });
+    $(document).ready(function () {
+        CreateDatatable('#hksMalTable');
+    });
+    $(document).on("click", "#modalSaveBtn", function (e) {
+        closeModal();
+    });
+    function closeModal() {
+        var target = $("#" + $("#modalTarget").val());
+        var isInput = $("#isinput").val();
+        var isGrid = $("#isgrid").val();
+        target.empty();
+        target.removeAttr("data-id");
+        var item = $("#hksMalTable").find("input:checked");
+        if (isInput) {
+            target.val(item.data("name"));
+            target.attr("data-id", item.data("id"));
+        } else if (isGrid) {
+            target.attr("data-id", item.data("id"));
+            target.attr("data-name", item.data("name"));
+            target.attr("data-urt", item.data("urt"));
+            target.val(item.data("type"));
+        }
+        $("#modal").modal("hide");
+        setTimeout(function () {
+            clickEnter(target);
+        }, 500);
+    }
+</script>

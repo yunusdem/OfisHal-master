@@ -1,0 +1,149 @@
+﻿@model TohalBankaHesabi
+
+@{
+    ViewBag.title = "Yeni Banka Hesabı";
+
+    ViewBag.pagetitle = "Banka İşlemleri";
+    ViewBag.pagesubtitle = "Banka Hesabı";
+    ViewBag.ptitle = "Yeni Banka Hesabı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.addUrl = "/TohalBankaHesabis/Create";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/BankaHesaplar?target=null&isNavigator=true";
+    ViewBag.firstDataUrl = "/TohalBankaHesabis/ilkSonKayit?firstOrLast=true";
+    ViewBag.beforeDataUrl = "";
+    ViewBag.afterDataUrl = "";
+    ViewBag.lastDataUrl = "/TohalBankaHesabis/ilkSonKayit?firstOrLast=false";
+    ViewBag.disabledBeforeAfter = true;
+}
+
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" action="@Url.Action("Create")">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="row">
+                <label for="HesapNo" class="col-sm-3 col-form-label pb-0">Hesap No</label>
+                <div class="col-sm-9">
+                    <input id="HesapNo" name="HesapNo" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.HesapNo)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="HesapAdi" class="col-sm-3 col-form-label pb-0">Hesap Adı</label>
+                <div class="col-sm-9">
+                    <input id="HesapAdi" name="HesapAdi" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.HesapAdi)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="Iban" class="col-sm-3 col-form-label pb-0">Iban</label>
+                <div class="col-sm-9">
+                    <input id="Iban" name="Iban" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Iban)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="SubeAdi" class="col-sm-3 col-form-label pb-0">Şube Adı</label>
+                <div class="col-sm-9">
+                    <input id="SubeAdi" name="SubeAdi" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.SubeAdi)</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="Devir" class="col-sm-3 col-form-label pb-0">Devir</label>
+                <div class="col-sm-9">
+                    <input type="number" id="Devir" name="Devir" class="form-control form-control-sm" />
+                    <span class="text-danger">@Html.ValidationMessageFor(model => model.Devir)</span>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" id="BankaId" name="BankaId" />
+                <label for="hidBankaId" class="col-sm-3 col-form-label pb-0">Banka Adı</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" id="hidBankaId" name="hidBankaId" class="form-control form-control-sm" />
+                        <button type="button" data-btarget="bankaid" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-label="Seç" data-remote-url="@Url.Action("Maddeler", "Common", new { target = "hidBankaId",tur = 3, isInput = true })">
+                            Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="EFaturadaGozuksun" name="EFaturadaGozuksun" value="true">
+                        <label class="form-check-label" for="EFaturadaGozuksun">E-Faturada Gözüksün</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Kaydet" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+                <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                    Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            target == "bankaid" ? $("#BankaId").val(document.getElementById("hidBankaId").getAttribute("data-id")) : null;
+            if (target == "arabtn") {
+                sessionStorage.getItem('bankHesabiId') > 0 ? window.location.href = `/TohalBankaHesabis/Edit/${sessionStorage.getItem('bankHesabiId')}` : null;
+                sessionStorage.removeItem("bankHesabiId");
+            }
+        });
+        $("#hidBankaId").on("focusout", async function (e) {
+            var val = await getData($(this), "/Common/maddeGetir?isInput=True&target=hidBankaId&tur=3", "Ad", "TabloMaddesiId", e, null, "bankaid");
+            val.result ? $("#BankaId").val(val.data.TabloMaddesiId) : $("#BankaId").val(null);
+        });
+
+    </script>
+}

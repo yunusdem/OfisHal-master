@@ -1,0 +1,537 @@
+﻿@model Tuple<VohalKullanici, List<TohalKullaniciYetkisi>>
+@{
+    ViewBag.title = "Kullanıcı Tanımları";
+
+    ViewBag.pagetitle = "Teknik İşlemler";
+    ViewBag.ptitle = "Kullanıcı Tanımları";
+
+    ViewBag.addUrl = "/TeknikIslemler/KullaniciTanimlari?yeni=True";
+    ViewBag.saveUrl = "";
+    ViewBag.searchUrl = "/Common/Kullanicilar?target=test&isNavigator=true";
+    ViewBag.firstDataUrl = "/TeknikIslemler/ilkSonKayit?firstOrLast=true";
+    ViewBag.lastDataUrl = "/TeknikIslemler/ilkSonKayit?firstOrLast=false";
+    List<TohalNumerator> numerator = (List<TohalNumerator> )ViewData["Numerator"];
+    if (Model.Item1 != null)
+    {
+        ViewBag.beforeDataUrl = "/TeknikIslemler/sonrakiOncekiKayit?&afterOrBefore=false&currentId=" + Model.Item1.KullaniciId;
+        ViewBag.afterDataUrl = "/TeknikIslemler/sonrakiOncekiKayit?&afterOrBefore=true&currentId=" + Model.Item1.KullaniciId;
+        ViewBag.disabledBeforeAfter = false;
+    }
+    else
+    {
+        ViewBag.disabledBeforeAfter = true;
+    }
+
+    List<byte> yetkiler = new List<byte>();
+    for (int i = 0; i < Model.Item2.Count; i++)
+    {
+        var yetki = Model.Item2.ElementAt(i);
+        yetkiler.Add(yetki.YetkiCinsi);
+    }
+}
+@Html.Partial("~/Views/Shared/_dataNavigator.cshtml")
+<form method="post" action="@Url.Action("KullaniciTanimlari", "TeknikIslemler")">
+    <input type="hidden" name="KullaniciId" id="KullaniciId" value="@Model.Item1.KullaniciId" />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row mb-1">
+                        <div class="col-md-7">
+                            <div class="row">
+                                <label for="Ad" class="col-sm-4 col-form-label pb-0 pe-0">
+                                    Kullanıcı Adı
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="Ad" id="Ad" value="@Model.Item1.Ad" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="Sifre" class="col-sm-4 col-form-label pb-0">
+                                    Şifre
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="Sifre" id="Sifre" class="form-control form-control-sm" value="@Model.Item1.Sifre" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="SistemYoneticisi" name="SistemYoneticisi" value="true" @(Model.Item1.SistemYoneticisi == true ? "checked" : "")>
+                                        <label class="form-check-label" for="SistemYoneticisi">
+                                            Sistem Yöneticisi
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col mt-2">
+                                    <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#numModal" @(Model.Item1.KullaniciId > 0 ? "" : "disabled")>Numeratörler</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="YaziciId" class="col-sm-4 col-form-label pb-0">
+                            Entegrator
+                        </label>
+                        <div class="col-sm-7">
+                            <select id="YaziciId" name="YaziciId" class="form-select form-select-sm">
+                                @foreach (var item in ViewBag.IntegratorProviders as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value" @(Model.Item1.YaziciId == int.Parse(item.Value) ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="MustahsilYaziciId" class="col-sm-4 col-form-label pb-0">
+                            Müstahsil Yazıcı No
+                        </label>
+                        <div class="col-sm-7">
+                            <select id="MustahsilYaziciId" name="MustahsilYaziciId" class="form-select form-select-sm">
+                                @foreach (var item in ViewBag.yazicilar as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value" @(Model.Item1.MustahsilYaziciId == int.Parse(item.Value) ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="IrsaliyeYaziciId" class="col-sm-4 col-form-label pb-0">
+                            İrsaliye Yazıcı No
+                        </label>
+                        <div class="col-sm-7">
+                            <select id="IrsaliyeYaziciId" name="IrsaliyeYaziciId" class="form-select form-select-sm">
+                                @foreach (var item in ViewBag.yazicilar as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value" @(Model.Item1.IrsaliyeYaziciId == int.Parse(item.Value) ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="BarkodYaziciId" class="col-sm-4 col-form-label pb-0">
+                            Barkod Yazıcı No
+                        </label>
+                        <div class="col-sm-7">
+                            <select id="BarkodYaziciId" name="BarkodYaziciId" class="form-select form-select-sm">
+                                @foreach (var item in ViewBag.yazicilar as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value" @(Model.Item1.BarkodYaziciId == int.Parse(item.Value) ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1" style="width:31px">Son</div>
+                        <div class="col-md-1" style="width:70px;"><input type="number" name="KayitGostermeGunSayisi" id="KayitGostermeGunSayisi" value="@(Model.Item1.KayitGostermeGunSayisi.HasValue ? Model.Item1.KayitGostermeGunSayisi : 0)" class="form-control form-control-sm" min="0" max="999" /></div>
+                        <div class="col">Günün Kayıtları Gelsin</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1" style="width:195px">Çeklerin Vadesi Gelmeden</div>
+                        <div class="col-md-1" style="width:70px;"><input type="number" name="VadeUyariGunSayisi" id="VadeUyariGunSayisi" value="@(Model.Item1.VadeUyariGunSayisi.HasValue ? Model.Item1.VadeUyariGunSayisi : 0)" class="form-control form-control-sm" min="0" max="999" /></div>
+                        <div class="col">Gün Önce Uyar</div>
+                    </div>
+                    <div class="row mt-1">
+                        <div data-simplebar style="max-height: 200px;">
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="GunBazindaDokumAcYetkisi">
+                                    Gün Bazında Döküm Aç
+                                </label>
+                                <input name="GunBazindaDokumAcYetkisi" id="GunBazindaDokumAcYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(0) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="TumFaturalariGormeYetkisi">
+                                    Tüm Faturaları Görme Yetkisi
+                                </label>
+                                <input name="TumFaturalariGormeYetkisi" id="TumFaturalariGormeYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(1) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="CariNakitDisiKayitYetkisi">
+                                    Cari Nakit Dışı Kayıt Yetkisi
+                                </label>
+                                <input name="CariNakitDisiKayitYetkisi" id="CariNakitDisiKayitYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(2) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="CalismaAlaniIslemleriYetkisi">
+                                    Çalışma Alanı İşlemleri Yetkisi
+                                </label>
+                                <input name="CalismaAlaniIslemleriYetkisi" id="CalismaAlaniIslemleriYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(3) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="TarihDegistirmeYetkisi">
+                                    Tarih Değiştirme Yetkisi
+                                </label>
+                                <input name="TarihDegistirmeYetkisi" id="TarihDegistirmeYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(4) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="SatisFaturasiTarihDegistirmeYetkisi">
+                                    Satış Faturası Tarih Değiştirme Yetkisi
+                                </label>
+                                <input name="SatisFaturasiTarihDegistirmeYetkisi" id="SatisFaturasiTarihDegistirmeYetkisi" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(5) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="FaturaTutariDegistirilsin">
+                                    Fatura Tutarı Değiştirilsin
+                                </label>
+                                <input name="FaturaTutariDegistirilsin" id="FaturaTutariDegistirilsin" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(6) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="FaturadaRiskBakiyeGosterilsin">
+                                    Faturada Risk Bakiye Gösterilsin
+                                </label>
+                                <input name="FaturadaRiskBakiyeGosterilsin" id="FaturadaRiskBakiyeGosterilsin" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(7) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="MusteriRiskSiniriniAsabilir">
+                                    Müşteri Risk Sınırını Aşabilir
+                                </label>
+                                <input name="MusteriRiskSiniriniAsabilir" id="MusteriRiskSiniriniAsabilir" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(8) ? "checked" : "") />
+                            </div>
+                            <div class="form-check bg-primary-subtle">
+                                <label class="form-check-label" for="AcilisMesajlariGosterilsin">
+                                    Açılış Mesajları Gösterilsin
+                                </label>
+                                <input name="AcilisMesajlariGosterilsin" id="AcilisMesajlariGosterilsin" type="checkbox" class="form-check-input" value="true" @(yetkiler.Contains(9) ? "checked" : "") />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 border p-2">
+                    <div class="row">
+                        <input type="hidden" name="EFaturaGondericiBirimiId" id="EFaturaGondericiBirimiId" value="@Model.Item1.EFaturaGondericiBirimiId" />
+                        <label for="EFaturaGondericiBirimi" class="col-sm-3 col-form-label pb-0">e-Fatura</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+
+                                <input type="text" id="EFaturaGondericiBirimi" name="EFaturaGondericiBirimi" class="form-control form-control-sm" value="@Model.Item1.EFaturaGondericiBirimi" />
+                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/GibFirmaPostaKutular?target=EFaturaGondericiBirimi&dokTip=0&pkTip=0&kayitSekli=1&tip=1`,'firmapostakutusu')">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="hidden" name="EIrsaliyeGondericiBirimiId" id="EIrsaliyeGondericiBirimiId" value="@Model.Item1.EIrsaliyeGondericiBirimiId" />
+                        <label for="EFaturaGondericiBirimi" class="col-sm-3 col-form-label pb-0">e-İrsaliye</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+
+                                <input type="text" id="EIrsaliyeGondericiBirimi" name="EIrsaliyeGondericiBirimi" class="form-control form-control-sm" value="@Model.Item1.EIrsaliyeGondericiBirimi" />
+                                <button type="button" class="btn btn-sm btn-primary" onclick="apiRequest(`/Common/GibFirmaPostaKutular?target=EIrsaliyeGondericiBirimi&dokTip=1&pkTip=0&kayitSekli=1&tip=1`,'firmairspostakutusu')">
+                                    Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EFaturaGondericiBirimi" class="col-sm-3 col-form-label pb-0">Entegratör Kullanıcı Adı</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+
+                                <input type="text" id="EntegratorKullaniciAdi" name="EntegratorKullaniciAdi" class="form-control form-control-sm" value="@Model.Item1.EntegratorKullaniciAdi" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EFaturaGondericiBirimi" class="col-sm-3 col-form-label pb-0">Entegratör Kullanıcı Şifresi</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+
+                                <input type="text" id="EntegratorKullaniciSifresi" name="EntegratorKullaniciSifresi" class="form-control form-control-sm" value="@Model.Item1.EntegratorKullaniciSifresi" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 border p-2">
+                    <div class="row">
+                        <label class="col-sm-12 pb-0">Alış Faturası Numerator</label>
+
+                    </div>
+                    <div class="row">
+                        <label for="OnEk0" class="col-sm-3 col-form-label pb-0">Ön Ek</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="OnEk0" name="OnEk0" class="form-control form-control-sm" value="@numerator[0].Onek" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Baslangic0" class="col-sm-3 col-form-label pb-0">Başlangıç</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Baslangic0" name="Baslangic0" class="form-control form-control-sm" value="@numerator[0].Baslangic" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Bitis0" class="col-sm-3 col-form-label pb-0">Bitiş</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Bitis0" name="Bitis0" class="form-control form-control-sm" value="@numerator[0].Bitis" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Uzunluk0" class="col-sm-3 col-form-label pb-0">Uzunluk</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Uzunluk0" name="Uzunluk0" class="form-control form-control-sm" value="@numerator[0].Uzunluk" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--SATIŞ FATURASI -->
+
+                    <div class="row mt-5">
+                        <label class="col-sm-12 pb-0">Satış Faturası Numerator</label>
+
+                    </div>
+                    <div class="row">
+                        <label for="OnEk1" class="col-sm-3 col-form-label pb-0">Ön Ek</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="OnEk1" name="OnEk1" class="form-control form-control-sm" value="@numerator[1].Onek" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Baslangic1" class="col-sm-3 col-form-label pb-0">Başlangıç</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Baslangic1" name="Baslangic1" class="form-control form-control-sm" value="@numerator[1].Baslangic" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Bitis1" class="col-sm-3 col-form-label pb-0">Bitiş</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Bitis1" name="Bitis1" class="form-control form-control-sm" value="@numerator[1].Bitis" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Uzunluk1" class="col-sm-3 col-form-label pb-0">Uzunluk</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Uzunluk1" name="Uzunluk1" class="form-control form-control-sm" value="@numerator[1].Uzunluk" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--SATIŞ FATURASI -->
+                    <!--STOK FATURASI -->
+
+                    <div class="row mt-5">
+                        <label class="col-sm-12 pb-0">Stok Numerator</label>
+
+                    </div>
+                    <div class="row">
+                        <label for="OnEk2" class="col-sm-3 col-form-label pb-0">Ön Ek</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="OnEk2" name="OnEk2" class="form-control form-control-sm" value="@numerator[2].Onek" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Baslangic2" class="col-sm-3 col-form-label pb-0">Başlangıç</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Baslangic2" name="Baslangic2" class="form-control form-control-sm" value="@numerator[2].Baslangic" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Bitis2" class="col-sm-3 col-form-label pb-0">Bitiş</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number id="Bitis2" name="Bitis2" class="form-control form-control-sm" value="@numerator[2].Bitis" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Uzunluk2" class="col-sm-3 col-form-label pb-0">Uzunluk</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="Uzunluk2" name="Uzunluk2" class="form-control form-control-sm" value="@numerator[2].Uzunluk" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--STOK FATURASI -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    @*<button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modalPostaKutulari">E-Belge Tanımları</button>*@
+                    <button type="submit" class="btn btn-sm btn-success">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="numModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Kullanıcı Numeratörleri</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label for="SatisFaturasiSiraNo" class="col-sm-7 col-form-label pb-0">
+                            Satış Faturası Sıra No
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="SatisFaturasiSiraNo" id="SatisFaturasiSiraNo" value="@(Model.Item1.SatisFaturasiSiraNo.HasValue ? Model.Item1.SatisFaturasiSiraNo : 0)" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="AlisFaturasiSiraNo" class="col-sm-7 col-form-label pb-0">
+                            Alış Faturası Sıra No
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="AlisFaturasiSiraNo" id="AlisFaturasiSiraNo" class="form-control form-control-sm" value="@(Model.Item1.AlisFaturasiSiraNo.HasValue ? Model.Item1.AlisFaturasiSiraNo : 0)" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="MustahsilFaturasiSiraNo" class="col-sm-7 col-form-label pb-0">
+                            Müstahsil Faturası Sıra No
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="MustahsilFaturasiSiraNo" id="MustahsilFaturasiSiraNo" class="form-control form-control-sm" value="@(Model.Item1.MustahsilFaturasiSiraNo.HasValue ? Model.Item1.MustahsilFaturasiSiraNo : 0)" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="FisSiraNo" class="col-sm-7 col-form-label pb-0">
+                            Fiş Sıra No
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="FisSiraNo" id="FisSiraNo" class="form-control form-control-sm" value="@(Model.Item1.FisSiraNo.HasValue ? Model.Item1.FisSiraNo : 0)" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="MalKabulSiraNo" class="col-sm-7 col-form-label pb-0">
+                            Mal Kabul Sıra No
+                        </label>
+                        <div class="col-sm-5">
+                            <input type="number" name="MalKabulSiraNo" id="MalKabulSiraNo" class="form-control form-control-sm" value="@(Model.Item1.MalKabulSiraNo.HasValue ? Model.Item1.MalKabulSiraNo : 0)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    <button id="numeratorBtn" type="button" class="btn btn-primary">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Kapat
+                    </button>
+                    <button id="modalSaveBtn" type="button" class="btn btn-primary">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+@section scripts{
+    <script src="~/assets/customscripts/sharedfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        var target = "";
+        $(document).on("show.bs.modal", "#modal", function (e) {
+            var btn = $(e.relatedTarget);
+            var container = $("#modalContent");
+            var label = $("#modalLabel");
+
+            container.empty();
+            label.empty();
+
+            if (btn.data("remote-url")) {
+                target = btn.data("btarget");
+                container.load(btn.data("remote-url"));
+                label.text(btn.data("label"))
+            } else {
+                target = e.relatedTarget.target;
+            }
+        });
+
+        $(document).on("hidden.bs.modal", "#modal", function (e) {
+            $("#modalContent").empty();
+            $("#modalLabel").empty();
+            if (target == "arabtn") {
+                sessionStorage.getItem('kullaniciId') > 0 ? window.location.href = `/TeknikIslemler/KullaniciTanimlari?id=${sessionStorage.getItem('kullaniciId')}` : null;
+                sessionStorage.removeItem("kullaniciId");
+            }
+        });
+        $("#numeratorBtn").click(function () {
+            var params = {
+                satisFatSiraNo: $("#SatisFaturasiSiraNo").val(),
+                alisFatSiraNo: $("#AlisFaturasiSiraNo").val(),
+                MustFatSiraNo: $("#MustahsilFaturasiSiraNo").val(),
+                fisSiraNo: $("#FisSiraNo").val(),
+                malKabulSiraNo: $("#MalKabulSiraNo").val(),
+                kullaniciId: $("#KullaniciId").val()
+            };
+            $.ajax({
+                url: "/TeknikIslemler/NumeratorlerGuncelle",
+                type: "POST",
+                data: params,
+                cache: false,
+                success: (res) => {
+                    ShowAlert(res.success, res.message);
+                    $("#numModal").modal("toggle");
+                }
+            });
+        });
+        $("#navigatorSaveBtn").click(function () {
+            $("form").first().trigger("submit");
+        });
+        $("#hideRemoveBtn").click(function () {
+            DeleteConfirm().then(p => {
+                if (p.isConfirmed) {
+                    var id = $('#KullaniciId').val();
+                    window.location.href = `/TeknikIslemler/KullaniciSil?kullaniciId=${id}`
+                }
+            });
+        });
+        $("#recordDeleteBtn").click(function () {
+            $("#hideRemoveBtn").trigger("click");
+        });
+        function apiRequest(reqUrl, trgt) {
+            $.ajax({
+                url: reqUrl,
+                type: "GET",
+                success: function (e) {
+                    loadModal(e, trgt);
+                }
+            });
+        }
+    </script>
+}
