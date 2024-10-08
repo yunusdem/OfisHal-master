@@ -256,12 +256,10 @@ namespace OfisHal.Core.ViewModels
                     SubMenu = new List<MenuItems>()
                     {
                         new MenuItems {Title = "Tedarikçi Kayıt", IconClass = null, Url = "/TohalCariKarts/Create"},
+                        new MenuItems {Title = "Müşteri Kayıt", IconClass = null, Url = "/TohalCariKarts/MCreate"},
                         new MenuItems {Title = "Cari Kayıt", IconClass = null, Url = "/TohalCariHarekets/Create"},
                         new MenuItems {Title = "Cari Defteri", IconClass = null, Url = "/reports/details/mustahsilcaridefteri"},
                         new MenuItems {Title = "Cari Mizan", IconClass = null, Url = "/reports/details/mustahsilcarimizan"},
-                        new MenuItems {Title = "Kap Cari Kayıt", IconClass = null, Url = "/TohalKapHarekets/Edit"},
-                        new MenuItems {Title = "Kap Cari Defteri", IconClass = null, Url = "/reports/details/mustahsilkapcaridefteri"},
-                        new MenuItems {Title = "Kap Cari Mizanı", IconClass = null, Url = "/reports/details/mustahsilkapcarimizani"},
                         new MenuItems {Title = "Müstahsil Liste", IconClass = null, Url = "/reports/details/mustahsilliste"},
                         //new MenuItems {Title = "Müstahsil Son Ürün Hareket Raporu", IconClass = null, Url = "/reports/details/mustahsilsonurun"},
                         //new MenuItems {Title = "Müstahsil Ciro Raporu", IconClass = null, Url = "/reports/details/mustahsilciro"},
@@ -279,15 +277,12 @@ namespace OfisHal.Core.ViewModels
                     Title = "Müşteri İşlemleri", IconClass = "user", Url = null,
                     SubMenu = new List<MenuItems>()
                     {
-                        new MenuItems {Title = "Müşteri Kayıt", IconClass = null, Url = "/TohalCariKarts/MCreate"},
+                        
                         new MenuItems {Title = "Veresiye Kayıt", IconClass = null, Url = "/TohalCariHarekets/MCreate"},
                         new MenuItems {Title = "Veresiye Defteri", IconClass = null, Url = "/reports/details/musteriveresiyedefteri"},
                         new MenuItems {Title = "Veresiye Mizan", IconClass = null, Url = "/reports/details/musteriveresiyemizan"},
                         new MenuItems {Title = "Veresiye Takip", IconClass = null, Url = "/reports/details/musteriveresiyetakip"},
                         new MenuItems {Title = "Müşteri Listesi", IconClass = null, Url = "/reports/details/musterilistesi"},
-                        new MenuItems {Title = "Rehin İade Düzeltme", IconClass = null, Url = "/MusteriCari/RehinIadeDuzeltme"},
-                        new MenuItems {Title = "Kap Cari Defteri", IconClass = null, Url = "/reports/details/musterikapcaridefteri"},
-                        new MenuItems {Title = "Kap Cari Mizanı", IconClass = null, Url = "/reports/details/musterikapcarimizan"},
                         new MenuItems {Title = "Müşteri Cari Hareket Raporu", IconClass = null, Url = "/reports/details/mustericarihareket"},
                         new MenuItems {Title = "Müşteri Risk Analizi Raporu", IconClass = null, Url = "/reports/details/musteririskanalizi"},
                     }
@@ -304,7 +299,6 @@ namespace OfisHal.Core.ViewModels
                         new MenuItems {Title = "Sipariş", IconClass = null, Url = "/AlisIslemleri/Siparis"},
                         new MenuItems {Title = "Alış Faturası Dökümü", IconClass = null, Url = "/reports/details/alisfaturasidokumu"},
                         new MenuItems {Title = "Kdv Bazlı Alış Fatura Listesi", IconClass = null, Url = "/reports/details/aliskdvbazlifaturalistesi"},
-                        new MenuItems {Title = "Alış İstatistiği", IconClass = null, Url = "/reports/details/alisistat"},
                         new MenuItems {Title = "Alış Takibi", IconClass = null, Url = "/reports/details/alistakibi"},
                     }
 

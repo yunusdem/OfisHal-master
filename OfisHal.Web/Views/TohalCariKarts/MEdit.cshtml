@@ -239,7 +239,7 @@
             </div>
 
             <div class="row">
-                <label for="VergiKimlikNo" class="col-sm-3 col-form-label pb-0">T.C.Kimlik No</label>
+                <label for="VergiKimlikNo" class="col-sm-3 col-form-label pb-0">Vergi Kimlik No</label>
                 <div class="col-sm-9">
                     <input name="VergiKimlikNo" id="VergiKimlikNo" class="form-control form-control-sm" type="number" value="@Model.VergiKimlikNo"  style=" text-align: start; direction: unset;" oninput="handleCharacterCount()"/>
                     <span class="text-danger">@Html.ValidationMessageFor(model => model.VergiKimlikNo)</span>
@@ -469,23 +469,23 @@
                 <div class="col-sm-12">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="RusumAlinmasin" name="RusumAlinmasin" value="true" @(Model.RusumAlinmasin == true ? "checked" : "")>
-                        <label class="form-check-label" for="RusumAlinmasin">Rüsum Alınmasın</label>
+                        <label class="form-check-label" for="RusumAlinmasin">Komisyon Alınmasın</label>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            @*<div class="row">
                 <div class="col-sm-12">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="Ihracatci" name="Ihracatci" value="true" @(Model.Ihracatci == true ? "checked" : "")>
                         <label class="form-check-label" for="Ihracatci">İhracatçı </label>
                     </div>
                 </div>
-            </div>
+            </div>*@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="HalKomisyoncusu" name="HalKomisyoncusu" value="true" @(Model.HalKomisyoncusu == true ? "checked" : "")>
-                        <label class="form-check-label" for="HalKomisyoncusu">Hal Komisyoncu</label>
+                        <label class="form-check-label" for="HalKomisyoncusu">Komisyoncu - Aracı</label>
                     </div>
                 </div>
             </div>
@@ -493,7 +493,7 @@
                 <div class="col-sm-12">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="FatKesilmedenKunyeAlinamaz" name="FatKesilmedenKunyeAlinamaz" value="true" @(Model.FatKesilmedenKunyeAlinamaz == true ? "checked" : "")>
-                        <label class="form-check-label" for="FatKesilmedenKunyeAlinamaz">Fatura Kesilmeden Künye Alınmasın</label>
+                        <label class="form-check-label" for="FatKesilmedenKunyeAlinamaz">Fatura Kesilmeden Ürün Satılmasın</label>
                     </div>
                 </div>
             </div>
