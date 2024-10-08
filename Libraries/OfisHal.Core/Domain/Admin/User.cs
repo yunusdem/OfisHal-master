@@ -1,10 +1,12 @@
-namespace OfisHal.Core.Domain.Admin
+using OfisHal.Core.Domain.Admin;
+
+namespace OfisHal.Core.Domain
 {
     public class User : BaseModel<int>
     {
-        public int RoleId { get; set; }
+        //public int RoleId { get; set; }
 
-        public int CustomerId { get; set; }
+        //public int CustomerId { get; set; }
 
         public string UserName { get; set; }
 
@@ -12,8 +14,8 @@ namespace OfisHal.Core.Domain.Admin
 
         public bool IsActive { get; set; }
 
-        public virtual Role Role { get; set; }
+        //public virtual Role Role { get; set; }
 
-        public virtual Customer Customer { get; set; }
+        //public virtual Customer Customer { get; set; }
     }
 }

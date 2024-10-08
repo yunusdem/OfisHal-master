@@ -24,7 +24,6 @@ namespace OfisHal.Web.Controllers
 
         public async Task<ActionResult> Index(bool ownFile = false)
         {
-            _reportsClient.SetDatabaseId(Request.GetCookie<string>(Constants.WorkSpaceCookieName));
             var model = await _reportsClient.GetAllAsync(ownFile);
 
             ViewData["Title"] = "Rapor Listesi";
@@ -33,7 +32,6 @@ namespace OfisHal.Web.Controllers
 
         public async Task<ActionResult> Details(string id)
         {
-            _reportsClient.SetDatabaseId(Request.GetCookie<string>(Constants.WorkSpaceCookieName));
             var model = await _reportsClient.GetAsync(id, false);
 
             if (model != null)
@@ -64,7 +62,6 @@ namespace OfisHal.Web.Controllers
                         form[name] = tanim?.DigYazihaneNo;
                 }
 
-                _reportsClient.SetDatabaseId(Request.GetCookie<string>(Constants.WorkSpaceCookieName));
                 var model = await _reportsClient.PostAsync(id, form, ownFile,pdf);
 
                 if (model != null)
@@ -85,7 +82,6 @@ namespace OfisHal.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> ExportReport(string id)
         {
-            _reportsClient.SetDatabaseId(Request.GetCookie<string>(Constants.WorkSpaceCookieName));
             var model = await _reportsClient.GetAsync(id, true);
 
             if (model != null)

@@ -2,9 +2,6 @@
 using OfisHal.Core.ViewModels;
 using OfisHal.Data.Context;
 using OfisHal.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,13 +9,11 @@ namespace OfisHal.Web.Controllers
 {
     public class DashBoardController : BaseController
     {
-        private readonly CatalogDb _catalogDb;
         private readonly IHksService _hksService;
         private readonly Db _db;
 
-        public DashBoardController(CatalogDb catalogDb,Db db,IHksService hksService)
+        public DashBoardController(Db db,IHksService hksService)
         {
-            _catalogDb = catalogDb;
             _hksService = hksService;
             _db = db;
         }
@@ -45,7 +40,7 @@ namespace OfisHal.Web.Controllers
             */
             return View();
         }
-
+        /*
         [HttpPost]
         public RedirectToRouteResult Index(string workSpace)
         {
@@ -53,7 +48,7 @@ namespace OfisHal.Web.Controllers
                 Response.AddCookie(Constants.WorkSpaceCookieName, workSpace);
             return RedirectToAction(nameof(Index));
         }
-
+        */
         public ActionResult GoToSubtItems(MenuItemsViewModel items)
         {
             return View("Index",items);

@@ -29,9 +29,9 @@ namespace OfisHal.Services
         private readonly string _basePath;
         private readonly string _clientPath;
 
-        public FileService(HttpServerUtilityBase server, ITenantService tenantService)
+        public FileService(HttpServerUtilityBase server/*, ITenantService tenantService*/)
         {
-            _clientPath = Convert.ToString(tenantService.GetCurrentTenant()?.Id);
+            //_clientPath = Convert.ToString(tenantService.GetCurrentTenant()?.Id);
             _basePath = server.MapPath(Constants.BaseDocumentPath);
         }
 

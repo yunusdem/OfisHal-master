@@ -1,10 +1,4 @@
-﻿@using OfisHal.Core
-@{ 
-    var tenantSvc = DependencyResolver.Current.GetService<OfisHal.Services.ITenantService>();
-    var workSpaces = tenantSvc?.GetWorkSpaces();
-    var currentWorkSpace = tenantSvc?.GetCurrentWorkSpace();
-}
-<!doctype html>
+﻿<!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="sm" data-sidebar-image="none" data-preloader="disable">
 <head>
     @Html.Partial("~/Views/Shared/_title_meta.cshtml")
@@ -40,36 +34,6 @@
     <!-- END layout-wrapper -->
     @* @Html.Partial("~/Views/Shared/_customizer.cshtml") *@
 
-    <div class="modal fade" id="workSpaceModal" tabindex="-1" aria-labelledby="workSpaceModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="@Url.Action("Index", "Dashboard")">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="workSpaceModalLabel">Çalışma Alanı</h1>
-                        @*<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>*@
-                    </div>
-                    <div class="modal-body">
-                        @Html.Label(Constants.WorkSpaceCookieName, "Lütfen çalışacağınız veritabanını seçiniz", new { @class = "control-label", required = "required" })
-                        @Html.DropDownList(Constants.WorkSpaceCookieName, workSpaces, "-Çalışma Alanı Seç-", new { @class = "form-control" })
-                    </div>
-                    <div class="modal-footer">
-                        @*<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>*@
-                        <button type="submit" class="btn btn-primary">Kaydet</button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
-    @if (string.IsNullOrWhiteSpace(currentWorkSpace?.DatabaseName))
-    {
-        <script>
-            window.onload = () => {
-                const myModal = new bootstrap.Modal("#workSpaceModal");
-                myModal.show();
-            }
-        </script>
-    }
     @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
     <button class="d-none" id="hideRemoveBtn"></button>
     @RenderSection("scripts", required: false)

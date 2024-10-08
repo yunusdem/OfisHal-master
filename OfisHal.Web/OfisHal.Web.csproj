@@ -287,7 +287,6 @@
     <Compile Include="Controllers\TohalKapsController.cs" />
     <Compile Include="Controllers\TohalMalsController.cs" />
     <Compile Include="Controllers\_BaseController.cs" />
-    <Compile Include="DbFilter.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -4106,7 +4105,6 @@
     <Content Include="Views\ResmiFormlar\TopluBildirmFormu.cshtml" />
     <Content Include="Views\ResmiFormlar\ZirveFaturaTransferi.cshtml" />
     <Content Include="Views\SatisIslemleri\DetayliSatisBordro.cshtml" />
-    <Content Include="Views\SatisIslemleri\FaturaAktarma.cshtml" />
     <Content Include="Views\SatisIslemleri\KarsilastirmaliSatisOzet.cshtml" />
     <Content Include="Views\SatisIslemleri\KunyeBildirimListesi.cshtml" />
     <Content Include="Views\SatisIslemleri\RehinIade.cshtml" />

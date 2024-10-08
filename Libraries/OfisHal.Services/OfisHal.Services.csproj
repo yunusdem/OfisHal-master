@@ -76,7 +76,6 @@
     <Compile Include="OpenAPIs\swagger.cs" />
     <Compile Include="OpenAPIs\v1.cs" />
     <Compile Include="SmtpService.cs" />
-    <Compile Include="TenantService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OfisHal.Core\OfisHal.Core.csproj">

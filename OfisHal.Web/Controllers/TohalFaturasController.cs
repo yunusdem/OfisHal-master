@@ -1,19 +1,14 @@
-﻿using OfisHal.Core;
-using OfisHal.Core.Domain;
+﻿using OfisHal.Core.Domain;
 using OfisHal.Data.Context;
 using OfisHal.Services;
 using OfisHal.Services.HksBildirimSvc;
 using OfisHal.Services.HksGenelSvc;
-using OfisHal.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
-using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -21,16 +16,14 @@ namespace OfisHal.Web.Controllers
 {
     public class TohalFaturasController : BaseController
     {
-        private readonly CatalogDb _catalogDb;
         private readonly Db _context;
         private readonly IHksService _hksService;
-        public TohalFaturasController(Db context,CatalogDb catalogDb, IHksService hksService)
+        public TohalFaturasController(Db context, IHksService hksService)
         {
             _context = context;
-            _catalogDb= catalogDb;
             _hksService = hksService;
         }
-
+        /*
         public ActionResult FaturaAktarma()
         {
             VohalFatura model = new VohalFatura();
@@ -206,7 +199,7 @@ namespace OfisHal.Web.Controllers
             return Json(new { success = true, message = "Başarıyla eklendi" }, JsonRequestBehavior.AllowGet);
             #endregion
         }
-
+        */
         // GET: TohalFaturas
         public async Task<ActionResult> Index(int faturaId = 0, bool yeni = false, string pgdown = "")
         {

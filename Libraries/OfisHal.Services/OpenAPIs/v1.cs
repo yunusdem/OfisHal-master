@@ -27,13 +27,7 @@ namespace OfisHal.Services.Reports
         {
             _httpClient = new HttpClient();
             _settings = new Lazy<JsonSerializerSettings>(CreateSerializerSettings);
-        }
-
-        public void SetDatabaseId(string databaseId)
-        {
-            if (_httpClient.DefaultRequestHeaders.TryGetValues("DId", out var _))
-                _httpClient.DefaultRequestHeaders.Remove("DId");
-            _httpClient.DefaultRequestHeaders.Add("DId", databaseId);
+            _httpClient.DefaultRequestHeaders.Add("DId", "swell");
         }
 
         private JsonSerializerSettings CreateSerializerSettings()

@@ -1,8 +1,4 @@
-﻿@{
-    var currentDb = DependencyResolver.Current.GetService<OfisHal.Services.ITenantService>()?.GetCurrentWorkSpace();
-    var currentDbName = string.IsNullOrWhiteSpace(currentDb?.FriendlyName) ? currentDb?.DatabaseName : currentDb?.FriendlyName;
-}
-<header id="page-topbar">
+﻿<header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
@@ -150,8 +146,6 @@
                     </button>
                     </div> *@
 
-
-                <span>@(!string.IsNullOrWhiteSpace(currentDbName) ? currentDbName : "Çalışma Alanı Seçilmedi")</span>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"

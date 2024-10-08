@@ -10,7 +10,7 @@ namespace OfisHal.Data.Context
 {
     public partial class Db : DbContext
     {
-        public Db(string conStr) : base(conStr)
+        public Db() : base("name=Db")
         {
             Configuration.LazyLoadingEnabled = false;
             Configuration.AutoDetectChangesEnabled = false;
@@ -19,6 +19,8 @@ namespace OfisHal.Data.Context
             Database.SetInitializer<Db>(null);
             Database.Initialize(false);
         }
+
+        public virtual DbSet<User> Users { get; set; }
 
         public virtual DbSet<TohalBagkurDosyasi> TohalBagkurDosyasis { get; set; }
         public virtual DbSet<TohalBankaHareketi> TohalBankaHareketis { get; set; }

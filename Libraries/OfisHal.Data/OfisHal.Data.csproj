@@ -178,7 +178,6 @@
     <Compile Include="Configurations\Views\VohalAramaKunyeConfiguration.cs" />
     <Compile Include="Configurations\Views\VohksHksKayitliKunyeBilgileriConfiguration.cs" />
     <Compile Include="Configurations\Tables\TohalNumeratorConfiguration.cs" />
-    <Compile Include="Context\CatalogDb.cs" />
     <Compile Include="Context\Db.Tables.cs" />
     <Compile Include="Context\Db.Views.cs" />
     <Compile Include="FormattedDbEntityValidationException.cs" />

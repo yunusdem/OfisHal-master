@@ -54,15 +54,15 @@ namespace OfisHal.Web
             app.UseHangfireServer();
 
             #region Services
-            builder.RegisterType<TenantService>().As<ITenantService>();
-            builder.RegisterType<CatalogDb>().AsSelf().InstancePerRequest();
-            //builder.RegisterType<Db>().AsSelf().InstancePerRequest();
-
+            //builder.RegisterType<TenantService>().As<ITenantService>();
+            //builder.RegisterType<CatalogDb>().AsSelf().InstancePerRequest();
+            builder.RegisterType<Db>().AsSelf().InstancePerRequest();
+            /*
             builder.Register(ctx => {
                 var provider = ctx.Resolve<ITenantService>();
                 return new Db(provider.GetConnectionString());
             }).AsSelf().InstancePerRequest();
-
+            */
             builder.RegisterType<DataServices>().As<IDataServices>().InstancePerRequest();
             builder.RegisterType<InvoiceService>().As<IInvoiceService>().InstancePerLifetimeScope();
             builder.RegisterType<HksService>().As<IHksService>().InstancePerLifetimeScope();
@@ -119,7 +119,7 @@ namespace OfisHal.Web
             var filters = GlobalFilters.Filters;
             filters.Add(new HandleErrorAttribute());
             filters.Add(new RequireHttpsAttribute(true));
-            filters.Add(new DbFilter());
+            //filters.Add(new DbFilter());
             #endregion
 
             #region Routes

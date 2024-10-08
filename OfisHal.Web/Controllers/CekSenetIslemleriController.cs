@@ -1,28 +1,26 @@
 ﻿using OfisHal.Core.Domain;
 using OfisHal.Data.Context;
 using OfisHal.Services;
-using System.Linq;
-using System;
-using System.Web.Mvc;
-using System.Threading.Tasks;
 using OfisHal.Web.Models;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace OfisHal.Web.Controllers
 {
 
     public class CekSenetIslemleriController : BaseController
     {
-        private readonly CatalogDb _catalogDb;
         private readonly Db _context;
         private readonly IHksService _hksService;
-        public CekSenetIslemleriController(Db context, CatalogDb catalogDb, IHksService hksService)
+        public CekSenetIslemleriController(Db context, IHksService hksService)
         {
             _context = context;
-            _catalogDb = catalogDb;
             _hksService = hksService;
         }
         // Çek Senet İşlemleri > Tahsilat
@@ -34,8 +32,8 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -236,10 +234,10 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel3"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel4"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
+                ViewData["faturaModel3"] = new List<VohalObSatiri>();
+                ViewData["faturaModel4"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -287,10 +285,10 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel3"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel4"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
+                ViewData["faturaModel3"] = new List<VohalObSatiri>();
+                ViewData["faturaModel4"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -338,10 +336,10 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel3"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel4"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
+                ViewData["faturaModel3"] = new List<VohalObSatiri>();
+                ViewData["faturaModel4"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -389,8 +387,8 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -437,8 +435,8 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
 
-                ViewData["faturaModel"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel2"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel"] = new List<VohalObSatiri>();
+                ViewData["faturaModel2"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
@@ -484,8 +482,8 @@ namespace OfisHal.Web.Controllers
             if (faturaId == 0)
             {
    
-                ViewData["faturaModel3"] = new List<OfisHal.Web.Models.VohalObSatiri>();
-                ViewData["faturaModel4"] = new List<OfisHal.Web.Models.VohalObSatiri>();
+                ViewData["faturaModel3"] = new List<VohalObSatiri>();
+                ViewData["faturaModel4"] = new List<VohalObSatiri>();
                 var newModel = new VohalOdemeBordrosu();
                 newModel.Tarih = DateTime.Today;
                 newModel.GuncellemeZamani = DateTime.Today;
